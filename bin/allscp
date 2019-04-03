@@ -1,0 +1,111 @@
+#! /bin/bash
+
+[[ -L $0 ]] && SCRIPT_FILE=`readlink -fn $0` || SCRIPT_FILE=$0
+pushd `dirname "${SCRIPT_FILE}"` >/dev/null
+BASE_DIR=`pwd`
+popd >/dev/null
+
+source "${BASE_DIR}/common.sh" || exit 1
+
+FUNC_FILE_CONFIG="${BASE_DIR}/config.sh"
+FUNC_FILE_REMOTE="${BASE_DIR}/remote.sh"
+import_functions
+
+SCP="scp ${IDENTITY}"
+
+function _help() {
+    local _CMD
+    _CMD=`basename $0`
+    printf "%s\n" "Usage: ${_CMD} [-u {user_name}] [-H {host_name}] [-p {host_port}] [-g {host_group_name}] src [dst]"
+    printf "%$((7+${#_CMD}-2))s  %s\n" "-u" "specify user name used in ssh connection, if not specified, local user will be used."
+    printf "%$((7+${#_CMD}-2))s  %s\n" "-H" "specify a ssh host to connect to."
+    printf "%$((7+${#_CMD}-2))s  %s\n" "-p" "specify a ssh port to connect to, if not specified, default[22] port will be used."
+    printf "%$((7+${#_CMD}-2))s  %s\n" "-g" "specify a ssh host group, if not specified, all hosts in \"/etc/hosts\" except localhost will be used."
+}
+
+while getopts :u:H:p:g:h FLAG; do
+    case $FLAG in
+        g)
+            GROUP_NAME=${OPTARG}
+        ;;
+        u)
+            REMOTE_USER=${OPTARG}
+        ;;
+        H)
+            REMOTE_HOST=${OPTARG}
+        ;;
+        p)
+            REMOTE_PORT=${OPTARG}
+        ;;
+        h)
+            _help >&2
+            exit
+        ;;
+        *)
+            _help >&2
+            exit 1
+        ;;
+    esac
+done
+shift $((OPTIND - 1))
+
+[[ $# -lt 1 || $# -gt 2 ]] && {
+    echo "Invalid params." >&2
+    exit 1
+}
+
+function transfer_file() {
+    local _USER
+    local _HOST
+    local _PORT
+    local _CONN_STRING
+    local _EXTRA_ARGS
+    local _SRC
+    local _DST
+
+    [[ -n ${REMOTE_USER} ]] && _USER="${REMOTE_USER}" || _USER="${SSH_USER}"
+    [[ -n ${REMOTE_HOST} ]] && _HOST="${REMOTE_HOST}" || _HOST="${SSH_HOST}"
+    [[ -n ${REMOTE_PORT} ]] && _PORT="${REMOTE_PORT}" || _PORT="${SSH_PORT}"
+
+    if [[ ${_PORT} -eq 22 ]]; then
+        _CONN_STRING="${_USER}@${_HOST}"
+    else
+        _CONN_STRING="${_USER}@${_HOST}:${_PORT}"
+    fi
+
+    echo -e "${COLOR[cyan]}Transfer${COLOR[nc]} file to remote host[${COLOR[yellow]}${_CONN_STRING}${COLOR[nc]}]:" >&2
+
+    # while getopts :r FLAG; do
+    #     case ${FLAG} in
+    #         r)
+    #             _EXTRA_ARGS="${_EXTRA_ARGS} -r"
+    #         ;;
+    #         *)
+    #             error "invalid scp args: $*"
+    #             return 1
+    #         ;;
+    #     esac
+    # done
+    # shift $((OPTIND-1))
+    
+    if [[ $# -eq 1 ]]; then
+        _SRC="$1"
+        _DST="$1"
+    else
+        _SRC="$1"
+        _DST="$2"
+    fi
+    
+    #remote_exec "mkdir -p `dirname ${_DST}`" &>/dev/null
+    ${SCP} -P${_PORT} ${_EXTRA_ARGS} "${_SRC}" ${_USER}@${_HOST}:"${_DST}"
+    echo >&2
+}
+
+host_list | while read HOST_CONF; do
+    parse_ssh ${HOST_CONF}
+    if [[ $? -ne 0 ]]; then
+        warning "Invalid config in group ${GROUP_NAME}: $HOST_CONF"
+        continue
+    fi
+    transfer_file $*
+done

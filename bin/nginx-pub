@@ -1,0 +1,77 @@
+#! /bin/bash
+
+[[ -L $0 ]] && SCRIPT_FILE=`readlink -fn $0` || SCRIPT_FILE=$0
+pushd `dirname "${SCRIPT_FILE}"` >/dev/null
+BASE_DIR=`pwd`
+popd >/dev/null
+
+source "${BASE_DIR}/common.sh" || exit 1
+
+FUNC_FILE_CONFIG="${BASE_DIR}/config.sh"
+import_functions
+
+NGINX_GROUP=front
+
+function _pub() {
+    if [[ $# -ne 1 ]]; then
+        error "invalid pub arg: $*"
+        exit 1
+    fi
+
+    info "pub $1 to nginx cluster."
+
+    host_list | while read HOST_CONF;do
+        parse_ssh ${HOST_CONF}
+        if [[ $? -ne 0 ]]; then
+            warning "Invalid config in group ${GROUP_NAME}: $HOST_CONF"
+            continue
+        fi
+
+        rsync -a --compress --human-readable --progress --delete /opt/nginx/$1 ${SSH_HOST}:/opt/nginx/
+    done
+}
+
+function _reload_nginx() {
+    info "reload nginx cluster."
+    allssh -g${NGINX_GROUP} container exec nginx nginx -s reload
+}
+
+while getopts :g:r FLAG; do
+    case $FLAG in
+        g)
+            NGINX_GROUP=${OPTARG}
+        ;;
+        r)
+            RELOAD=1
+        ;;
+        *)
+            error "invalid args: $*"
+            exit 1
+        ;;
+    esac
+done
+shift $((OPTIND-1))
+
+if [[ $# -lt 1 ]]; then
+    error "missing command."
+    exit 1
+fi
+
+COMMAND=$1
+shift
+
+GROUP_NAME=${NGINX_GROUP}
+case ${COMMAND} in
+    data)
+        _pub data
+    ;;
+    conf)
+        _pub conf
+    ;;
+    *)
+        error "invalid command: ${COMMAND}"
+        exit 1
+    ;;
+esac
+
+[[ ${RELOAD} -eq 1 ]] && _reload_nginx

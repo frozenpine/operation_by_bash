@@ -1,0 +1,79 @@
+#! /bin/bash
+
+[[ -L $0 ]] && SCRIPT_FILE=`readlink -fn $0` || SCRIPT_FILE=$0
+pushd `dirname "${SCRIPT_FILE}"` >/dev/null
+BASE_DIR=`pwd`
+popd >/dev/null
+
+source "${BASE_DIR}/common.sh" || exit 1
+
+SCRIPT_START="${BASE_DIR}/start-container"
+SCRIPT_STOP="${BASE_DIR}/stop-container"
+SCRIPT_CHECK="${BASE_DIR}/check-container"
+
+for SCRIPT in ${!SCRIPT_@}; do
+    SCRIPT_FILE_PATH=$(eval echo \$$SCRIPT)
+    if [[ ! -f "${SCRIPT_FILE_PATH}" ]]; then
+        error script file not exist.
+        exit 1
+    fi
+done
+
+function shell() {
+    while getopts :s: FLAG; do
+        case $FLAG in
+            s)
+                SHELL=${OPTARG}
+            ;;
+            *)
+                error Invalid shell args: $*
+                exit 1
+            ;;
+        esac
+    done
+    shift $((OPTIND-1))
+
+    "${SCRIPT_CHECK}" $* >/dev/null
+    [[ $? -ne 0 ]] && exit 1
+
+    docker exec -it $1 ${SHELL:=sh}
+}
+
+ACTION=$1
+shift
+
+case $ACTION in
+    status)
+        "${SCRIPT_CHECK}" $*
+        [[ $? -ne 0 ]] && exit 1
+    ;;
+    start)
+        "${SCRIPT_START}" $*
+        [[ $? -ne 0 ]] && exit 1
+    ;;
+    stop)
+        "${SCRIPT_STOP}" $*
+        [[ $? -ne 0 ]] && exit 1
+    ;;
+    restart)
+        "${SCRIPT_STOP}" $*
+        [[ $? -ne 0 ]] && exit 1
+        shift $(($#-1))
+        "${SCRIPT_START}" $*
+        [[ $? -ne 0 ]] && exit 1
+    ;;
+    logs)
+        docker logs $*
+    ;;
+    list)
+        docker ps $*
+    ;;
+    shell)
+        shell $*
+    ;;
+    exec)
+        docker exec $*
+    ;;
+    *)
+    ;;
+esac

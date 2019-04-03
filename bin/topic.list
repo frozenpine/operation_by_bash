@@ -1,0 +1,17 @@
+# TOPIC_NAME PARTIONS REPLICAS
+# if want to define replicas without partions, use "null" in partions column
+MATCH
+MATCH-SS
+MATCH-SS-INCREMENT
+MATCH-JSON-SS
+MATCH-JSON-SS-INCREMENT
+
+BACK-ORDER
+SS-BOOK-ORDER
+
+CLEAR                   # 30
+APO-FULL                # 30
+APO-INCREMENT           # 30
+
+NOTIFY
+ACCESS

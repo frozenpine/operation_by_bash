@@ -1,0 +1,38 @@
+VERSION="1.0.1-SNAPSHOT"
+NAME=match
+USER=${NAME}
+
+JVM_OPTS="-Xms8G -Xmx8G"
+
+SERVICE_LIST="registry zookeeper kafka mysql redis"
+
+for SERVICE in ${SERVICE_LIST}; do
+    source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
+        echo "service list file missing: ${SERVICE}.sh" >&2
+        exit 1
+    }
+done
+
+docker run -d \
+    --name ${NAME} \
+    --restart no \
+    --network host \
+    -e SENTRY_DSN="http://ebd586b285bc4fd08c7026c36007a182:f8fae917d105440ca9301e597d5ff179@monitor:9000/5" \
+    registry:5000/trade$1/${NAME}:${VERSION} ${JVM_OPTS} \
+        -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
+        --logging.level.root=info \
+        --logging.level.com.quantdo.trade=info \
+        --com.quantdo.trade.handle.manager.transaction-batch-size=1000 \
+        --com.quantdo.trade.match.consumer.receive.buffer.bytes=10240000 \
+        --com.quantdo.trade.match.consumer.fetch.max.bytes=10240000 \
+        --com.quantdo.trade.match.consumer.fetch.min.bytes=1024000 \
+        --com.quantdo.trade.match.consumer.fetch.max.wait.ms=10 \
+        --com.quantdo.trade.match.consumer.max.poll.records=10000 \
+        --com.quantdo.trade.match.producer.acks=all \
+        --com.quantdo.trade.match.producer.max.in.flight.requests.per.connection=1 \
+        --com.quantdo.trade.match.producer.max.request.size=2147483647 \
+        --com.quantdo.trade.match.producer.transaction.timeout.ms=300000 \
+        --com.quantdo.trade.match.producer.buffer.memory=2147483647 \
+        --com.quantdo.trade.match.producer.batch.size=1024000 \
+        --com.quantdo.trade.match.producer.linger.ms=100 \
+        --com.quantdo.trade.match.producer.receive.buffer.bytes=10240000

@@ -1,0 +1,339 @@
+#! /bin/bash
+
+[[ -L "$0" ]] && SCRIPT_FILE=`readlink -fn "$0"` || SCRIPT_FILE="$0"
+cd `dirname "${SCRIPT_FILE}"`
+BASE_DIR=`pwd`
+
+source "${BASE_DIR}/common.sh" || exit 1
+
+REGISTRY_USER=quantdo
+REGISTRY_PASS=quantdo123456
+
+BASE_URI=registry:5000
+SCHEME=http
+
+PRETTY=
+
+declare -a IMAGES
+declare -A TAGS
+declare -A MANIFESTS
+
+HTTP_AUTH="--user ${REGISTRY_USER}:${REGISTRY_PASS}"
+
+_usage() {
+    local SCRIPT_NAME
+    SCRIPT_NAME=`basename ${SCRIPT_FILE}`
+    cat <<EOF
+Usage : ${SCRIPT_NAME} [-h] [-H {registry uri}] [-s {scheme: http | https}]
+        `printf "%${#SCRIPT_NAME}s" " "` {list | show [tag] | manifests | default | sync {source} {target} [clean|clean_src|clean_dst]}
+EOF
+    echo
+    echo "Option Descriptions :"
+    cat <<EOF
+    -h      Show this help message.
+    -H      Specify an registry base uri.
+            default: registry.quantfair.com.
+    -s      Specify scheme used to connect registry.
+            default: https.
+    -p      Show result pretty.
+EOF
+    echo
+    echo "Command Descriptions :"
+    cat <<EOF
+    list        List all images in registry.
+    show        Show image's tag info.
+    manifests   Show image's manifests digest.
+    default     Set BASE_URI & SCHEME to param specified.
+    sync        Sync image from one registry to another.
+                If clean specified, local image will be cleaned.
+EOF
+}
+
+_get_images () {
+    IMAGES=(`curl -s ${HTTP_AUTH} "${SCHEME}://${BASE_URI}/v2/_catalog" 2>/dev/null | \
+               jq -r '.repositories|.[]'`)
+}
+
+_list_images () {
+    _get_images
+    echo -n "["
+    for IMG in ${IMAGES[@]}; do
+        echo -n "\"$IMG\", "
+    done | sed 's/, $//'
+    echo "]"
+}
+
+_get_image_tags() {
+    _get_images
+    if [[ $# -eq 0 ]]; then
+        for IMG in ${IMAGES[@]}; do
+            TAGS[$IMG]=`curl -s ${HTTP_AUTH} "${SCHEME}://${BASE_URI}/v2/$IMG/tags/list" 2>/dev/null | \
+                        jq -r '.tags|.[]' | tr '\n' ' '`
+        done
+    elif [[ $# -eq 1 ]]; then
+        IMG_NAME=
+        for IMG in ${IMAGES[@]}; do
+            [[ ${IMG} == $1 ]] && IMG_NAME=${IMG} && break
+        done
+        [[ -z ${IMG_NAME} ]] && {
+            echo "Image($1) not exist." >&2
+            exit 1
+        }
+        TAGS[$IMG_NAME]=`curl -s ${HTTP_AUTH} "${SCHEME}://${BASE_URI}/v2/${IMG_NAME}/tags/list" 2>/dev/null | \
+                    jq -r '.tags|.[]' | tr '\n' ' '`
+    else
+        echo "Invalid params." >&2
+        _usage >&2
+        exit 1
+    fi
+}
+
+_get_image_manifests() {
+    _get_image_tags $*
+    if [[ $# -eq 0 ]]; then
+        for IMG in ${IMAGES[@]}; do
+            for TAG in ${TAGS[${IMG}]}; do
+                MANIFESTS["${IMG}:${TAG}"]=`curl -s ${HTTP_AUTH} \
+                    -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+                    -I "${SCHEME}://${BASE_URI}/v2/${IMG}/manifests/${TAG}" | \
+                    grep "Docker-Content-Digest" | awk '{print $2}' | tr -d '\r\n'`
+            done
+        done
+    elif [[ $# -eq 1 ]]; then
+        IMG_NAME=
+        for IMG in ${IMAGES[@]}; do
+            [[ ${IMG} == $1 ]] && IMG_NAME=${IMG} && break
+        done
+        [[ -z ${IMG_NAME} ]] && {
+            echo "Image($1) not exist." >&2
+            exit 1
+        }
+        for TAG in ${TAGS[$IMG_NAME]}; do
+            MANIFESTS["${IMG_NAME}:${TAG}"]=`curl -s ${HTTP_AUTH} -H "Accept: application/vnd.docker.distribution.manifest.v2+json" -I "${SCHEME}://${BASE_URI}/v2/${IMG_NAME}/manifests/${TAG}" | grep "Docker-Content-Digest" | awk '{print $2}' | tr -d '\r\n'`
+        done
+    else
+        echo "Invalid params." >&2
+        _usage >&2
+        exit 1
+    fi
+    }
+
+_show_image_tags() {
+    _get_image_tags $*
+    echo -n "{"
+    for IMG_NAME in ${!TAGS[@]}; do
+        echo -n "\"${IMG_NAME}\": ["
+        for TAG in ${TAGS[$IMG_NAME]}; do
+            echo -n "\"${TAG}\", "
+        done | sed 's/, $//'
+        echo -n "], "
+    done | sed 's/, $//'
+    printf "}\n"
+}
+
+_show_image_manifests() {
+    _get_image_manifests $*
+    echo -n "{"
+    for IMG_NAME in ${!TAGS[@]}; do
+        echo -n "\"${IMG_NAME}\": ["
+        for TAG in ${TAGS[$IMG_NAME]}; do
+            echo -n "{\"${TAG}\": \"${MANIFESTS[${IMG_NAME}:${TAG}]}\"}, "
+        done | sed 's/, $//'
+        printf "], "
+    done | sed 's/, $//'
+    echo "}"
+}
+
+_sync_image() {
+    declare -A TARGETS
+    [[ $# -lt 2 || $# -gt 3 || ! ${3-clean} =~ clean(_(src|dst))? ]] && {
+        echo "invalid parmas." >&2
+        exit 1
+    }
+    TARGETS=([SRC]=$1 [DST]=$2)
+    echo -e "${COLOR[red]}Syncing image${COLOR[nc]}"
+    echo -e "${COLOR[green]}From: ${COLOR[nc]}${TARGETS[SRC]}"
+    echo -e "${COLOR[yellow]}  To: ${COLOR[nc]}${TARGETS[DST]}"
+    confirm Is this correct?
+    [[ $? -ne 0 ]] && exit 1
+    CLEAN=$3
+    CLEAN_SIDE=${BASH_REMATCH[2]^^}
+    docker pull ${TARGETS[SRC]} && \
+    docker tag ${TARGETS[SRC]} ${TARGETS[DST]} && \
+    docker push ${TARGETS[DST]} && {
+        if [[ -n ${CLEAN} ]]; then
+            if [[ -n ${CLEAN_SIDE} ]]; then
+                docker rmi ${TARGETS[${CLEAN_SIDE}]} --force
+            else
+                docker rmi `docker images "${TARGETS[SRC]}" | awk 'FNR != 1{print $3}'`  --force
+            fi
+        fi
+    } || {
+        echo "Sync image from ${TARGETS[SRC]} to ${TARGETS[DST]} failed." >&2
+        exit 1
+    }
+}
+
+_delete_image() {
+    [[ $1 =~ ([^:]*):?(.*) ]] || {
+        echo "Invalid parameters." >&2
+        exit 1
+    }
+    local IMG_NAME
+    local IMG_TAG
+    local IMG_MANIFEST
+    IMG_NAME=${BASH_REMATCH[1]}
+    IMG_TAG=${BASH_REMATCH[2]}
+    IMG_MANIFEST=$2
+    [[ -z ${IMG_TAG} && -z ${IMG_MANIFEST} ]] && {
+        echo "Missing parameters." >&2
+        exit 1
+    }
+    _get_image_manifests ${IMG_NAME}
+    echo "ImageName: ${IMG_NAME}"
+    echo "ImageTag : ${IMG_TAG}"
+    echo "Manifests: ${IMG_MANIFEST}"
+    if [[ -n ${IMG_MANIFEST} ]]; then
+        [[ -n ${IMG_TAG} && ${MANIFESTS[${IMG_NAME}:${IMG_TAG}]} != "${IMG_MANIFEST}" ]] && {
+            echo "Manifest mismatch with tag." >&2
+            exit 1
+        }
+        local EXIST
+        for TAG in ${TAGS[${IMG_NAME}]}; do
+            [[ ${MANIFESTS[${IMG_NAME}:${TAG}]} == ${IMG_MANIFEST} ]] && {
+                EXIST=1
+                break
+            }
+        done
+        [[ $EXIST -ne 1 ]] && {
+            echo "Invalid manifest." >&2
+            exit 1
+        }
+    else
+        IMG_MANIFEST=${MANIFESTS[${IMG_NAME}:${IMG_TAG}]}
+        [[ -z ${IMG_MANIFEST} ]] && {
+            echo "Invalid tag." >&2
+            exit 1
+        }
+    fi
+    
+    curl -s ${HTTP_AUTH} -I -XDELETE $SCHEME://${BASE_URI}/v2/$IMG_NAME/manifests/$IMG_MANIFEST
+}
+
+_compare_image() {
+    local SRC_MANIFEST
+    local DST_MANIFEST
+    local IMAGE_PATTERN
+    local IMG_NAME
+    local IMG_TAG
+    IMAGE_PATTERN="([^:]+)://([^/]+)/([^:]+):(.+)"
+    if [[ $1 =~ $IMAGE_PATTERN ]]; then
+        SCHEME=${BASH_REMATCH[1]}
+        BASE_URI=${BASH_REMATCH[2]}
+        IMG_NAME=${BASH_REMATCH[3]}
+        IMG_TAG=${BASH_REMATCH[4]}
+        _get_image_manifests ${IMG_NAME}
+        SRC_MANIFEST=${MANIFESTS[${IMG_NAME}:${IMG_TAG}]}
+        [[ -z ${SRC_MANIFEST} ]] && {
+            echo "Source image not found." >&2
+            exit 1
+        }
+    else
+        echo "Invalid source image: $1"
+        exit 1
+    fi
+    if [[ $2 =~ $IMAGE_PATTERN ]]; then
+        SCHEME=${BASH_REMATCH[1]}
+        BASE_URI=${BASH_REMATCH[2]}
+        IMG_NAME=${BASH_REMATCH[3]}
+        IMG_TAG=${BASH_REMATCH[4]}
+        _get_image_manifests ${IMG_NAME}
+        DST_MANIFEST=${MANIFESTS[${IMG_NAME}:${IMG_TAG}]}
+        [[ -z ${DST_MANIFEST} ]] && {
+            echo "Destination image not found." >&2
+            exit 1
+        }
+    else
+        echo "Invalid Destination image: $2"
+        exit 1
+    fi
+    echo "Src  image: $1"
+    echo "Dest image: $2"
+    if [[ ${SRC_MANIFEST} == ${DST_MANIFEST} ]]; then
+        echo "Two image is equal."
+    else
+        echo "Two image is not equal." >&2
+        exit 1
+    fi
+}
+
+while getopts :H:s:ph FLAG; do
+    case ${FLAG} in
+        H)
+            BASE_URI=${OPTARG}
+        ;;
+        s)
+            [[ ${OPTARG} =~ https? ]] || {
+                echo "Invalid sheme, possible values: http | https" >&2
+                exit 1
+            }
+            SCHEME=${OPTARG}
+        ;;
+        p)
+            PRETTY=1
+        ;;
+        h)
+            _usage
+            exit
+        ;;
+        *)
+            _usage >&2
+            exit 1
+        ;;
+    esac
+done
+shift $((OPTIND - 1))
+
+[[ $# -lt 1 ]] && {
+    echo "Command missing." >&2
+    _usage >&2
+    exit 1
+}
+
+case $1 in
+    list)
+        echo "Results from registry: ${SCHEME}://${BASE_URI}" >&2
+        [[ -n ${PRETTY} ]] && _list_images | jq 2>/dev/null || _list_images
+    ;;
+    show)
+        shift
+        echo "Results from registry: ${SCHEME}://${BASE_URI}" >&2
+        [[ -n ${PRETTY} ]] && _show_image_tags $* | jq 2>/dev/null || _show_image_tags $*
+    ;;
+    manifests)
+        shift
+        echo "Results from registry: ${SCHEME}://${BASE_URI}" >&2
+        [[ -n ${PRETTY} ]] && _show_image_manifests $* | jq 2>/dev/null || _show_image_manifests $*
+    ;;
+    delete)
+        shift
+        echo "Results from registry: ${SCHEME}://${BASE_URI}" >&2
+        _delete_image $*
+    ;;
+    compare)
+        shift
+        _compare_image $*
+    ;;
+    default)
+        echo "Set default registry to: ${SCHEME}://${BASE_URI}"
+        sed -i -e 's/^BASE_URI=.*$/BASE_URI='"${BASE_URI}"'/' -e 's/^SCHEME=.*$/SCHEME='"${SCHEME}"'/' "${SCRIPT_FILE}"
+    ;;
+    sync)
+        shift
+        _sync_image $*
+    ;;
+    *)
+        _usage >&2
+        exit 1
+    ;;
+esac

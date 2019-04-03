@@ -1,0 +1,114 @@
+#! /bin/bash
+
+[[ -L $0 ]] && SCRIPT_FILE=`readlink -fn $0` || SCRIPT_FILE=$0
+pushd `dirname "${SCRIPT_FILE}"` >/dev/null
+BASE_DIR=`pwd`
+popd >/dev/null
+
+source "${BASE_DIR}/common.sh" || exit 1
+
+FUNC_FILE_CONFIG="${BASE_DIR}/config.sh"
+FUNC_FILE_REMOTE="${BASE_DIR}/remote.sh"
+import_functions
+
+GROUP_NAME="pyload"
+CPU_PER_RUNNER=1
+
+IDX=0
+parse_ssh `host_list | head -1`
+MASTER_HOST=`grep ${SSH_HOST} /etc/hosts | awk '{printf $1}'`
+MASTER_PORT=5557
+
+LOADER="pyload"
+
+function _start() {
+    declare _TOTAL_COUNT
+
+    info "${CPU_PER_RUNNER} CPU per Slave."
+    _TOTAL_COUNT=$(host_list| sed '1d' | (while read HOST_CONF; do
+        parse_ssh ${HOST_CONF}
+        if [[ $? -ne 0 ]]; then
+            warning "Invalid config in group ${GROUP_NAME}: $HOST_CONF"
+            continue
+        fi
+
+        CPU_COUNT=`remote_exec "lscpu | grep '^CPU(s):' | awk '{printf \\$NF}'" 2>/dev/null`
+        
+        COUNT=$((CPU_COUNT / CPU_PER_RUNNER))
+        if [[ ${COUNT} -lt 1 ]]; then
+            COUNT=1
+        fi
+        
+        _TOTAL_COUNT=$((_TOTAL_COUNT + COUNT))
+    done && echo ${_TOTAL_COUNT}))
+    info "Total ${_TOTAL_COUNT} Slaves."
+
+    host_list | while read HOST_CONF; do
+        parse_ssh ${HOST_CONF}
+        if [[ $? -ne 0 ]]; then
+            warning "Invalid config in group ${GROUP_NAME}: $HOST_CONF"
+            continue
+        fi
+        
+        if [[ ${IDX} -eq 0 ]]; then
+            remote_exec ${LOADER} ${IDX}
+            IDX=$((IDX+1))
+        else
+            CPU_COUNT=`remote_exec "lscpu | grep '^CPU(s):' | awk '{printf \\$NF}'" 2>/dev/null`
+            
+            COUNT=$((CPU_COUNT / CPU_PER_RUNNER))
+            if [[ ${COUNT} -lt 1 ]]; then
+                COUNT=1
+            fi
+
+            for ((i=1;i<=COUNT;i++)); do
+                remote_exec ${LOADER} -C${_TOTAL_COUNT} ${IDX} ${MASTER_HOST} ${MASTER_PORT}
+        
+                IDX=$((IDX+1))
+            done
+        fi
+    done
+}
+
+function _stop() {
+    host_list | while read HOST_CONF; do
+        parse_ssh ${HOST_CONF}
+        if [[ $? -ne 0 ]]; then
+            warning "Invalid config in group ${GROUP_NAME}: $HOST_CONF"
+            continue
+        fi
+        
+        remote_exec "docker rm -f \`docker ps -a -q --filter=name=pyload\` 2>/dev/null || echo \"pyload not runnning.\" >&2"
+    done
+}
+
+function _status() {
+    host_list | while read HOST_CONF; do
+        parse_ssh ${HOST_CONF}
+        if [[ $? -ne 0 ]]; then
+            warning "Invalid config in group ${GROUP_NAME}: $HOST_CONF"
+            continue
+        fi
+        
+        remote_exec "docker ps -a --filter=name=pyload"
+    done
+}
+
+COMMAND=$1
+shift
+
+case ${COMMAND} in
+    start)
+        _start $*
+    ;;
+    stop)
+        _stop
+    ;;
+    status)
+        _status
+    ;;
+    *)
+        error "invalid command: $*"
+        exit 1
+    ;;
+esac

@@ -1,0 +1,13 @@
+#! /usr/bin/expect -f
+set usr [lindex $argv 0]
+set host [lindex $argv 1]
+set pass [lindex $argv 2]
+set port [lindex $argv 3]
+set timeout -1
+spawn ssh-copy-id $usr@$host -p $port
+expect {
+	"yes/no" {send "yes\n";exp_continue}
+	"assword:" {send "$pass\n";exp_continue}
+	"denied" {exit 1}
+    "not resolve" {exit 1}
+}

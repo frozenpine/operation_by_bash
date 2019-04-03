@@ -1,0 +1,142 @@
+#! /bin/bash
+
+[[ -L $0 ]] && SCRIPT_FILE=`readlink -fn $0` || SCRIPT_FILE=$0
+pushd `dirname "${SCRIPT_FILE}"` >/dev/null
+BASE_DIR=`pwd`
+popd >/dev/null
+
+source "${BASE_DIR}/common.sh" || exit 1
+FUNC_FILE_CONFIG="${BASE_DIR}/config.sh"
+FUNC_FILE_MYSQL="${BASE_DIR}/mysql.sh"
+import_functions
+
+SERVICE_LIST="mysql"
+
+for SERVICE in ${SERVICE_LIST}; do
+    source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
+        echo "service list file missing: ${SERVICE}.sh" >&2
+        exit 1
+    }
+done
+
+DB_HOST=
+DB_PORT=
+DB_USER=
+DB_PASS=
+
+SQL_BASE="/opt/sql"
+
+function _shuffle_host() {
+    IDX=$((RANDOM % ${#MYSQL_LIST[@]}))
+    DB_HOST=${MYSQL_LIST[mysql00$((IDX+1))]}
+}
+
+function _init() {
+    if [[ $1 == "all" ]]; then
+        DBS=$(find ${SQL_BASE} -maxdepth 1 -type d -not -name `basename ${SQL_BASE}` -exec basename {} \;)
+    else
+        DBS="$*"
+    fi
+    
+    for DB_NAME in ${DBS}; do
+        info "Initiating ${DB_NAME} datas..."
+        pushd "${SQL_BASE}/${DB_NAME}" >/dev/null
+            find . -type f -name "${DB_NAME}_init_*.sql" | while read INIT_FILE; do
+                info "initing ${INIT_FILE}"
+                cat ${INIT_FILE} | mysql_exec -D${DB_NAME}
+            done
+        popd >/dev/null
+        info "Initiating finished."
+        echo
+    done
+}
+
+function _truncate() {
+    if [[ $1 == "all" ]]; then
+        DBS=$(find ${SQL_BASE} -maxdepth 1 -type d -not -name `basename ${SQL_BASE}` -exec basename {} \;)
+    else
+        DBS="$*"
+    fi
+    
+    for DB_NAME in ${DBS}; do
+        info "Truncating ${DB_NAME}'s tables..."
+        echo "show full tables where Table_Type != 'VIEW';" | mysql_exec -D${DB_NAME} -N | while read TABLE_NAME TABLE_TYPE; do
+            echo "TRUNCATE \`${TABLE_NAME}\`;"
+        done | tee >(mysql_exec -D${DB_NAME})
+        info "Truncate finished."
+        echo
+    done
+}
+
+while getopts :h:u:p:P:d FLAG; do
+    case $FLAG in
+        d)
+            DRY_RUN="echo"
+        ;;
+        h)
+            DB_HOST=${OPTARG}
+        ;;
+        u)
+            DB_USER=${OPTARG}
+        ;;
+        p)
+            DB_PASS=${OPTARG}
+        ;;
+        P)
+            DB_PORT=${OPTARG}
+        ;;
+        *)
+            error "invalid args: $*"
+            exit 1
+        ;;
+    esac
+done
+shift $((OPTIND-1))
+
+if [[ $# -lt 1 ]]; then
+    error "`basename ${SCRIPT_FILE}` command missing: $*"
+    exit 1
+fi
+
+COMMAND=$1
+shift
+
+if [[ ${COMMAND} =~ truncate|init ]]; then
+    [[ -z ${DB_HOST} ]] && _shuffle_host
+
+    if [[ $# -lt 1 ]]; then
+        error "missing db name."
+        exit 1
+    fi
+fi
+
+case ${COMMAND} in
+    truncate)
+        _truncate $*
+    ;;
+    init)
+        _init $*
+    ;;
+    start)
+        allssh -gmysql container start mysql
+    ;;
+    status)
+        allssh -gmysql container status mysql
+    ;;
+    stop)
+        allssh -gmysql container stop mysql
+    ;;
+    kill)
+        allssh -gmysql container stop -f mysql
+    ;;
+    destory)
+        allssh -gmysql container stop -crf mysql
+    ;;
+    users)
+        _get_users
+    ;;
+    *)
+        error "invalid command: ${COMMAND}"
+        exit 1
+    ;;
+esac

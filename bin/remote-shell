@@ -1,0 +1,37 @@
+#! /bin/bash
+
+[[ -L $0 ]] && SCRIPT_FILE=`readlink -fn $0` || SCRIPT_FILE=$0
+pushd `dirname "${SCRIPT_FILE}"` >/dev/null
+BASE_DIR=`pwd`
+popd >/dev/null
+
+source "${BASE_DIR}/common.sh" || exit 1
+
+while getopts :H:u:p:s: FLAG; do
+    case $FLAG in
+        H)
+            REMOTE_HOST=${OPTARG}
+        ;;
+        u)
+            REMOTE_USER=${OPTARG}
+        ;;
+        p)
+            REMOTE_PORT=${OPTARG}
+        ;;
+        s)
+            SHELL_ARG="-s ${OPTARG}"
+        ;;
+        *)
+            error "Invalid args: $*"
+        ;;
+    esac
+done
+shift $((OPTIND-1))
+
+if [[ -z ${REMOTE_HOST} ]]; then
+    error remote host must be specified by -H
+    exit 1
+fi
+
+ssh -t ${REMOTE_USER:=`whoami`}@${REMOTE_HOST} -p${REMOTE_PORT:=22} bin/container shell "${SHELL_ARG}" $1
+info "Connection to ${REMOTE_HOST}'s container[$1] closed."

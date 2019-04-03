@@ -1,0 +1,134 @@
+#! /bin/bash
+
+[[ -L $0 ]] && SCRIPT_FILE=`readlink -fn $0` || SCRIPT_FILE=$0
+pushd `dirname "${SCRIPT_FILE}"` >/dev/null
+BASE_DIR=`pwd`
+popd >/dev/null
+
+source "${BASE_DIR}/common.sh" || exit 1
+
+FUNC_FILE_TEMPLATE="${BASE_DIR}/template.sh"
+import_functions
+
+BUILD_BASE="/opt/docker-hub"
+BUILD_DIR=
+BUILD_NAME=
+
+CLEAN_LOCAL=0
+PUSH_REGISTRY=0
+
+function _help() {
+    local _IDX
+    _IDX=1
+    
+    echo "Usage: `basename "${SCRIPT_FILE}"` [-c|-p] -b \${BUILD_NAME} {all|\${MODULE_NAME}}"
+    echo "    -c clean local build image."
+    echo "    -p push image to registry."
+    echo
+    echo "Available BUILD_NAME: "
+
+    find "${BUILD_BASE}" -maxdepth 1 -type d -not -name "`basename ${BUILD_BASE}`" -exec basename {} \; | while read BUILD; do
+        echo "    ${_IDX}. ${BUILD}"
+        _IDX=$((_IDX+1))
+    done
+}
+
+function _build() {
+    MODULE=
+    VERSION=
+
+    cat | sed '/^[ '"\t"']*$/d' | (\
+        while read FILE_NAME; do
+            [[ ${FILE_NAME} =~ ${BUILD_NAME}-([a-zA-Z-]+)-([SNAPSHOT0-9.-]+).jar ]] || {
+                error "invalid jar file name: ${FILE_NAME}"
+                continue
+            }
+
+            MODULE=${BASH_REMATCH[1]}
+            VERSION=${BASH_REMATCH[2]}
+            
+            SIG_FILE="${BUILD_DIR}/${FILE_NAME}.md5"
+
+            NEW_SIG=`openssl md5 "${BUILD_DIR}/${FILE_NAME}"`
+            if [[ -f "${SIG_FILE}" && `cat "${SIG_FILE}"` == ${NEW_SIG} ]]; then
+                warning "module[${MODULE}] with version[${VERSION}] not modified, skip building."
+                continue
+            fi
+
+            echo -n ${NEW_SIG} >"${SIG_FILE}"
+            
+            [[ ! -d build ]] && mkdir build
+            pushd build >/dev/null
+                template "${BUILD_DIR}/dockerfile.template" dockerfile
+
+                rm -f *.jar &>/dev/null
+                cp "${BUILD_DIR}/${FILE_NAME}" . &>/dev/null
+                find "${BUILD_DIR}" -type f -name "*.sh" -exec cp {} . \; &>/dev/null
+                chmod u+x *.sh &>/dev/null
+
+                _IMAGE_NAME="registry:5000/${BUILD_NAME}/${MODULE}:${VERSION}"
+                eval "${DRY_RUN} docker build . -t ${_IMAGE_NAME}"
+
+                if [[ $? -eq 0 && ${PUSH_REGISTRY} -eq 1 ]]; then
+                    eval "${DRY_RUN} docker push ${_IMAGE_NAME}"
+                    [[ ${CLEAN_LOCAL} -eq 1 ]] && eval "${DRY_RUN} docker rmi ${_IMAGE_NAME}"
+                fi
+            popd >/dev/null
+
+            "${BASE_DIR}/allssh" "echo \"docker rmi -f ${_IMAGE_NAME}\" | tee >(eval \`cat\`)"
+        done
+    )
+}
+
+while getopts :b:cpd FLAG; do
+    case $FLAG in
+        c)
+            CLEAN_LOCAL=1
+        ;;
+        p)
+            PUSH_REGISTRY=1
+        ;;
+        d)
+            DRY_RUN="echo"
+        ;;
+        b)
+            BUILD_NAME=${OPTARG}
+            BUILD_DIR="${BUILD_BASE}/${BUILD_NAME}"
+        ;;
+        *)
+            _help >&2
+            exit 1
+        ;;
+    esac
+done
+shift $((OPTIND-1))
+
+if [[ -z ${BUILD_NAME} ]]; then
+    error "missing module name."
+    exit 1
+fi
+
+if [[ $# -ne 1 ]]; then
+    error "invalid args: $*"
+    exit 1
+fi
+
+if [[ $1 == "all" ]]; then
+    PATTERN="${BUILD_NAME}-*.jar"
+else
+    PATTERN="${BUILD_NAME}-$1-*.jar"
+fi
+
+if [[ ! -d "${BUILD_DIR}" ]]; then
+    error "invalid BUILD_NAME"
+    exit 1
+fi
+
+cd "${BUILD_DIR}"
+
+ls ${PATTERN} &>/dev/null
+if [[ $? -ne 0 ]]; then
+    error "invalid module name: $1"
+    exit 1
+fi
+find . -maxdepth 1 -type f -name "${PATTERN}" -exec basename {} \; | _build

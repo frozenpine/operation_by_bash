@@ -1,0 +1,95 @@
+#! /bin/bash
+
+[[ -L $0 ]] && SCRIPT_FILE=`readlink -fn $0` || SCRIPT_FILE=$0
+pushd `dirname "${SCRIPT_FILE}"` >/dev/null
+BASE_DIR=`pwd`
+popd >/dev/null
+
+source "${BASE_DIR}/common.sh" || exit 1
+FUNC_FILE_CONFIG="${BASE_DIR}/config.sh"
+FUNC_FILE_REMOTE="${BASE_DIR}/remote.sh"
+import_functions
+
+SERVICE_LIST="mysql"
+
+for SERVICE in ${SERVICE_LIST}; do
+    source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
+        echo "service list file missing: ${SERVICE}.sh" >&2
+        exit 1
+    }
+done
+
+DB_USER=root
+DB_PASS=quantdo123456
+DB_NAME=digital
+
+USER_BASE_DIR="/opt/pyload/CSV"
+ORIGN_USER_FILE="${USER_BASE_DIR}/Users.csv"
+SLAVE_USER_FILE="${USER_BASE_DIR}/users.csv"
+
+PYLOAD_GROUP="pyload"
+
+function _init_users() {
+    local _RESULT
+    
+    _RESULT=`curl -XPOST http://trade/api/v1/user/register1`
+    if [[ $? -ne 0 ]]; then
+        error "Init trading user failed."
+        exit 1
+    fi
+
+    echo "${_RESULT}" | jq
+}
+
+function _get_users() {
+    local _MY_ID
+    local _MY_NAME
+
+    _MY_ID=$((RANDOM % ${#MYSQL_LIST[@]}))
+    _MY_NAME="mysql00$((_MY_ID+1))"
+
+    info "getting user info from mysql: ${_MY_NAME}"
+    
+    mysql -h${MYSQL_LIST[${_MY_NAME}]} \
+         -u${DB_USER} -p${DB_PASS} ${DB_NAME} \
+         -e 'select u.email as identity, u.password as password, k.key_id as api_key, k.secret_key as api_secret \
+                    from t_trade_user as u inner join t_api_key as k on u.user_id = k.user_id' | \
+        awk '{printf("%s,%s,%s,%s\n", $1,$2,$3,$4)}' | tee "${ORIGN_USER_FILE}"
+    
+    info "Total user count: $((`wc -l "${ORIGN_USER_FILE}" | cut -d' ' -f1` - 1))"
+    sleep 1
+}
+
+function _pub_users() {
+    info "publishing origin user file..."
+    allscp -g${PYLOAD_GROUP} "${ORIGN_USER_FILE}"
+    info "publishing finished."
+}
+
+if [[ $# -lt 1 ]]; then
+    error "missing command."
+    exit 1
+fi
+
+COMMAND=$1
+shift
+
+case ${COMMAND} in
+    init)
+        _init_users
+    ;;
+    get)
+        _get_users
+    ;;
+    pub)
+        _pub_users
+    ;;
+    deploy)
+        _get_users
+        _pub_users
+    ;;
+    *)
+        error "invalid command: $*"
+        exit 1
+    ;;
+esac

@@ -1,0 +1,202 @@
+#! /bin/bash
+
+[[ -L $0 ]] && SCRIPT_FILE=`readlink -fn $0` || SCRIPT_FILE=$0
+pushd `dirname "${SCRIPT_FILE}"` >/dev/null
+BASE_DIR=`pwd`
+popd >/dev/null
+
+source "${BASE_DIR}/common.sh" || exit 1
+FUNC_FILE_CONFIG="${BASE_DIR}/config.sh"
+import_functions
+
+SERVICE_LIST=""
+
+for SERVICE in ${SERVICE_LIST}; do
+    source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
+        echo "service list file missing: ${SERVICE}.sh" >&2
+        exit 1
+    }
+done
+
+GROUP=
+
+function _find_group() {
+    if [[ $1 =~ ^(order|sso)$ ]]; then
+        GROUP="front"
+        return
+    fi
+
+    if [[ $1 =~ ^(clear|match)$ ]]; then
+        GROUP="trade-core"
+        return
+    fi
+    
+    return 1
+}
+
+function _status() {
+    if [[ $# -gt 0 && ! "$*" =~ all ]]; then
+        for MODULE in $*; do
+            info "checking ${MODULE}"
+
+            _find_group ${MODULE}
+            if [[ $? -ne 0 ]]; then
+                error "invalid module name: ${MODULE}"
+                continue
+            fi
+            
+            allssh -g${GROUP} container status ${MODULE}
+        done
+    else
+        allssh -gfront container status order sso
+        allssh -gtrade-core container status clear match
+    fi
+}
+
+function _start() {
+    local _ARG
+
+    if [[ $1 =~ ^-.* ]]; then
+        _ARG=$1
+        shift
+    fi
+
+    if [[ $# -gt 0 && ! "$*" =~ all ]]; then
+        for MODULE in $*; do
+            info "starting ${MODULE}"
+
+            _find_group ${MODULE}
+            if [[ $? -ne 0 ]]; then
+                error "invalid module name: ${MODULE}"
+                continue
+            fi
+            
+            allssh -g${GROUP} container start ${_ARG} ${MODULE}
+        done
+    else
+        info "starting all."
+        allssh -gtrade-core container start ${_ARG} clear match
+        allssh -gfront container start ${_ARG} order sso
+    fi
+}
+
+function _stop() {
+    local _ARGS
+
+    while getopts :crf FLAG; do
+        case ${FLAG} in
+            c)
+                _ARGS="${_ARGS} -c"
+            ;;
+            r)
+                _ARGS="${_ARGS} -r"
+            ;;
+            f)
+                _ARGS="${_ARGS} -f"
+            ;;
+            *)
+                error "invalid stop args: $*"
+                exit 1
+            ;;
+        esac
+    done
+    shift $((OPTIND-1))
+
+    if [[ $# -gt 0 && ! "$*" =~ all ]]; then
+        for MODULE in $*; do
+            info "stoping ${MODULE}"
+            
+            _find_group ${MODULE}
+            if [[ $? -ne 0 ]]; then
+                error "invalid module name: ${MODULE}"
+                continue
+            fi
+            
+            allssh -g${GROUP} container stop ${_ARGS} ${MODULE}
+        done
+    else
+        info "stopping all"
+        allssh -gfront container stop ${_ARGS} order sso
+        allssh -gtrade-core container stop ${_ARGS} clear match
+    fi
+}
+
+function _logs() {
+    _find_group $1
+    if [[ $? -ne 0 ]]; then
+        error "invalid pub name: $1"
+    fi
+
+    allssh -g${GROUP} container logs --tail 100 $1
+}
+
+function _pub() {
+    if [[ $# -lt 1 || "$*" =~ all ]]; then
+        MODULES="order sso clear match"
+    else
+        MODULES="$*"
+    fi
+
+    for MOD in ${MODULES}; do
+        _find_group ${MOD}
+        if [[ $? -ne 0 ]]; then
+            error "invalid pub name: $*"
+            exit 1
+        fi
+
+        allscp -g${GROUP} "${BASE_DIR}/container.d/${MOD}.sh"
+    done
+}
+
+while getopts :d FLAG; do
+    case $FLAG in
+        d)
+            DRY_RUN="echo"
+        ;;
+        *)
+            error "invalid args: $*"
+        ;;
+    esac
+done
+shift $((OPTIND-1))
+
+if [[ $# -lt 1 ]]; then
+    error "`basename ${SCRIPT_FILE}` command missing: $*"
+    exit 1
+fi
+
+COMMAND=$1
+shift
+
+if [[ ${COMMAND} =~ log|pub && $# -lt 1 ]]; then
+    error "please specify module name."
+    exit 1
+fi
+
+case ${COMMAND} in
+    start)
+        _start $*
+    ;;
+    stop)
+        _stop $*
+    ;;
+    kill)
+        _stop -f $*
+    ;;
+    status|check)
+        _status $*
+    ;;
+    destory)
+        _stop -crf $*
+    ;;
+    logs)
+        _logs $*
+    ;;
+    pub)
+        _pub $*
+    ;;
+    *)
+        error "invalid command: ${COMMAND}"
+        exit 1
+    ;;
+esac
