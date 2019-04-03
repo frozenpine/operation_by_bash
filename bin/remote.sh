@@ -46,7 +46,7 @@ function remote_exec() {
     echo -e "${COLOR[cyan]}Results${COLOR[nc]} from remote host[${COLOR[yellow]}${_CONN_STRING}${COLOR[nc]}]:" >&2
     
     ${SSH} -n ${_USER}@${_HOST} -p${_PORT} "\
-        export PATH=/sbin:/bin:/usr/bin:/usr/local/bin:~/bin; \
+        export PATH=/sbin:/bin:/usr/bin:/user/sbin:/usr/local/bin:~/bin; \
         [[ -f ~/.bashrc ]] && source ~/.bashrc; \
         [[ -f ~/.bash_profile ]] && source ~/.bash_profile; \
         ${_CMD_LINE} $*"

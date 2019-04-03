@@ -16,25 +16,26 @@ done
 get_id `uname -n`
 SERVER_ID=${ID}
 
+CONTAINER_BASE="${DATA_BASE:=/opt}/${NAME}"
 find_user ${USER}
 if [[ $? -ne 0 ]]; then
-    useradd --home-dir "/opt/${NAME}" \
+    ${SUDO} useradd --home-dir "${CONTAINER_BASE}" \
             --create-home \
             --shell /sbin/nologin \
             ${USER} || exit 1
 fi
 
-make_dir -b "/opt/${NAME}" data run log || exit 1
-chown -R ${USER}:${USER} "/opt/${NAME}"
+make_dir -b "${CONTAINER_BASE}" data run log || exit 1
+${SUDO} chown -R ${USER}:${USER} "${CONTAINER_BASE}"
 
 docker run -d \
     --name ${NAME} \
     --restart always \
     --network host \
     --user `grep ${USER} /etc/passwd | cut -d':' -f3` \
-    -v /opt/${NAME}/data:/var/lib/${NAME} \
-    -v /opt/${NAME}/run:/var/run/${NAME}d \
-    -v /opt/${NAME}/log:/var/log/${NAME} \
+    -v "${CONTAINER_BASE}/data:/var/lib/${NAME}" \
+    -v "${CONTAINER_BASE}/run:/var/run/${NAME}" \
+    -v "${CONTAINER_BASE}/log:/var/log/${NAME}" \
     -e MYSQL_ROOT_PASSWORD="${ADMIN_PASSWD}" \
     registry:5000/${NAME}:${VERSION} \
         --character-set-server=utf8mb4 \

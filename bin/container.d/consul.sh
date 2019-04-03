@@ -13,27 +13,33 @@ for SERVICE in ${SERVICE_LIST}; do
     }
 done
 
-make_dir -b"/opt/${NAME}" conf data || exit 1
+CONTAINER_BASE="${DATA_BASE:=/opt}/${NAME}"
+make_dir -b"${CONTAINER_BASE}" conf data || exit 1
 
 get_id `uname -n`
 
-FIRST_IP=${CONSUL_LIST[${NAME}001]}
-SELF_IP=`ip address show ${BIND_INT} | grep inet | awk '{print $2}' | cut -d'/' -f1`
+SELF_IP=`ip address show ${BIND_INT} | grep inet | grep -v inet6 | awk '{print $2}' | cut -d'/' -f1`
 
-if [[ ${ID} -eq 1 ]]; then
-    BOOTSTRAP="-bootstrap-expect 3 -ui"
-    JOIN="-join=${FIRST_IP} -retry-join=${FIRST_IP}"
+if [[ ${#CONSUL_LIST[@]} -ge 3 ]]; then
+    FIRST_IP=${CONSUL_LIST[${NAME}01]}
+    
+    if [[ ${ID} -eq 1 ]]; then
+        BOOTSTRAP="-bootstrap-expect 3 -ui"
+        JOIN="-join=${FIRST_IP} -retry-join=${FIRST_IP}"
+    else
+        BOOTSTRAP="-bootstrap-expect 3"
+        JOIN="-join=${FIRST_IP} -retry-join=${FIRST_IP}"
+    fi
 else
-    BOOTSTRAP="-bootstrap-expect 3"
-    JOIN="-join=${FIRST_IP} -retry-join=${FIRST_IP}"
+    BOOTSTRAP="-bootstrap"
 fi
-
+    
 docker run -d \
     --name ${NAME} \
     --restart always \
     --network host \
-    -v /opt/${NAME}/conf:/consul/config \
-    -v /opt/${NAME}/data:/consul/data \
+    -v "${CONTAINER_BASE}/conf:/consul/config" \
+    -v "${CONTAINER_BASE}/data:/consul/data" \
     registry:5000/${NAME}:${VERSION} \
         consul agent -server \
         -bind=${SELF_IP} \

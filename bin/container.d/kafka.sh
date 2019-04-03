@@ -20,17 +20,19 @@ for SVR_NAME in ${!ZK_LIST[@]}; do
 done
 ZK_SERVERS=${ZK_SERVERS:1}
 
+CONTAINER_BASE="${DATA_BASE:=/opt}/${NAME}"
 find_user ${USER}
 if [[ $? -ne 0 ]]; then
-    useradd --home-dir "/opt/${NAME}" \
+    ${SUDO} useradd --home-dir "${CONTAINER_BASE}" \
             --create-home \
             --shell /sbin/nologin \
             ${USER} || exit 1
 fi
 
-make_dir -b "/opt/${NAME}" data config log || exit 1
+make_dir -b "${CONTAINER_BASE}" data config log || exit 1
 
-cat <<EOF >/opt/${NAME}/config/log4j.properties
+LOG_TEMP=`mktemp`
+cat <<EOF >"${LOG_TEMP}"
 log4j.rootLogger=INFO, stdout
 
 log4j.appender.stdout=org.apache.log4j.ConsoleAppender
@@ -106,34 +108,64 @@ log4j.additivity.state.change.logger=false
 log4j.logger.kafka.authorizer.logger=INFO, authorizerAppender
 log4j.additivity.kafka.authorizer.logger=false
 EOF
+${SUDO} mv "${LOG_TEMP}" "${CONTAINER_BASE}/config/log4j.properties"
     
-chown -R ${USER}:${USER} "/opt/${NAME}"
+${SUDO} chown -R ${USER}:${USER} "${CONTAINER_BASE}"
 
 LISTENERS=PLAINTEXT://`uname -n`:${CLIENT_PORT}
 
-docker run -d \
-    --name ${NAME} \
-    --restart always \
-    --network host \
-    --user `grep ${USER} /etc/passwd | cut -d':' -f3` \
-    -v /opt/${NAME}/data:/${NAME} \
-    -v /opt/${NAME}/config:/opt/kafka/config \
-    -v /opt/${NAME}/log:/opt/kafka/logs \
-    -e JMX_PORT=1099 \
-    -e KAFKA_ZOOKEEPER_CONNECT=${ZK_SERVERS} \
-    -e KAFKA_ADVERTISED_LISTENERS=${LISTENERS} \
-    -e KAFKA_LISTENERS=${LISTENERS} \
-    -e KAFKA_BROKER_ID=${BROKER_ID} \
-    -e KAFKA_DELETE_TOPIC_ENABLE="true" \
-    -e KAFKA_AUTO_CREATE_TOPICS_ENABLE="false" \
-    -e KAFKA_NUM_PARTITIONS=3 \
-    -e KAFKA_DEFAULT_REPLICATION_FACTOR=3 \
-    -e KAFKA_MIN_INSYNC_REPLICAS=2 \
-    -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=3 \
-    -e KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=3 \
-    -e KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=2 \
-    -e KAFKA_MAX_TRANSACTION_TIMEOUT_MS=300000 \
-    -e KAFKA_SESSION_TIMEOUT_MS=300000 \
-    -e KAFKA_GROUP_MAX_SESSION_TIMEOUT_MS=300000 \
-    -e KAFKA_MESSAGE_MAX_BYTES=2147483647 \
-    registry:5000/${NAME}:${VERSION}
+if [[ ${#KAFKA_LIST[@]} -ge 3 ]]; then
+    docker run -d \
+        --name ${NAME} \
+        --restart always \
+        --network host \
+        --user `grep ${USER} /etc/passwd | cut -d':' -f3` \
+        -v "${CONTAINER_BASE}/data:/${NAME}" \
+        -v "${CONTAINER_BASE}/config:/opt/kafka/config" \
+        -v "${CONTAINER_BASE}/log:/opt/kafka/logs" \
+        -e JMX_PORT=1199 \
+        -e KAFKA_HOST_NAME="kfk0${ID}" \
+        -e KAFKA_ZOOKEEPER_CONNECT=${ZK_SERVERS} \
+        -e KAFKA_ADVERTISED_LISTENERS=${LISTENERS} \
+        -e KAFKA_LISTENERS=${LISTENERS} \
+        -e KAFKA_BROKER_ID=${BROKER_ID} \
+        -e KAFKA_DELETE_TOPIC_ENABLE="true" \
+        -e KAFKA_NUM_PARTITIONS=3 \
+        -e KAFKA_DEFAULT_REPLICATION_FACTOR=3 \
+        -e KAFKA_MIN_INSYNC_REPLICAS=2 \
+        -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=3 \
+        -e KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=3 \
+        -e KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=2 \
+        -e KAFKA_MAX_TRANSACTION_TIMEOUT_MS=300000 \
+        -e KAFKA_SESSION_TIMEOUT_MS=300000 \
+        -e KAFKA_GROUP_MAX_SESSION_TIMEOUT_MS=300000 \
+        -e KAFKA_MESSAGE_MAX_BYTES=2147483647 \
+        registry:5000/${NAME}:${VERSION}
+else
+    docker run -d \
+        --name ${NAME} \
+        --restart always \
+        --network host \
+        --user `grep ${USER} /etc/passwd | cut -d':' -f3` \
+        -v "${CONTAINER_BASE}/data:/${NAME}" \
+        -v "${CONTAINER_BASE}/config:/opt/kafka/config" \
+        -v "${CONTAINER_BASE}/log:/opt/kafka/logs" \
+        -e JMX_PORT=1199 \
+        -e KAFKA_HOST_NAME=kfk \
+        -e KAFKA_ZOOKEEPER_CONNECT=${ZK_SERVERS} \
+        -e KAFKA_ADVERTISED_LISTENERS=${LISTENERS} \
+        -e KAFKA_LISTENERS=${LISTENERS} \
+        -e KAFKA_BROKER_ID=${BROKER_ID} \
+        -e KAFKA_DELETE_TOPIC_ENABLE="true" \
+        -e KAFKA_NUM_PARTITIONS=3 \
+        -e KAFKA_DEFAULT_REPLICATION_FACTOR=1 \
+        -e KAFKA_MIN_INSYNC_REPLICAS=1 \
+        -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 \
+        -e KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1 \
+        -e KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=1 \
+        -e KAFKA_MAX_TRANSACTION_TIMEOUT_MS=300000 \
+        -e KAFKA_SESSION_TIMEOUT_MS=300000 \
+        -e KAFKA_GROUP_MAX_SESSION_TIMEOUT_MS=300000 \
+        -e KAFKA_MESSAGE_MAX_BYTES=2147483647 \
+        registry:5000/${NAME}:${VERSION}
+fi

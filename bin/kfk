@@ -146,6 +146,10 @@ function _init() {
             REPLICAS=${_DEFAULT_REPLICAS:=3}
         fi
         
+        if [[ ${REPLICAS} -gt ${#KAFKA_LIST[@]} ]]; then
+            REPLICAS=${#KAFKA_LIST[@]}
+        fi
+        
         _topic --create --topic ${TOPIC} --partitions ${PARTITIONS} --replication-factor ${REPLICAS}
         
         if [[ $? -eq 0 ]]; then
@@ -211,7 +215,7 @@ case ${COMMAND} in
         allssh -gkafka container status kafka
     ;;
     check)
-        allssh -gkafka ll /opt
+        allssh -gkafka ls -l ${DATA_BASE:=/opt}
         allssh -gkafka container status kafka
     ;;
     delete)

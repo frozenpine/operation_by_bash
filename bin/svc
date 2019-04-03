@@ -1,0 +1,43 @@
+#! /bin/bash
+
+[[ -L $0 ]] && SCRIPT_FILE=`readlink -fn $0` || SCRIPT_FILE=$0
+pushd `dirname "${SCRIPT_FILE}"` >/dev/null
+BASE_DIR=`pwd`
+popd >/dev/null
+
+source "${BASE_DIR}/common.sh" || exit 1
+FUNC_FILE_CONFIG="${BASE_DIR}/config.sh"
+import_functions
+
+SERVICE_LIST=
+
+function _sync_host() {
+    for SERVICE in ${SERVICE_LIST}; do
+        source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
+            echo "service list file missing: ${SERVICE}.sh" >&2
+            exit 1
+        }
+    done
+}
+
+function _list_services() {
+    if [[ $# -lt 1 ]]; then
+        SERVICE_LIST=`find "${BASE_DIR}/service.d" -maxdepth 1 -type f -name "*.sh" -exec basename {} \; | cut -d'.' -f1 | xargs`
+    else
+        SERVICE_LIST="$*"
+    fi
+}
+
+COMMAND=$1
+shift
+
+case ${COMMAND} in
+    sync)
+        _list_services
+        _sync_host
+    ;;
+    *)
+        error "invalid command"
+        exit 1
+    ;;
+esac

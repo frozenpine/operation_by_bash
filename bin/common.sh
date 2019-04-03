@@ -1,10 +1,19 @@
 # SSH private key for authorization
-# use user default key if not specified.
+# use user default key if blank.
 IDENTITY_FILE="~/.ssh/Jisheng-func-test.pem"
 if [[ -n ${IDENTITY_FILE} ]]; then
     IDENTITY="-i ${IDENTITY_FILE}"
 fi
 
+# specify if remote user need to get privilege with sudo
+# if not necessary, leave blank
+SUDO="sudo"
+
+# data base dir
+DATA_BASE=/data
+
+# app base dir
+APP_BASE=/opt
 
 # Bash Color start
 # to display color with enhanced echo command: "echo -e"
@@ -236,10 +245,12 @@ function make_dir() {
         error "base dir missing."
         exit 1
     else
-        mkdir -p "${_BASE_DIR}" || return 1
+        ${SUDO} mkdir -p "${_BASE_DIR}" || return 1
     fi
 
     for DIR in $*; do
-        mkdir -p "${_BASE_DIR}/${DIR}" || return 1
+        ${SUDO} mkdir -p "${_BASE_DIR}/${DIR}" || return 1
     done
+
+    ${SUDO} chmod go+rx "${_BASE_DIR}"
 }

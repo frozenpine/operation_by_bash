@@ -78,9 +78,9 @@ function stop_container() {
     if [[ ${CLEAN} -eq 1 ]]; then
         local _DATA_DIR
         
-        _DATA_DIR="/opt/$1"
+        _DATA_DIR="${DATA_BASE:=/opt}/$1"
         info "cleaning container[$1] data dir: ${_DATA_DIR}"
-        rm -rf "${_DATA_DIR}"
+        ${SUDO} rm -rf "${_DATA_DIR}"
     fi
 }
 

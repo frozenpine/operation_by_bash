@@ -90,7 +90,7 @@ function parse_ssh() {
 }
 
 function get_all_hosts() {
-    sed 's/#.*$//g' /etc/hosts | grep -v -E "`uname -n`|localhost|^[ \t]*$" | awk '{printf("ssh://%s\n", $1)}'
+    sed 's/#.*$//g' /etc/hosts | grep -v -E "localhost|^[ \t]*$" | awk '{printf("ssh://%s\n", $1)}'
 }
 
 function host_list() {
