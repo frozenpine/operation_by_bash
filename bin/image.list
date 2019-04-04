@@ -1,0 +1,8 @@
+redis:5.0.3
+nginx:1.14.2
+elasticsearch:6.6.0
+wurstmeister/kafka:2.12-2.1.0
+openjdk:8u181-jre
+zookeeper:3.4.13
+mysql:5.7.25
+consul:1.4.3

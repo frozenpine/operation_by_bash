@@ -14,6 +14,10 @@ SCHEME=http
 
 PRETTY=
 
+YES=
+
+BASE_IMG_LIST="${BASE_DIR}/image.list"
+
 declare -a IMAGES
 declare -A TAGS
 declare -A MANIFESTS
@@ -154,8 +158,10 @@ _sync_image() {
     echo -e "${COLOR[red]}Syncing image${COLOR[nc]}"
     echo -e "${COLOR[green]}From: ${COLOR[nc]}${TARGETS[SRC]}"
     echo -e "${COLOR[yellow]}  To: ${COLOR[nc]}${TARGETS[DST]}"
-    confirm Is this correct?
-    [[ $? -ne 0 ]] && exit 1
+    if [[ ${YES} -ne 1 ]]; then
+        confirm Is this correct?
+        [[ $? -ne 0 ]] && exit 1
+    fi
     CLEAN=$3
     CLEAN_SIDE=${BASH_REMATCH[2]^^}
     docker pull ${TARGETS[SRC]} && \
@@ -267,7 +273,28 @@ _compare_image() {
     fi
 }
 
-while getopts :H:s:ph FLAG; do
+function _base_images_list() {
+    if [[ ! -f "${BASE_IMG_LIST}" ]]; then
+        error "base images list not exists."
+        exit 1
+    fi
+
+    while read LINE; do
+        LINE=`echo ${LINE} | sed 's/#.*//g; /^[ '"\t"']*$/d'`
+
+        if [[ -z ${LINE} ]]; then
+            continue
+        fi
+
+        IMG_NAME=`echo ${LINE} | cut -d':' -f1`
+        IMG_TAG=`echo ${LINE} | cut -d':' -f2`
+
+        echo "${LINE}" "${BASE_URI}/`basename ${IMG_NAME}`:${IMG_TAG}"
+    
+    done<"${BASE_IMG_LIST}"
+}
+
+while getopts :H:s:yph FLAG; do
     case ${FLAG} in
         H)
             BASE_URI=${OPTARG}
@@ -281,6 +308,9 @@ while getopts :H:s:ph FLAG; do
         ;;
         p)
             PRETTY=1
+        ;;
+        y)
+            YES=1
         ;;
         h)
             _usage
@@ -330,7 +360,14 @@ case $1 in
     ;;
     sync)
         shift
-        _sync_image $*
+        if [[ $# -lt 1 ]]; then
+            YES=1
+            _base_images_list | while read SRC DST; do
+                _sync_image ${SRC} ${DST} clean
+            done
+        else
+            _sync_image $*
+        fi
     ;;
     *)
         _usage >&2
