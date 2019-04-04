@@ -4,7 +4,7 @@
 cd `dirname "${SCRIPT_FILE}"`
 BASE_DIR=`pwd`
 
-source "${BASE_DIR}/common.sh" || exit 1
+source "${MODULE_BASE}/common.sh" || exit 1
 
 REGISTRY_USER=quantdo
 REGISTRY_PASS=quantdo123456
@@ -16,7 +16,7 @@ PRETTY=
 
 YES=
 
-BASE_IMG_LIST="${BASE_DIR}/image.list"
+BASE_IMG_LIST="${CONF_BASE}/image.list"
 
 declare -a IMAGES
 declare -A TAGS

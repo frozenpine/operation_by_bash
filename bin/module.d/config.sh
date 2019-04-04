@@ -1,5 +1,4 @@
-HOST_FILE="${BASE_DIR}/hosts.ini"
-APP_FILE="${BASE_DIR}/apps.ini"
+HOST_FILE="${CONF_BASE}/hosts.ini"
 
 function extract_ini_sec() {
     local _SEC_NAME

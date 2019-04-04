@@ -5,15 +5,15 @@ pushd `dirname "${SCRIPT_FILE}"` >/dev/null
 BASE_DIR=`pwd`
 popd >/dev/null
 
-source "${BASE_DIR}/common.sh" || exit 1
+source "${MODULE_BASE}/common.sh" || exit 1
 FUNC_FILE_CONFIG="${BASE_DIR}/config.sh"
 import_functions
 
-KAFKA_HOME="/opt/kafka_2.12-2.1.0"
+KAFKA_HOME="${APP_BASE:=/opt}/kafka_2.12-2.1.0"
 TOPIC_SCRIPT="${KAFKA_HOME}/bin/kafka-topics.sh"
 GROUP_SCRIPT="${KAFKA_HOME}/bin/kafka-consumer-groups.sh"
 CONSUMER_SCRIPT="${KAFKA_HOME}/bin/kafka-console-consumer.sh"
-TOPIC_LIST_FILE="${BASE_DIR}/topic.list"
+TOPIC_LIST_FILE="${CONF_BASE}/topic.list"
 
 KEY_DESERIALIZER="--key-deserializer org.apache.kafka.common.serialization.StringDeserializer"
 VALUE_DESERIALIZER="--value-deserializer com.quantdo.trade.kafka.kryo.KryoDeserializer"

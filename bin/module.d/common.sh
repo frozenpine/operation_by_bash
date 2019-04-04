@@ -1,19 +1,15 @@
-# SSH private key for authorization
-# use user default key if blank.
-IDENTITY_FILE="~/.ssh/Jisheng-func-test.pem"
+CONF_BASE="${BASE_DIR}/conf"
+MODULE_BASE="${BASE_DIR}/module.d"
+
+COMMON_ENV="${CONF_BASE}/common.env"
+
+if [[ -f "${COMMON_ENV}" ]]; then
+    source "${COMMON_ENV}"
+fi
+
 if [[ -n ${IDENTITY_FILE} ]]; then
     IDENTITY="-i ${IDENTITY_FILE}"
 fi
-
-# specify if remote user need to get privilege with sudo
-# if not necessary, leave blank
-SUDO="sudo"
-
-# data base dir
-DATA_BASE=/data
-
-# app base dir
-APP_BASE=/opt
 
 # Bash Color start
 # to display color with enhanced echo command: "echo -e"

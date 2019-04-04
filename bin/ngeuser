@@ -5,7 +5,7 @@ pushd `dirname "${SCRIPT_FILE}"` >/dev/null
 BASE_DIR=`pwd`
 popd >/dev/null
 
-source "${BASE_DIR}/common.sh" || exit 1
+source "${MODULE_BASE}/common.sh" || exit 1
 FUNC_FILE_CONFIG="${BASE_DIR}/config.sh"
 FUNC_FILE_REMOTE="${BASE_DIR}/remote.sh"
 import_functions

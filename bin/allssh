@@ -5,7 +5,7 @@ pushd `dirname "${SCRIPT_FILE}"` >/dev/null
 BASE_DIR=`pwd`
 popd >/dev/null
 
-source "${BASE_DIR}/common.sh" || exit 1
+source "${MODULE_BASE}/common.sh" || exit 1
 
 FUNC_FILE_CONFIG="${BASE_DIR}/config.sh"
 FUNC_FILE_REMOTE="${BASE_DIR}/remote.sh"
@@ -51,8 +51,8 @@ while getopts :u:H:p:g:h FLAG; do
 done
 shift $((OPTIND - 1))
 
-CMD=$'\n' read -d'' -r -a DANGEROUS <"${BASE_DIR}/.dangerous"
-CMD=$'\n' read -d'' -r -a IGNORE <"${BASE_DIR}/.ignore"
+CMD=$'\n' read -d'' -r -a DANGEROUS <"${CONF_BASE}/.dangerous"
+CMD=$'\n' read -d'' -r -a IGNORE <"${CONF_BASE}/.ignore"
 
 for CMD in ${IGNORE[@]}; do
     if [[ $1 == ${CMD} || $1 =~ ^${CMD}( )+ ]]; then
