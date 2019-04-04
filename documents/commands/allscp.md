@@ -77,7 +77,8 @@
   > **Note：** 理论上应该支持该模式，暂未测试
   
   ```bash
-  $ allscp -gkafka bin/service.d/zookeeper.sh bin/service.d/zookeeper.sh bin/service.d/
+  $ allscp -gkafka bin/service.d/zookeeper.sh bin/service.d/kafka.sh bin/service.d/
   ```
 
 更多传输模式，请实践 `scp` 命令后，解锁新的传输姿势
+
