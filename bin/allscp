@@ -17,11 +17,12 @@ RECURSIVE=
 function _help() {
     local _CMD
     _CMD=`basename $0`
-    printf "%s\n" "Usage: ${_CMD} [-u {user_name}] [-H {host_name}] [-p {host_port}] [-g {host_group_name}] src [dst]"
+    printf "%s\n" "Usage: ${_CMD} [-u {user_name}] [-H {host_name}] [-p {host_port}] [-g {host_group_name}] [-r] src [dst]"
     printf "%$((7+${#_CMD}-2))s  %s\n" "-u" "specify user name used in ssh connection, if not specified, local user will be used."
     printf "%$((7+${#_CMD}-2))s  %s\n" "-H" "specify a ssh host to connect to."
     printf "%$((7+${#_CMD}-2))s  %s\n" "-p" "specify a ssh port to connect to, if not specified, default[22] port will be used."
     printf "%$((7+${#_CMD}-2))s  %s\n" "-g" "specify a ssh host group, if not specified, all hosts in \"/etc/hosts\" except localhost will be used."
+    printf "%$((7+${#_CMD}-2))s  %s\n" "-r" "recursively transfer data under a directory."
 }
 
 while getopts :u:H:p:g:rh FLAG; do
