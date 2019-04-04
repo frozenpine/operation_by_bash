@@ -12,6 +12,7 @@ FUNC_FILE_REMOTE="${BASE_DIR}/remote.sh"
 import_functions
 
 SCP="scp ${IDENTITY}"
+RECURSIVE=
 
 function _help() {
     local _CMD
@@ -23,7 +24,7 @@ function _help() {
     printf "%$((7+${#_CMD}-2))s  %s\n" "-g" "specify a ssh host group, if not specified, all hosts in \"/etc/hosts\" except localhost will be used."
 }
 
-while getopts :u:H:p:g:h FLAG; do
+while getopts :u:H:p:g:rh FLAG; do
     case $FLAG in
         g)
             GROUP_NAME=${OPTARG}
@@ -37,6 +38,9 @@ while getopts :u:H:p:g:h FLAG; do
         p)
             REMOTE_PORT=${OPTARG}
         ;;
+        r)
+            RECURSIVE="-r"
+        ;;
         h)
             _help >&2
             exit
@@ -49,7 +53,7 @@ while getopts :u:H:p:g:h FLAG; do
 done
 shift $((OPTIND - 1))
 
-[[ $# -lt 1 || $# -gt 2 ]] && {
+[[ $# -lt 1 ]] && {
     echo "Invalid params." >&2
     exit 1
 }
@@ -59,6 +63,7 @@ function transfer_file() {
     local _HOST
     local _PORT
     local _CONN_STRING
+    local _HOST_IP
     local _EXTRA_ARGS
     local _SRC
     local _DST
@@ -66,6 +71,15 @@ function transfer_file() {
     [[ -n ${REMOTE_USER} ]] && _USER="${REMOTE_USER}" || _USER="${SSH_USER}"
     [[ -n ${REMOTE_HOST} ]] && _HOST="${REMOTE_HOST}" || _HOST="${SSH_HOST}"
     [[ -n ${REMOTE_PORT} ]] && _PORT="${REMOTE_PORT}" || _PORT="${SSH_PORT}"
+
+    _HOST_IP=`grep ${_HOST} /etc/hosts | awk '{print $1}'`
+
+    for IP in `ip address show | grep inet | grep -v inet6 | awk '{split($2, addr, "/"); print addr[1]}'`; do
+        if [[ ${IP} == ${_HOST_IP} ]]; then
+            warning "Destination is same as localhost[${_HOST_IP}], skip."
+            return 0
+        fi
+    done
 
     if [[ ${_PORT} -eq 22 ]]; then
         _CONN_STRING="${_USER}@${_HOST}"
@@ -75,29 +89,21 @@ function transfer_file() {
 
     echo -e "${COLOR[cyan]}Transfer${COLOR[nc]} file to remote host[${COLOR[yellow]}${_CONN_STRING}${COLOR[nc]}]:" >&2
 
-    # while getopts :r FLAG; do
-    #     case ${FLAG} in
-    #         r)
-    #             _EXTRA_ARGS="${_EXTRA_ARGS} -r"
-    #         ;;
-    #         *)
-    #             error "invalid scp args: $*"
-    #             return 1
-    #         ;;
-    #     esac
-    # done
-    # shift $((OPTIND-1))
-    
     if [[ $# -eq 1 ]]; then
+        if [[ -n ${RECURSIVE} ]]; then
+            error "must specify dest path in recursive mode."
+            exit 1
+        fi
+
         _SRC="$1"
         _DST="$1"
     else
-        _SRC="$1"
-        _DST="$2"
+        _DST="${!#}"
+        _SRC="${*%%${_DST}}"
     fi
     
     #remote_exec "mkdir -p `dirname ${_DST}`" &>/dev/null
-    ${SCP} -P${_PORT} ${_EXTRA_ARGS} "${_SRC}" ${_USER}@${_HOST}:"${_DST}"
+    ${SCP} ${RECURSIVE} -P${_PORT} ${_EXTRA_ARGS} ${_SRC} ${_USER}@${_HOST}:${_DST}
     echo >&2
 }
 
