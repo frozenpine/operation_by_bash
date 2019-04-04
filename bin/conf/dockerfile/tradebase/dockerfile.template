@@ -1,0 +1,5 @@
+FROM registry:5000/openjdk:8u181-jre
+COPY . /${MODULE}
+WORKDIR /${MODULE}
+ENTRYPOINT ["java"]
+CMD ["-jar", "/${MODULE}/tradebase-${MODULE}-${VERSION}.jar"]
