@@ -51,7 +51,7 @@ bin
 
 ## 运维框架初始化
 
-1. 定义运维脚本需要管理的 [**`主机列表`**](documents/inventory.md)
+1. 定义运维脚本需要管理的 [ **`主机列表`** ](documents/inventory.md)
 
    > 将所有节点的 **IP** 和 **主机名** 添加至 **`管理节点`** 的 ***/etc/hosts*** 文件内
    > ```bash
@@ -70,14 +70,14 @@ bin
 
 3. 根据规划，编辑 **service.d** 下的应用服务模块中的 **`主机别名`** 和 **IP** 地址的对应关系
 
-4. 在 **`管理节点`** 上执行 [***`服务管理`***](documents/commands/svc.md "svc") 命令，完成 **IP - 主机名** 的初始化
+4. 在 **`管理节点`** 上执行 [ ***`服务管理`*** ](documents/commands/svc.md "svc") 命令，完成 **IP - 主机名** 的初始化
 
 5. **`管理节点`** 与 **`应用节点`** 间建立 SSH 互信
 
    > * **`管理节点`** 应该能免密登录到任意一台运行应用的节点服务器
    > * **`管理节点`** 免密登录 **`应用节点`** 的 **`管理账号`**，应具备 **root** 权限，或至少应能免密使用 **sudo** 以运行需要特权的管理命令
 
-以上操作完成后，**`管理节点`** 应该具备基本的 [***`远程执行`***](documents/commands/allssh.md "allssh") 管理命令的功能：
+以上操作完成后，**`管理节点`** 应该具备基本的 [ ***`远程执行`*** ](documents/commands/allssh.md "allssh") 管理命令的功能：
 
 ```bash
 [ec2-user@node03 ~]$ allssh uname -n
@@ -121,7 +121,7 @@ node03
    > "insecure-registries" : ["registry:5000"]
    > }
    > ```
-   > 可先在 **`管理节点`** 上先创建完该文件，再使用 [***`远程分发`***](documents/commands/allscp.md "allscp") 命令下发至所有服务器
+   > 可先在 **`管理节点`** 上先创建完该文件，再使用 [ ***`远程分发`*** ](documents/commands/allscp.md "allscp") 命令下发至所有服务器
    >
    > ```bash
    > # 创建 daemon.json 文件
@@ -169,7 +169,7 @@ node03
    > ```
    >
 
-4. 将 **`应用节点`** 及 **`管理节点`**上的 **`管理账号`** 加入 **docker** 组，以具备 **docker** 命令执行权限
+4. 将 **`应用节点`** 及 **`管理节点`** 上的 **`管理账号`** 加入 **docker** 组，以具备 **docker** 命令执行权限
 
    > ```bash
    > # ec2-user 请修改为实际的用户账号
@@ -182,7 +182,7 @@ node03
    >
    > **`管理节点`** 上配置完 **docker** 用户组后，需重新登录以使配置生效
 
-5. 在 **`管理节点`** 上使用 [***`容器管理`***](documents/commands/container.md "container") 命令启动 **`本地镜像仓库`**，并配置 [***`仓库管理`***](documents/commands/registry.md "registry") 命令的默认连接仓库
+5. 在 **`管理节点`** 上使用 [ ***`容器管理`*** ](documents/commands/container.md "container") 命令启动 **`本地镜像仓库`**，并配置 [ ***`仓库管理`*** ](documents/commands/registry.md "registry") 命令的默认连接仓库
 
    > ```bash 
    > # 启动容器
@@ -197,7 +197,7 @@ node03
    > 
    > ```
 
-6. 编辑 [**`基础镜像列表`** ](documents/images.md) 并使用 [***`仓库管理`***](documents/commands/registry.md "registry") 命令从 **docker-hub** 同步这些基础镜像
+6. 编辑 [ **`基础镜像列表`** ](documents/images.md) 并使用 [ ***`仓库管理`*** ](documents/commands/registry.md "registry") 命令从 **docker-hub** 同步这些基础镜像
 
    > 列表文件位于 ***config/image.list***
    >
@@ -242,7 +242,7 @@ node03
 
 ## 应用容器镜像打包
 
-> **Note：**该运维脚本不包括应用的编译功能，请用户自行编译目标应用
+> **Note：** 该运维脚本不包括应用的编译功能，请用户自行编译目标应用
 
 
 
@@ -263,9 +263,9 @@ node03
    > 
    > 不符合规则的程序包，请手工修改为符合规则的命名
 
-3. 使用 ***`镜像打包`*** 命令，将程序包打包为 **docker** 镜像，并上传至 **`本地镜像仓库`**
+3. 使用 [ ***`镜像打包`*** ](documents/commands/build-image.md "build-image") 命令，将程序包打包为 **docker** 镜像，并上传至 **`本地镜像仓库`**
 
-   > 打包过程中，将自动清理 ***`应用节点`*** 上同名的历史镜像，以确保 **容器** 启动时，使用的是最新的镜像
+   > 打包过程中，将自动清理 **`应用节点`** 上同名的历史镜像，以确保 **容器** 启动时，使用的是最新的镜像
    >
    > ```bash
    > # 此处 trade 为 ${DATA_BASE}/docker-hub/ 下存在的工程名
