@@ -5,7 +5,7 @@ pushd `dirname "${SCRIPT_FILE}"` >/dev/null
 BASE_DIR=`pwd`
 popd >/dev/null
 
-source "${MODULE_BASE}/common.sh" || exit 1
+source "${BASE_DIR}/conf/common.sh" || exit 1
 
 if [[ $# -lt 1 ]]; then
     error "Invalid args: $*"
