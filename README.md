@@ -5,6 +5,10 @@
 ```bash
 bin
 ├─conf
+│  └─dockerfile
+│      ├─digital
+│      ├─trade
+│      └─tradebase
 ├─container.d
 ├─logger.d
 ├─module.d
@@ -12,13 +16,37 @@ bin
 ```
 
 * **conf:** 基础配置文件目录
+
   1. *common.env:* 基本环境变量
+
+     > ```bash
+     > $ cat bin/conf/common.env 
+     > # 数据基础目录
+     > DATA_BASE=/data
+     > 
+     > # 应用基础目录
+     > APP_BASE=/opt
+     > 
+     > # SSH 免密连接至应用节点使用的私钥，如为空，则使用管理用户的默认私钥
+     > IDENTITY_FILE="~/.ssh/Jisheng-func-test.pem"
+     > 
+     > # 管理用户需要sudo以提升权限，如为root用户，则留空
+     > SUDO="sudo"
+     > ```
+
   2. *hosts.ini:* 应用组定义
+
   3. *image.list:* 基础依赖镜像列表
+
   4. *topic.list:* Kafka初始化 topic 列表
+
+  5. **dockerfile:** dockerfile模板目录
 * **container.d:** 容器启动模块目录，一个模块文件对应一种容器启动逻辑，模块文件名（不含 “*.sh*” 后缀）即 **`应用组`** 名
+
 * **logger.d:** 自定义日志记录器模块目录，不同的日志模块对应不同的日志存储，目前暂无用，日志输出至 ***stdout*** & ***stderr***
+
 * **module.d:** 功能模块目录，提供命令行所需的各种功能函数
+
 * **service.d:** 应用服务模块目录，解决应用组成员的 **`主机别名`** 和 **IP** 地址在 ***/etc/hosts*** 文件中的映射关系
 
 ## 运维框架初始化
@@ -204,4 +232,44 @@ node03
    > 
    > ```
 
-至此，**docker** 运行环境部署完成
+至此，**docker** 运行环境部署完成。
+
+
+
+------
+
+
+
+## 应用容器镜像打包
+
+> **Note：**该运维脚本不包括应用的编译功能，请用户自行编译目标应用
+
+
+
+1. 将编译完成的程序包存放至 **`管理节点`** 的 ***${DATA_BASE}/docker-hub/{工程名}*** 目录下
+
+2. 程序包名必须符合如下的命名规则：
+
+   > {工程名}-{模块名}-{版本号}.jar， 例如：
+   >
+   > ```bash
+   > $ ll /data/docker-hub/trade/
+   > total 128836
+   > -rw-rw-r-- 1 ec2-user ec2-user 64425301 Apr  4 02:17 trade-clear-1.0.1-SNAPSHOT.jar
+   > -rw-rw-r-- 1 ec2-user ec2-user 32671908 Apr  4 02:16 trade-match-1.0.1-SNAPSHOT.jar
+   > -rw-rw-r-- 1 ec2-user ec2-user 34825790 Apr  4 02:17 trade-order-1.0.1-SNAPSHOT.jar
+   > 
+   > ```
+   > 
+   > 不符合规则的程序包，请手工修改为符合规则的命名
+
+3. 使用 ***`镜像打包`*** 命令，将程序包打包为 **docker** 镜像，并上传至 **`本地镜像仓库`**
+
+   > 打包过程中，将自动清理 ***`应用节点`*** 上同名的历史镜像，以确保 **容器** 启动时，使用的是最新的镜像
+   >
+   > ```bash
+   > # 此处 trade 为 ${DATA_BASE}/docker-hub/ 下存在的工程名
+   > # all 表示打包该工程下所有模块，也可指定模块列表（模块名以空格分隔），以更新特定的模块
+   > $ build-image -cp -b trade all
+   > 
+   > ```
