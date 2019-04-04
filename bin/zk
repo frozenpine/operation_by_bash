@@ -6,7 +6,7 @@ BASE_DIR=`pwd`
 popd >/dev/null
 
 source "${MODULE_BASE}/common.sh" || exit 1
-FUNC_FILE_CONFIG="${BASE_DIR}/config.sh"
+FUNC_FILE_CONFIG="${MODULE_BASE}/config.sh"
 import_functions
 
 DRY_RUN=
