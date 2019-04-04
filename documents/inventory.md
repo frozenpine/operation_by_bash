@@ -26,4 +26,3 @@
 | 12   | digital   | mgmt     |          | http      | 场下管理系统，以nginx反向代理发布                            |
 | 13   | index     | index    |          | 自定义    | 指数计算服务                                                 |
 | 14   | schedule  | sched    |          | 自定义    | 定时任务管理服务                                             |
-
