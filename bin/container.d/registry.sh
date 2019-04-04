@@ -7,7 +7,4 @@ docker run -d \
     --network host \
     -v /etc/${NAME}:/etc/docker/registry \
     -v ${DATA_BASE:=/opt}/${NAME}:/var/lib/registry \
-    -e REGISTRY_AUTH=htpasswd \
-    -e REGISTRY_AUTH_HTPASSWD_REALM="Registry Realm" \
-    -e REGISTRY_AUTH_HTPASSWD_PATH=/etc/docker/registry/htpasswd \
     ${NAME}:${VERSION}
