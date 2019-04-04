@@ -20,7 +20,7 @@ bin
   1. *common.env:* 基本环境变量
 
      > ```bash
-     > $ cat bin/conf/common.env 
+     > $ cat bin/conf/common.env
      > # 数据基础目录
      > DATA_BASE=/data
      > 
