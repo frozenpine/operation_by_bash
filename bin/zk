@@ -11,6 +11,17 @@ import_functions
 
 DRY_RUN=
 
+HELP_COMMANDS["start"]="Start zookeeper cluster/standalone."
+HELP_COMMANDS["stop"]="Stop zookeeper cluster/standalone and keep container & local volume."
+HELP_COMMANDS["kill"]="Kill zookeeper cluster/standalone forcely and keep container & local volume."
+HELP_COMMANDS["status"]="Check zookeeper cluster/standalone status."
+HELP_COMMANDS["check"]="Check zookeeper cluster/standalone status and local volume exists."
+HELP_COMMANDS["restart"]="Restart zookeeper cluster/standalone."
+HELP_COMMANDS["destory"]="Destory zookeeper cluster/standalone and remove container & local volume."
+HELP_COMMANDS["pub"]="Publish zookeeper container module to all memeber nodes."
+HELP_COMMANDS["log"]="Get zookeeper all memeber nodes's last logs specified by \"-t NUM\", defualt: 100."
+HELP_COMMANDS["shell"]="Get zookeeper container's remote shell in random memeber nodes."
+
 SERVICE_LIST="zookeeper"
 
 for SERVICE in ${SERVICE_LIST}; do
@@ -20,10 +31,14 @@ for SERVICE in ${SERVICE_LIST}; do
     }
 done
 
-while getopts :d FLAG; do
+while getopts :dh FLAG; do
     case $FLAG in
         d)
             DRY_RUN="echo"
+        ;;
+        h)
+            _help
+            exit 1
         ;;
         *)
             error "invalid args: $*"
@@ -68,7 +83,20 @@ case ${COMMAND} in
         allssh -gzookeeper container exec zookeeper $*
     ;;
     logs)
-        allssh -gzookeeper container logs --tail 100 zookeeper
+        TAIL=100
+        while getopts :t: FLAG; do
+            case ${FLAG} in
+                t)
+                    TAIL=${OPTARG}
+                ;;
+                *)
+                    error "invalid log args: $*"
+                ;;
+            esac
+        done
+        shift $((OPTIND-1))
+
+        allssh -gzookeeper container logs --tail ${TAIL} zookeeper
     ;;
     shell)
         IDX=$((RANDOM % ${#ZK_LIST[@]}))
