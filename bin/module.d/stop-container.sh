@@ -1,13 +1,4 @@
-#! /bin/bash
-
-[[ -L $0 ]] && SCRIPT_FILE=`readlink -fn $0` || SCRIPT_FILE=$0
-pushd `dirname "${SCRIPT_FILE}"` >/dev/null
-BASE_DIR=`pwd`
-popd >/dev/null
-
-source "${BASE_DIR}/module.d/common.sh" || exit 1
-
-STATUS_COMMAND="${BASE_DIR}/check-container"
+STATUS_COMMAND="${BASE_DIR}/module.d/check-container.sh"
 
 if [[ $# -lt 1 ]]; then
     error "Invalid args: $*"

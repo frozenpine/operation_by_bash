@@ -7,9 +7,9 @@ popd >/dev/null
 
 source "${BASE_DIR}/module.d/common.sh" || exit 1
 
-SCRIPT_START="${BASE_DIR}/start-container"
-SCRIPT_STOP="${BASE_DIR}/stop-container"
-SCRIPT_CHECK="${BASE_DIR}/check-container"
+SCRIPT_START="${BASE_DIR}/module.d/start-container.sh"
+SCRIPT_STOP="${BASE_DIR}/module.d/stop-container.sh"
+SCRIPT_CHECK="${BASE_DIR}/module.d/check-container.sh"
 
 for SCRIPT in ${!SCRIPT_@}; do
     SCRIPT_FILE_PATH=$(eval echo \$$SCRIPT)
