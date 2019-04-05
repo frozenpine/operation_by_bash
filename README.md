@@ -1,5 +1,7 @@
 # 运维脚本使用说明
 
+> [TOC]
+
 ## 目录结构
 
 ```bash
@@ -51,7 +53,7 @@ bin
 
 ## 运维框架初始化
 
-1. 定义运维脚本需要管理的 [ **`主机列表`** ](documents/inventory.md)
+1. 定义运维脚本需要管理的 [**`主机列表`**](documents/inventory.md/#nodes)
 
    > 将所有节点的 **IP** 和 **主机名** 添加至 **`管理节点`** 的 ***/etc/hosts*** 文件内
    > ```bash
@@ -66,13 +68,13 @@ bin
    > ```
    >
 
-2. 规划 **`应用组`** 在主机上的分布
+2. 规划 [**`应用组`**](documents/inventory.md/#应用分组) 在主机上的分布
 
-3. 根据规划，编辑 **service.d** 下的应用服务模块中的 **`主机别名`** 和 **IP** 地址的对应关系
+3. 根据规划，编辑 **service.d** 下的应用服务模块中的 [**`主机别名`**](documents/inventory.md/#alias) 和 **IP** 地址的对应关系，[示例](documents/commands/svc.md/#service-define)
 
 4. 在 **`管理节点`** 上执行 [ ***`服务管理`*** ](documents/commands/svc.md "svc") 命令，完成 **IP - 主机名** 的初始化
 
-5. **`管理节点`** 与 **`应用节点`** 间建立 SSH 互信
+5. **`管理节点`** 与 [**`应用节点`**](documents/inventory.md/#nodes) 间建立 SSH 互信
 
    > * **`管理节点`** 应该能免密登录到任意一台运行应用的节点服务器
    > * **`管理节点`** 免密登录 **`应用节点`** 的 **`管理账号`**，应具备 **root** 权限，或至少应能免密使用 **sudo** 以运行需要特权的管理命令
@@ -197,7 +199,7 @@ node03
    > 
    > ```
 
-6. 编辑 [ **`基础镜像列表`** ](documents/images.md) 并使用 [ ***`仓库管理`*** ](documents/commands/registry.md "registry") 命令从 **docker-hub** 同步这些基础镜像
+6. 编辑 [ **`基础镜像列表`** ](documents/images.md/#依赖的外部镜像) 并使用 [ ***`仓库管理`*** ](documents/commands/registry.md "registry") 命令从 **docker-hub** <a name="sync-image">同步</a> 这些基础镜像
 
    > 列表文件位于 ***config/image.list***
    >
@@ -273,3 +275,61 @@ node03
    > $ build-image -cp -b trade all
    > 
    > ```
+
+---
+
+## Zookeeper集群搭建
+
+> **Note：** 建立 **zookeeper** 集群前，请先确保以下操作完成：
+>
+> 1. **`本地仓库`** 中存在指定版本号的 **zookeeper** 镜像，该镜像应该在 [**Docker运行环境部署**](#Docker运行环境部署) 的 [同步](#sync-image) 操作中完成下载
+> 2. **service.d** 下的 ***zookeeper.sh*** 服务模块有正确的 **IP - HOST** 映射，[示例](documents/commands/svc.md/#服务定义示例)
+
+1. 编辑 ***container.d/zookeeper.sh*** 容器启动模块
+
+   ```bash
+   $ vim container.d/zookeeper.sh
+   # zookeeper 镜像版本号
+   VERSION="3.4.13"
+   # zookeeper 镜像名，不包含 本地仓库 地址
+   NAME=zookeeper
+   # zookeeper 启动用户
+   USER=${NAME}
+   
+   # zookeeper 客户端连接端口
+   CLIENT_PORT=2181
+   # zookeeper leader 开放端口
+   SVR_PORT1=2888
+   # zookeeper 选举端口
+   SVR_PORT2=3888
+   
+   # zookeeper 依赖的服务列表
+   # registry 服务为所有容器启动模块的固定依赖，不可变
+   # 由于该模块脚本支持启动 zookeeper 集群，集群成员需要知道所有的成员地址
+   # 故还需依赖 zookeeper 自身服务，以获取全部成员的 IP-HOST
+   SERVICE_LIST="registry zookeeper"
+   
+   # 以下是模块启动逻辑，不赘述...
+   ```
+
+   
+
+2. 将编辑后的启动模块分发给 **zookeeper** 应用组的全部成员节点
+
+   ```bash
+   $ pwd
+   /home/ec2-user
+   # 此处需注意分发路径
+   $ allscp -gzookeeper bin/container.d/zookeeper.sh
+   ```
+
+3. 使用 ***`zk`*** 集群管理命令启动 **zookeeper** 集群
+
+   ```bash
+   # 检查集群当前状态，包括：1.容器是否运行；2.数据目录状态
+   $ zk check
+   # start 命令将启动集群
+   $ zk start
+   ```
+
+4. 
