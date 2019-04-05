@@ -21,6 +21,24 @@ VALUE_DESERIALIZER="--value-deserializer com.quantdo.trade.kafka.kryo.KryoDeseri
 
 DRY_RUN=
 
+HELP_ARGS["D"]="-"
+
+HELP_COMMANDS["start"]="Start an Kafka cluster/standalone."
+HELP_COMMANDS["stop"]="Stop an Kafka cluster/standalone."
+HELP_COMMANDS["restart"]="Restart an Kafka cluster/standalone."
+HELP_COMMANDS["kill"]="Stop an Kafka cluster/standalone forcely."
+HELP_COMMANDS["destory"]="Stop an Kafka cluster/standalone forcely & delete data files."
+HELP_COMMANDS["status"]="Check Kafka cluster/standalone status."
+HELP_COMMANDS["check"]="Check Kafka cluster/standalone status & data file exists."
+HELP_COMMANDS["init"]="Create topics specified in topic.list"
+HELP_COMMANDS["create"]="Combine start & init command."
+HELP_COMMANDS["delete"]="Stop an Kafka cluster/standalone & delete data files."
+HELP_COMMANDS["pub"]="Publish kafka.sh module in container.d to all memeber hosts."
+HELP_COMMANDS["logs"]="Get all kafka's last 100 logs"
+HELP_COMMANDS["topic"]="Wrapper for kafka-topic.sh without specify zookeeper address."
+HELP_COMMANDS["group"]="Wrapper for kafak-groups.sh without specify kafka bootstraps."
+HELP_COMMANDS["consumer"]="Wrapper for consule-consumer.sh without specify kafka bootstraps."
+
 SERVICE_LIST="zookeeper kafka"
 
 for SERVICE in ${SERVICE_LIST}; do
@@ -174,10 +192,14 @@ function _delete() {
     info "delete finished, checking topics..."
 }
 
-while getopts :D FLAG; do
+while getopts :hD FLAG; do
     case $FLAG in
         D)
             DRY_RUN="echo"
+        ;;
+        h)
+            _help >&2
+            exit
         ;;
         *)
             error "invalid args: $*"
