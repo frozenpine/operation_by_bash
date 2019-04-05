@@ -7,7 +7,13 @@ popd >/dev/null
 
 source "${BASE_DIR}/module.d/common.sh" || exit 1
 
-while getopts :H:u:p:s: FLAG; do
+HELP_ARGS["u:user_name"]="optional,Specify user name used in ssh connection, if not specified, local user will be used."
+HELP_ARGS["H:host_name"]="Specify a ssh host to connect to."
+HELP_ARGS["p:host_port"]="optional,Specify a ssh port to connect to, if not specified, default[22] port will be used."
+HELP_ARGS["s:shell"]="optional,Specify shell name for container, default: bash"
+HELP_ARGS["D"]="-"
+
+while getopts :H:u:p:s:h FLAG; do
     case $FLAG in
         H)
             REMOTE_HOST=${OPTARG}
@@ -20,6 +26,10 @@ while getopts :H:u:p:s: FLAG; do
         ;;
         s)
             SHELL_ARG="-s ${OPTARG}"
+        ;;
+        h)
+            _help >&2
+            exit
         ;;
         *)
             error "Invalid args: $*"

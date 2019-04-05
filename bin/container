@@ -7,9 +7,9 @@ popd >/dev/null
 
 source "${BASE_DIR}/module.d/common.sh" || exit 1
 
-SCRIPT_START="${BASE_DIR}/module.d/start-container.sh"
-SCRIPT_STOP="${BASE_DIR}/module.d/stop-container.sh"
-SCRIPT_CHECK="${BASE_DIR}/module.d/check-container.sh"
+SCRIPT_START="${MODULE_BASE}/start-container.sh"
+SCRIPT_STOP="${MODULE_BASE}/stop-container.sh"
+SCRIPT_CHECK="${MODULE_BASE}/check-container.sh"
 
 for SCRIPT in ${!SCRIPT_@}; do
     SCRIPT_FILE_PATH=$(eval echo \$$SCRIPT)
@@ -18,6 +18,17 @@ for SCRIPT in ${!SCRIPT_@}; do
         exit 1
     fi
 done
+
+HELP_ARGS["D"]="-"
+
+HELP_COMMANDS["start"]="Start an container by name."
+HELP_COMMANDS["stop"]="Stop an container by name."
+HELP_COMMANDS["status"]="Check container status by name."
+HELP_COMMANDS["restart"]="Restart an container by name."
+HELP_COMMANDS["logs"]="Get container's logs by name."
+HELP_COMMANDS["shell"]="Get an container's shell by name."
+HELP_COMMANDS["exec"]="Execute command in an container by name."
+HELP_COMMANDS["list"]="List all running containers."
 
 function shell() {
     while getopts :s: FLAG; do
@@ -38,6 +49,20 @@ function shell() {
 
     docker exec -it $1 ${SHELL:=sh}
 }
+
+while getopts :h FLAG; do
+    case $FLAG in
+        h)
+            _help >&2
+            exit
+        ;;
+        *)
+            _help >&2
+            exit 1
+        ;;
+    esac
+done
+shift $((OPTIND - 1))
 
 ACTION=$1
 shift

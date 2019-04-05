@@ -24,34 +24,16 @@ declare -A MANIFESTS
 
 HTTP_AUTH="--user ${REGISTRY_USER}:${REGISTRY_PASS}"
 
-_usage() {
-    local SCRIPT_NAME
-    SCRIPT_NAME=`basename ${SCRIPT_FILE}`
-    cat <<EOF
-Usage : ${SCRIPT_NAME} [-h] [-H {registry uri}] [-s {scheme: http | https}]
-        `printf "%${#SCRIPT_NAME}s" " "` {list | show [tag] | manifests | default | sync {source} {target} [clean|clean_src|clean_dst]}
-EOF
-    echo
-    echo "Option Descriptions :"
-    cat <<EOF
-    -h      Show this help message.
-    -H      Specify an registry base uri.
-            default: registry.quantfair.com.
-    -s      Specify scheme used to connect registry.
-            default: https.
-    -p      Show result pretty.
-EOF
-    echo
-    echo "Command Descriptions :"
-    cat <<EOF
-    list        List all images in registry.
-    show        Show image's tag info.
-    manifests   Show image's manifests digest.
-    default     Set BASE_URI & SCHEME to param specified.
-    sync        Sync image from one registry to another.
-                If clean specified, local image will be cleaned.
-EOF
-}
+HELP_ARGS["H:uri"]="optional,Specify host uri used in management, if not specified, default one stored by \"default\" command will be used."
+HELP_ARGS["s:scheme"]="optional,Specify connection type(http|https), if not specified, default one stored by \"default\" command will be used."
+HELP_ARGS["p"]="optional,Format result with \`jq\`."
+HELP_ARGS["D"]="-"
+
+HELP_COMMANDS["list"]="List all images in registry."
+HELP_COMMANDS["show"]="Show all/specified image with tags."
+HELP_COMMANDS["manifests"]="Show all/specified image's manifest id."
+HELP_COMMANDS["default"]="Save default registry's URI & connection type."
+HELP_COMMANDS["sync"]="Sync a image fron source registry to dest."
 
 _get_images () {
     IMAGES=(`curl -s ${HTTP_AUTH} "${SCHEME}://${BASE_URI}/v2/_catalog" 2>/dev/null | \
@@ -313,11 +295,11 @@ while getopts :H:s:yph FLAG; do
             YES=1
         ;;
         h)
-            _usage
+            _help >&2
             exit
         ;;
         *)
-            _usage >&2
+            _help >&2
             exit 1
         ;;
     esac

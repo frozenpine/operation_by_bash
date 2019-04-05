@@ -1,4 +1,4 @@
-STATUS_COMMAND="${BASE_DIR}/module.d/check-container.sh"
+STATUS_COMMAND="${MODULE_BASE}/check-container.sh"
 
 if [[ $# -lt 1 ]]; then
     error "Invalid args: $*"

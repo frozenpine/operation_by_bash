@@ -17,21 +17,23 @@ BUILD_NAME=
 CLEAN_LOCAL=0
 PUSH_REGISTRY=0
 
-function _help() {
+function _extra_help() {
     local _IDX
     _IDX=1
     
-    echo "Usage: `basename "${SCRIPT_FILE}"` [-c|-p] -b \${BUILD_NAME} {all|\${MODULE_NAME}}"
-    echo "    -c clean local build image."
-    echo "    -p push image to registry."
     echo
-    echo "Available BUILD_NAME: "
+    echo "Available {build_name}: "
 
     find "${BUILD_BASE}" -maxdepth 1 -type d -not -name "`basename ${BUILD_BASE}`" -exec basename {} \; | while read BUILD; do
         echo "    ${_IDX}. ${BUILD}"
         _IDX=$((_IDX+1))
     done
 }
+
+HELP_ARGS["c"]="optional,Clean local build image."
+HELP_ARGS["p"]="optional,Push image to registry."
+HELP_ARGS["b:build_name"]="Project name to build."
+HELP_ARGS["D"]="-"
 
 function _build() {
     MODULE=
@@ -80,7 +82,7 @@ function _build() {
     )
 }
 
-while getopts :b:cpd FLAG; do
+while getopts :b:cpdh FLAG; do
     case $FLAG in
         c)
             CLEAN_LOCAL=1
@@ -95,8 +97,13 @@ while getopts :b:cpd FLAG; do
             BUILD_NAME=${OPTARG}
             BUILD_DIR="${BUILD_BASE}/${BUILD_NAME}"
         ;;
+        h)
+            _help
+            _extra_help
+            exit
+        ;;
         *)
-            _help >&2
+            error "invalid args: $*"
             exit 1
         ;;
     esac

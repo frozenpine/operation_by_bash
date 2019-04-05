@@ -11,6 +11,9 @@ import_functions
 
 SERVICE_LIST=
 
+HELP_ARGS["D"]="-"
+HELP_COMMANDS["sync"]="Sync specified IP-HOST mapping to \"/etc/hosts\" by service name, if no service name specified, all service in \"service.d\" will be synced."
+
 function _sync_host() {
     for SERVICE in ${SERVICE_LIST}; do
         source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
@@ -27,6 +30,20 @@ function _list_services() {
         SERVICE_LIST="$*"
     fi
 }
+
+while getopts :h FLAG; do
+    case $FLAG in
+        h)
+            _help >&2
+            exit
+        ;;
+        *)
+            _help >&2
+            exit 1
+        ;;
+    esac
+done
+shift $((OPTIND - 1))
 
 COMMAND=$1
 shift

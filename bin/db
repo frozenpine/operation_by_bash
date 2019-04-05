@@ -10,6 +10,19 @@ FUNC_FILE_CONFIG="${MODULE_BASE}/config.sh"
 FUNC_FILE_MYSQL="${MODULE_BASE}/mysql.sh"
 import_functions
 
+HELP_ARGS["H:db_host"]="optional,Specify db host to connect to, default: random host in mysql group."
+HELP_ARGS["u:db_user"]="optional,Specify db user in db connection, if not sepcified, default identity will be used."
+HELP_ARGS["p:db_pass"]="optional,Specify db pass in db connection, if not sepcified, default identity will be used."
+HELP_ARGS["P:db_port"]="optional,Specify db port to connect to, default: 3306."
+
+HELP_COMMANDS["start"]="Start all mysql hosts without replication."
+HELP_COMMANDS["stop"]="Stop all mysql hosts."
+HELP_COMMANDS["kill"]="Kill all mysql hosts forcely."
+HELP_COMMANDS["status"]="Check all mysql hosts' status."
+HELP_COMMANDS["destory"]="Stop all mysql hosts & remove data files."
+HELP_COMMANDS["init"]="Init specified db's talbes in sql directory, need db creation first."
+HELP_COMMANDS["truncate"]="Truncate all specified db's tables."
+
 SERVICE_LIST="mysql"
 
 for SERVICE in ${SERVICE_LIST}; do
@@ -68,12 +81,12 @@ function _truncate() {
     done
 }
 
-while getopts :h:u:p:P:d FLAG; do
+while getopts :H:u:p:P:Dh FLAG; do
     case $FLAG in
-        d)
+        D)
             DRY_RUN="echo"
         ;;
-        h)
+        H)
             DB_HOST=${OPTARG}
         ;;
         u)
@@ -84,6 +97,10 @@ while getopts :h:u:p:P:d FLAG; do
         ;;
         P)
             DB_PORT=${OPTARG}
+        ;;
+        h)
+            _help >&2
+            exit 
         ;;
         *)
             error "invalid args: $*"
@@ -132,9 +149,9 @@ case ${COMMAND} in
     destory)
         allssh -gmysql container stop -crf mysql
     ;;
-    users)
-        _get_users
-    ;;
+    # users)
+    #     _get_users
+    # ;;
     *)
         error "invalid command: ${COMMAND}"
         exit 1

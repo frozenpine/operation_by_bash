@@ -1,5 +1,4 @@
-STATUS_COMMAND="${BASE_DIR}/module.d/check-container.sh"
-CONTAINER_STARTERS="${BASE_DIR}/container.d"
+STATUS_COMMAND="${MODULE_BASE}/check-container.sh"
 
 if [[ $# -lt 1 ]]; then
     error "Invalid args: $*"
@@ -13,7 +12,7 @@ function start_container() {
     if [[ ${_COUNT} -eq 1 ]]; then
         docker start $1
     else
-        _START_FILE=`find "${CONTAINER_STARTERS}" -type f -name "$1.sh"`
+        _START_FILE=`find "${CONTAINER_BASE}" -type f -name "$1.sh"`
         if [[ -n ${_START_FILE} ]]; then
             shift
             source "${_START_FILE}" ${ARG} $*

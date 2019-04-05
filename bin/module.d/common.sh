@@ -1,5 +1,7 @@
 CONF_BASE="${BASE_DIR}/conf"
 MODULE_BASE="${BASE_DIR}/module.d"
+CONTAINER_BASE="${BASE_DIR}/container.d"
+SERVICE_BASE="${BASE_DIR}/service.d"
 
 COMMON_ENV="${CONF_BASE}/common.env"
 
