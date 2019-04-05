@@ -264,29 +264,79 @@ declare -A HELP_COMMANDS
 # if no need to use this two default args, please set arg description with "-"
 declare -A HELP_ARGS
 
+# help message for position args
+declare -a HELP_POSITION_ARGS
+
+function _trim_description() {
+    local _DES_MAX
+    local _START
+    local _END
+    local _LAST_SEP
+    local _HEAD_LEN
+    local _DESCRIPTION
+    local _BREAK
+    local _TRIM_LINE
+
+    _HEAD_LEN=$1
+    shift
+    _DES_MAX=$1
+    shift
+    _DESCRIPTION=$*
+
+    _END=0
+    while [[ ${_END} -lt ${#_DESCRIPTION} ]]; do
+        _START=${_END}
+        _LAST_SEP=${_END}
+        
+        while true; do
+            if [[ ${_DESCRIPTION:$_END:1} =~ (\'|\") ]]; then
+                if [[ ${_BREAK} == ${_DESCRIPTION:$_END:1} ]]; then
+                    _BREAK=
+                else
+                    _BREAK=${_DESCRIPTION:$_END:1}
+                fi
+            fi
+
+            if [[ -z ${_BREAK} && ${_DESCRIPTION:$_END:1} =~ ( |,|/|\\|\.|;) ]]; then
+                _LAST_SEP=$((_END+1))
+            fi
+
+            _END=$((_END+1))
+
+            if [[ ${_END} -ge ${#_DESCRIPTION} ]]; then
+                _END=${#_DESCRIPTION}
+                break
+            fi
+
+            if [[ $((_END-_START)) -gt ${_DES_MAX} ]]; then
+                _END=${_LAST_SEP}
+                break
+            fi
+        done
+
+        if [[ ${_START} -eq 0 ]]; then
+            printf "    %s\n" "${_DESCRIPTION:$_START:$((_END-_START))}"
+        else
+            _TRIM_LINE="${_DESCRIPTION:$_START:$((_END-_START))}"
+            printf "%${_HEAD_LEN}s    %s\n" " " "${_TRIM_LINE## }"
+        fi
+    done
+}
+
 function _help() {
     local _CMD
     local _ARG_LIST
+    local _POSITION_ARG_LIST
+    local _OPTIONAL
     local _COMMAND_LIST
     local _MAX_CMD
     local _HEAD_LEN
     local _DES_MAX
 
     _CMD=`basename $0`
-    _HEAD_LEN=$((7+${#_CMD}))
+    _HEAD_LEN=7
     _MAX_CMD=0
-    _DES_MAX=100
-
-    if [[ ${#HELP_COMMANDS[@]} -ge 1 ]]; then
-        for NAME in ${!HELP_COMMANDS[@]}; do
-            _COMMAND_LIST="${_COMMAND_LIST}|${NAME}"
-            
-            if [[ ${#NAME} -gt ${_MAX_CMD} ]]; then
-                _MAX_CMD=${#NAME}
-            fi
-        done
-        _COMMAND_LIST="{${_COMMAND_LIST:1}}"
-    fi
+    _DES_MAX=89
 
     if [[ "x${HELP_ARGS["D"]}" == "x" ]]; then
         HELP_ARGS["D"]="optional,Dry-run command for test."
@@ -303,8 +353,8 @@ function _help() {
             continue
         fi
 
-        if [[ $ARG =~ : ]]; then
-            ARG_PATTERN="-${ARG:0:1} ${ARG:2}"
+        if [[ $ARG =~ ":" ]]; then
+            ARG_PATTERN="-${ARG:0:1} {${ARG:2}}"
         else
             ARG_PATTERN="-${ARG:0:1}"
         fi
@@ -316,10 +366,40 @@ function _help() {
         fi
     done
 
-    printf "Usage: %s %s %s\n" "${_CMD}" "${_ARG_LIST}" "${_COMMAND_LIST}"
+    _OPTIONAL=
+    for POS in ${!HELP_POSITION_ARGS[@]}; do
+        POS_ARG="${HELP_POSITION_ARGS[$POS]}"
+
+        if [[ ${POS_ARG} =~ optional, ]]; then
+            _OPTIONAL=1
+        fi
+
+        if [[ ${_OPTIONAL} -eq 1 ]]; then
+            _POSITION_ARG_LIST="${_POSITION_ARG_LIST} [${POS_ARG#optional,}]"
+        else
+            _POSITION_ARG_LIST="${_POSITION_ARG_LIST} ${POS_ARG#optional,}"
+        fi
+    done
+
+    if [[ ${#HELP_COMMANDS[@]} -ge 1 ]]; then
+        printf "Usage: %s %s %s %s\n" "${_CMD}" "${_ARG_LIST## }" "${_COMMAND_LIST}" "${_POSITION_ARG_LIST## }"
+    else
+        printf "Usage: %s %s %s\n" "${_CMD}" "${_ARG_LIST## }" "${_POSITION_ARG_LIST## }"
+    fi
     
-    if [[ ${#_HEAD_LEN} -lt ${#_MAX_CMD} ]]; then
-        _HEAD_LEN=${#_MAX_CMD}
+    if [[ ${#HELP_COMMANDS[@]} -ge 1 ]]; then
+        for NAME in ${!HELP_COMMANDS[@]}; do
+            _COMMAND_LIST="${_COMMAND_LIST}|${NAME}"
+            
+            if [[ ${#NAME} -gt ${_MAX_CMD} ]]; then
+                _MAX_CMD=${#NAME}
+            fi
+        done
+        _COMMAND_LIST="{${_COMMAND_LIST:1}}"
+
+        if [[ ${#_HEAD_LEN} -le ${#_MAX_CMD} ]]; then
+            _HEAD_LEN=$((${#_MAX_CMD}+2))
+        fi
     fi
 
     printf "%s\n" "Args:"
@@ -330,7 +410,12 @@ function _help() {
             continue
         fi
 
-        printf "%${_HEAD_LEN}s    %s\n" "-${ARG:0:1}" "${DESCRIPTION#optional,}"
+        printf "%${_HEAD_LEN}s" "-${ARG:0:1}"
+        if [[ ${#DESCRIPTION} -le ${_DES_MAX} ]]; then
+            printf "    %s\n" "${DESCRIPTION#optional,}"
+        else
+            _trim_description "${_HEAD_LEN}" "${_DES_MAX}" "${DESCRIPTION#optional,}"
+        fi
     done
     
     if [[ ${#HELP_COMMANDS[@]} -lt 1 ]]; then
@@ -343,38 +428,10 @@ function _help() {
 
         DESCRIPTION=${HELP_COMMANDS[$NAME]}
 
-        if [[ ${#DESCRIPTION} -le ${_DES_LEN} ]]; then
+        if [[ ${#DESCRIPTION} -le ${_DES_MAX} ]]; then
             printf "    %s\n" "${HELP_COMMANDS[$NAME]}"
         else
-            _END=0
-            while [[ ${_END} -lt ${#DESCRIPTION} ]]; do
-                _START=${_END}
-                _LAST_SEP=${_END}
-                
-                while true; do
-                    if [[ ${DESCRIPTION:$_END:1} =~ ( |,|/|\\|\.|;|\"|\') ]]; then
-                        _LAST_SEP=$((_END+1))
-                    fi
-
-                    _END=$((_END+1))
-
-                    if [[ ${_END} -ge ${#DESCRIPTION} ]]; then
-                        _END=${#DESCRIPTION}
-                        break
-                    fi
-
-                    if [[ $((_END-_START)) -gt ${_DES_MAX} ]]; then
-                        _END=${_LAST_SEP}
-                        break
-                    fi
-                done
-
-                if [[ ${_START} -eq 0 ]]; then
-                    printf "    %s\n" "${DESCRIPTION:$_START:$((_END-_START))}"
-                else
-                    printf "%${_HEAD_LEN}s    %s\n" " " "${DESCRIPTION:$_START:$((_END-_START))}"
-                fi
-            done
+            _trim_description ${_HEAD_LEN} ${_DES_MAX} ${DESCRIPTION}
         fi
     done
 }
