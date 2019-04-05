@@ -267,58 +267,109 @@ declare -A HELP_ARGS
 # help message for position args
 declare -a HELP_POSITION_ARGS
 
-function _trim_description() {
-    local _DES_MAX
+function _trim_line() {
+    local _LINE_MAX
     local _START
     local _END
     local _LAST_SEP
     local _HEAD_LEN
-    local _DESCRIPTION
+    local _LINE
     local _BREAK
     local _TRIM_LINE
+    local _SPACE
+    local _COLOR
+    local _FIRST_LINE
 
+    _LINE_MAX=89
+
+    _FIRST_LINE=$1
+    shift
     _HEAD_LEN=$1
     shift
-    _DES_MAX=$1
+    _SPACE=$1
     shift
-    _DESCRIPTION=$*
+    _COLOR=$1
+    shift
+    _LINE=$*
+
+    if [[ ${#_LINE} -le $((_LINE_MAX-_HEAD_LEN)) ]]; then
+        if [[ ${_FIRST_LINE} -eq 1 ]]; then
+            printf "%${_SPACE}s${_COLOR}%s${COLOR["nc"]}\n" " " "${_LINE}"
+        else
+            printf "%${_HEAD_LEN}s%${_SPACE}s${_COLOR}%s${COLOR["nc"]}\n" " " " " "${_LINE}"
+        fi
+        return
+    fi
 
     _END=0
-    while [[ ${_END} -lt ${#_DESCRIPTION} ]]; do
+    while [[ ${_END} -lt ${#_LINE} ]]; do
         _START=${_END}
         _LAST_SEP=${_END}
         
         while true; do
-            if [[ ${_DESCRIPTION:$_END:1} =~ (\'|\") ]]; then
-                if [[ ${_BREAK} == ${_DESCRIPTION:$_END:1} ]]; then
+            if [[ ${_LINE:$_END:1} =~ (\'|\") ]]; then
+                if [[ ${_BREAK} == ${_LINE:$_END:1} ]]; then
                     _BREAK=
                 else
-                    _BREAK=${_DESCRIPTION:$_END:1}
+                    _BREAK=${_LINE:$_END:1}
                 fi
             fi
 
-            if [[ -z ${_BREAK} && ${_DESCRIPTION:$_END:1} =~ ( |,|/|\\|\.|;) ]]; then
+            case ${_LINE:$_END:1} in
+                "[")
+                    if [[ -z ${_BREAK} ]]; then
+                        _BREAK="["
+                    fi
+                ;;
+                "]")
+                    if [[ ${_BREAK} == "[" ]]; then
+                        _BREAK=
+                    fi
+                ;;
+                # "(")
+                #     if [[ -z ${_BREAK} ]]; then
+                #         _BREAK="("
+                #     fi
+                # ;;
+                # ")")
+                #     if [[ ${_BREAK} == "(" ]]; then
+                #         _BREAK=
+                #     fi
+                # ;;
+                # "{")
+                #     if [[ -z ${_BREAK} ]]; then
+                #         _BREAK="{"
+                #     fi
+                # ;;
+                # "}")
+                #     if [[ ${_BREAK} == "{" ]]; then
+                #         _BREAK=
+                #     fi
+                # ;;
+            esac
+
+            if [[ -z ${_BREAK} && ${_LINE:$_END:1} =~ ( |,|/|\\|\.|;) ]]; then
                 _LAST_SEP=$((_END+1))
             fi
 
             _END=$((_END+1))
 
-            if [[ ${_END} -ge ${#_DESCRIPTION} ]]; then
-                _END=${#_DESCRIPTION}
+            if [[ ${_END} -ge ${#_LINE} ]]; then
+                _END=${#_LINE}
                 break
             fi
 
-            if [[ $((_END-_START)) -gt ${_DES_MAX} ]]; then
+            if [[ $((_END-_START)) -gt $((_LINE_MAX-_HEAD_LEN)) ]]; then
                 _END=${_LAST_SEP}
                 break
             fi
         done
 
-        if [[ ${_START} -eq 0 ]]; then
-            printf "    %s\n" "${_DESCRIPTION:$_START:$((_END-_START))}"
+        if [[ ${_FIRST_LINE} -eq 1 && ${_START} -eq 0 ]]; then
+            printf "%${_SPACE}s${_COLOR}%s${COLOR["nc"]}\n" " " "${_LINE:$_START:$((_END-_START))}"
         else
-            _TRIM_LINE="${_DESCRIPTION:$_START:$((_END-_START))}"
-            printf "%${_HEAD_LEN}s    %s\n" " " "${_TRIM_LINE## }"
+            _TRIM_LINE="${_LINE:$_START:$((_END-_START))}"
+            printf "%${_HEAD_LEN}s%${_SPACE}s${_COLOR}%s${COLOR["nc"]}\n" " " " " "${_TRIM_LINE## }"
         fi
     done
 }
@@ -331,12 +382,12 @@ function _help() {
     local _COMMAND_LIST
     local _MAX_CMD
     local _HEAD_LEN
-    local _DES_MAX
+    local _LINE_MAX
 
     _CMD=`basename $0`
     _HEAD_LEN=7
     _MAX_CMD=0
-    _DES_MAX=89
+    _LINE_MAX=89
 
     if [[ "x${HELP_ARGS["D"]}" == "x" ]]; then
         HELP_ARGS["D"]="optional,Dry-run command for test."
@@ -382,27 +433,32 @@ function _help() {
     done
 
     if [[ ${#HELP_COMMANDS[@]} -ge 1 ]]; then
-        printf "Usage: %s %s %s %s\n" "${_CMD}" "${_ARG_LIST## }" "${_COMMAND_LIST}" "${_POSITION_ARG_LIST## }"
-    else
-        printf "Usage: %s %s %s\n" "${_CMD}" "${_ARG_LIST## }" "${_POSITION_ARG_LIST## }"
-    fi
-    
-    if [[ ${#HELP_COMMANDS[@]} -ge 1 ]]; then
         for NAME in ${!HELP_COMMANDS[@]}; do
-            _COMMAND_LIST="${_COMMAND_LIST}|${NAME}"
+            _COMMAND_LIST="${_COMMAND_LIST} | ${NAME}"
             
             if [[ ${#NAME} -gt ${_MAX_CMD} ]]; then
                 _MAX_CMD=${#NAME}
             fi
         done
-        _COMMAND_LIST="{${_COMMAND_LIST:1}}"
+        _COMMAND_LIST="{ ${_COMMAND_LIST# | } }"
 
-        if [[ ${#_HEAD_LEN} -le ${#_MAX_CMD} ]]; then
-            _HEAD_LEN=$((${#_MAX_CMD}+2))
+        if [[ ${_HEAD_LEN} -le ${_MAX_CMD} ]]; then
+            _HEAD_LEN=$((${_MAX_CMD}+2))
         fi
     fi
 
-    printf "%s\n" "Args:"
+    printf "Usage: ${COLOR["cyan"]}%s${COLOR["nc"]}" "${_CMD}"
+    if [[ ${#HELP_COMMANDS[@]} -ge 1 ]]; then
+        _trim_line 1 $((7+${#_CMD})) 1 ${COLOR["dark_gray"]} ${_ARG_LIST## }
+        _trim_line 0 $((7+${#_CMD})) 1 ${COLOR["blue"]} ${_COMMAND_LIST}
+    else
+        _trim_line 1 $((7+${#_CMD})) 1 ${COLOR["dark_gray"]} "${_ARG_LIST## }"
+    fi
+    if [[ ${#HELP_POSITION_ARGS[@]} -ge 1 ]]; then
+        _trim_line 0 $((7+${#_CMD})) 1 ${COLOR["yellow"]} "${_POSITION_ARG_LIST## }"
+    fi
+
+    printf "${COLOR["dark_gray"]}%s${COLOR["nc"]}\n" "Args:"
     for ARG in ${!HELP_ARGS[@]}; do
         DESCRIPTION=${HELP_ARGS[$ARG]}
 
@@ -410,28 +466,20 @@ function _help() {
             continue
         fi
 
-        printf "%${_HEAD_LEN}s" "-${ARG:0:1}"
-        if [[ ${#DESCRIPTION} -le ${_DES_MAX} ]]; then
-            printf "    %s\n" "${DESCRIPTION#optional,}"
-        else
-            _trim_description "${_HEAD_LEN}" "${_DES_MAX}" "${DESCRIPTION#optional,}"
-        fi
+        printf "${COLOR["dark_gray"]}%${_HEAD_LEN}s${COLOR["nc"]}" "-${ARG:0:1}"
+        _trim_line 1 ${_HEAD_LEN} 4 ${COLOR["dark_gray"]} ${DESCRIPTION#optional,}
     done
     
     if [[ ${#HELP_COMMANDS[@]} -lt 1 ]]; then
         return
     fi
     
-    printf "%s\n" "Commands:"
+    printf "${COLOR[light_blue]}%s${COLOR["nc"]}\n" "Commands:"
     for NAME in ${!HELP_COMMANDS[@]}; do
-        printf "%${_HEAD_LEN}s" "${NAME}"
+        printf "${COLOR["blue"]}%${_HEAD_LEN}s${COLOR["nc"]}" "${NAME}"
 
         DESCRIPTION=${HELP_COMMANDS[$NAME]}
 
-        if [[ ${#DESCRIPTION} -le ${_DES_MAX} ]]; then
-            printf "    %s\n" "${HELP_COMMANDS[$NAME]}"
-        else
-            _trim_description ${_HEAD_LEN} ${_DES_MAX} ${DESCRIPTION}
-        fi
+        _trim_line 1 ${_HEAD_LEN} 4 ${COLOR["light_blue"]} ${DESCRIPTION}
     done
 }
