@@ -250,3 +250,131 @@ function make_dir() {
 
     ${SUDO} chmod go+rx "${_BASE_DIR}"
 }
+
+# help message for command
+# HELP_COMMANDS["command name"]="command description"
+declare -A HELP_COMMANDS
+
+# help message for args
+# HELP_ARGS["arg name"]="optional,arg description"
+# arg name without prefix "-"
+# if arg is optional, make sure arg description is start with "optional,"
+# if arg has arg value, make sure join arg name and value name with ":"
+# HELP_ARGS has two default args: -D for dry-run, -h for help message
+# if no need to use this two default args, please set arg description with "-"
+declare -A HELP_ARGS
+
+function _help() {
+    local _CMD
+    local _ARG_LIST
+    local _COMMAND_LIST
+    local _MAX_CMD
+    local _HEAD_LEN
+    local _DES_MAX
+
+    _CMD=`basename $0`
+    _HEAD_LEN=$((7+${#_CMD}))
+    _MAX_CMD=0
+    _DES_MAX=100
+
+    if [[ ${#HELP_COMMANDS[@]} -ge 1 ]]; then
+        for NAME in ${!HELP_COMMANDS[@]}; do
+            _COMMAND_LIST="${_COMMAND_LIST}|${NAME}"
+            
+            if [[ ${#NAME} -gt ${_MAX_CMD} ]]; then
+                _MAX_CMD=${#NAME}
+            fi
+        done
+        _COMMAND_LIST="{${_COMMAND_LIST:1}}"
+    fi
+
+    if [[ "x${HELP_ARGS["D"]}" == "x" ]]; then
+        HELP_ARGS["D"]="optional,Dry-run command for test."
+    fi
+
+    if [[ "x${HELP_ARGS["h"]}" == "x" ]]; then
+        HELP_ARGS["h"]="optional,Show this help message."
+    fi
+
+    for ARG in ${!HELP_ARGS[@]}; do
+        DESCRIPTION=${HELP_ARGS[$ARG]}
+
+        if [[ ${DESCRIPTION} == "-" ]]; then
+            continue
+        fi
+
+        if [[ $ARG =~ : ]]; then
+            ARG_PATTERN="-${ARG:0:1} ${ARG:2}"
+        else
+            ARG_PATTERN="-${ARG:0:1}"
+        fi
+
+        if [[ ${DESCRIPTION} =~ optional, ]]; then
+            _ARG_LIST="${_ARG_LIST} [${ARG_PATTERN}]"
+        else
+            _ARG_LIST="${_ARG_LIST} ${ARG_PATTERN}"
+        fi
+    done
+
+    printf "Usage: %s %s %s\n" "${_CMD}" "${_ARG_LIST}" "${_COMMAND_LIST}"
+    
+    if [[ ${#_HEAD_LEN} -lt ${#_MAX_CMD} ]]; then
+        _HEAD_LEN=${#_MAX_CMD}
+    fi
+
+    printf "%s\n" "Args:"
+    for ARG in ${!HELP_ARGS[@]}; do
+        DESCRIPTION=${HELP_ARGS[$ARG]}
+
+        if [[ ${DESCRIPTION} == "-" ]]; then
+            continue
+        fi
+
+        printf "%${_HEAD_LEN}s    %s\n" "-${ARG:0:1}" "${DESCRIPTION#optional,}"
+    done
+    
+    if [[ ${#HELP_COMMANDS[@]} -lt 1 ]]; then
+        return
+    fi
+    
+    printf "%s\n" "Commands:"
+    for NAME in ${!HELP_COMMANDS[@]}; do
+        printf "%${_HEAD_LEN}s" "${NAME}"
+
+        DESCRIPTION=${HELP_COMMANDS[$NAME]}
+
+        if [[ ${#DESCRIPTION} -le ${_DES_LEN} ]]; then
+            printf "    %s\n" "${HELP_COMMANDS[$NAME]}"
+        else
+            _END=0
+            while [[ ${_END} -lt ${#DESCRIPTION} ]]; do
+                _START=${_END}
+                _LAST_SEP=${_END}
+                
+                while true; do
+                    if [[ ${DESCRIPTION:$_END:1} =~ ( |,|/|\\|\.|;|\"|\') ]]; then
+                        _LAST_SEP=$((_END+1))
+                    fi
+
+                    _END=$((_END+1))
+
+                    if [[ ${_END} -ge ${#DESCRIPTION} ]]; then
+                        _END=${#DESCRIPTION}
+                        break
+                    fi
+
+                    if [[ $((_END-_START)) -gt ${_DES_MAX} ]]; then
+                        _END=${_LAST_SEP}
+                        break
+                    fi
+                done
+
+                if [[ ${_START} -eq 0 ]]; then
+                    printf "    %s\n" "${DESCRIPTION:$_START:$((_END-_START))}"
+                else
+                    printf "%${_HEAD_LEN}s    %s\n" " " "${DESCRIPTION:$_START:$((_END-_START))}"
+                fi
+            done
+        fi
+    done
+}
