@@ -7,49 +7,58 @@
 ```bash
 bin
 ├─conf
-│  └─dockerfile
-│      ├─digital
-│      ├─trade
-│      └─tradebase
 ├─container.d
 ├─logger.d
 ├─module.d
-└─service.d
+├─service.d
+├─sql
+└─templates
+    └─dockerfile
+        ├─digital
+        ├─trade
+        └─tradebase
 ```
 
-* **conf:** 基础配置文件目录
+* **conf：** 基础配置文件目录
 
-  1. *common.env:* 基本环境变量
+  > * *common.env：* 基本环境变量
+  > 
+  >    > ```bash
+  >    > $ cat bin/conf/common.env
+  >    > # 数据基础目录
+  >    > DATA_BASE=/data
+  >    > 
+  >    > # 应用基础目录
+  >    > APP_BASE=/opt
+  >    > 
+  >    > # SSH 免密连接至应用节点使用的私钥，如为空，则使用管理用户的默认私钥
+  >    > IDENTITY_FILE="~/.ssh/Jisheng-func-test.pem"
+  >    > 
+  >    > # 管理用户需要sudo以提升权限，如为root用户，则留空
+  >    > SUDO="sudo"
+  >    > ```
+  > 
+  > * *hosts.ini：* 应用组定义
+  > 
+  > * *image.list：* 基础依赖镜像列表
+  > 
+  > * *topic.list：* Kafka初始化 topic 列表
+  > 
+  > * **dockerfile：** dockerfile模板目录
 
-     > ```bash
-     > $ cat bin/conf/common.env
-     > # 数据基础目录
-     > DATA_BASE=/data
-     > 
-     > # 应用基础目录
-     > APP_BASE=/opt
-     > 
-     > # SSH 免密连接至应用节点使用的私钥，如为空，则使用管理用户的默认私钥
-     > IDENTITY_FILE="~/.ssh/Jisheng-func-test.pem"
-     > 
-     > # 管理用户需要sudo以提升权限，如为root用户，则留空
-     > SUDO="sudo"
-     > ```
+* **container.d：** 容器启动模块目录，一个模块文件对应一种容器启动逻辑，模块文件名（不含 “*.sh*” 后缀）即 **`应用组`** 名
 
-  2. *hosts.ini:* 应用组定义
+* **logger.d：** 自定义日志记录器模块目录，不同的日志模块对应不同的日志存储，目前暂无用，日志输出至 ***stdout*** & ***stderr***
 
-  3. *image.list:* 基础依赖镜像列表
+* **module.d：** 功能模块目录，提供命令行所需的各种功能函数
 
-  4. *topic.list:* Kafka初始化 topic 列表
+* **service.d：** 应用服务模块目录，解决应用组成员的 **`主机别名`** 和 **IP** 地址在 ***/etc/hosts*** 文件中的映射关系
 
-  5. **dockerfile:** dockerfile模板目录
-* **container.d:** 容器启动模块目录，一个模块文件对应一种容器启动逻辑，模块文件名（不含 “*.sh*” 后缀）即 **`应用组`** 名
+* **sql：** 数据库初始化脚本目录
 
-* **logger.d:** 自定义日志记录器模块目录，不同的日志模块对应不同的日志存储，目前暂无用，日志输出至 ***stdout*** & ***stderr***
+* **templates：** 模板文件目录
 
-* **module.d:** 功能模块目录，提供命令行所需的各种功能函数
-
-* **service.d:** 应用服务模块目录，解决应用组成员的 **`主机别名`** 和 **IP** 地址在 ***/etc/hosts*** 文件中的映射关系
+  > * **dockerfiles：** 自定义 **docker** 镜像打包所使用的 ***dockerfile*** 模板文件目录
 
 ## 运维框架初始化
 
