@@ -14,16 +14,48 @@ import_functions
 GROUP_NAME="pyload"
 CPU_PER_RUNNER=1
 
+LOADER="pyload"
+
 IDX=0
-parse_ssh `host_list | head -1`
-MASTER_HOST=`grep ${SSH_HOST} /etc/hosts | awk '{printf $1}'`
+
 MASTER_PORT=5557
 
-LOADER="pyload"
+HELP_ARGS["g:group_name"]="optional,Group name for pyload, default: \"pyload\"."
+HELP_ARGS["c:cpu_count"]="optional,CPU count for per process, default: 1."
+HELP_ARGS["L:loader_name"]="optional,Loader command for start pyload, default: \"pyload\"."
+HELP_ARGS["p:master_port"]="optional,Master port for reportting, default: 5557."
 
 HELP_COMMANDS["start"]="Start pyload cluster."
 HELP_COMMANDS["stop"]="Stop pyload cluster."
 HELP_COMMANDS["status"]="Check pyload cluster status."
+
+while getopts :c:h FLAG; do
+    case $FLAG in
+        c)
+            CPU_PER_RUNNER=${OPTARG}
+        ;;
+        g)
+            GROUP_NAME=${OPTARG}
+        ;;
+        L)
+            LOADER=${OPTARG}
+        ;;
+        p)
+            MASTER_PORT=${OPTARG}
+        ;;
+        h)
+            _help >&2
+            exit
+        ;;
+        *)
+            error "invalid args: $*"
+        ;;
+    esac
+done
+shift $((OPTIND-1))
+
+parse_ssh `host_list | head -1`
+MASTER_HOST=`grep ${SSH_HOST} /etc/hosts | awk '{printf $1}'`
 
 function _start() {
     declare _TOTAL_COUNT
