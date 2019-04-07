@@ -15,7 +15,7 @@ MASTER_IP="172.31.11.0"
 SCHEME=http
 HOST=trade
 
-SENTRY="SENTRY_DSN=http://8dc86b3c1ea045ef89b1b80cc442cebc:96c17c34471c492ba0e28f2fb7d61c48@monitor:9000/2"
+SENTRY_DSN="http://8dc86b3c1ea045ef89b1b80cc442cebc:96c17c34471c492ba0e28f2fb7d61c48@monitor:9000/2"
 
 HELP_ARGS["H:trade_host"]="optional,Trade host for pyload testing, default: \"trade\"."
 HELP_ARGS["C:cpu_count"]="optional,CPU cores per pyload process, default: 1."
@@ -105,7 +105,7 @@ docker run -d \
     --name "${NAME}-$IDX" \
     --restart always \
     ${NETWORK_ARGS} \
-    -e ${SENTRY} \
+    -e SENTRY_DSN=${SENTRY_DSN} \
     ${RUNNING_SCRIPT} \
     -v "${USER_FILE}":/pyLoadRunner/CSV/users.csv:ro \
     registry:5000/${NAME}:${VERSION} -H"${SCHEME}://${HOST}" -m${MODE} ${ARGS}
