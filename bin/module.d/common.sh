@@ -2,6 +2,8 @@ CONF_BASE="${BASE_DIR}/conf"
 MODULE_BASE="${BASE_DIR}/module.d"
 CONTAINER_BASE="${BASE_DIR}/container.d"
 SERVICE_BASE="${BASE_DIR}/service.d"
+TEMPLATE_BASE="${BASE_DIR}/templates"
+SQL_BASE="${BASE_DIR}/sql"
 
 COMMON_ENV="${CONF_BASE}/common.env"
 
@@ -391,9 +393,9 @@ function _help() {
     _MAX_CMD=0
     _LINE_MAX=89
 
-    if [[ "x${HELP_ARGS["D"]}" == "x" ]]; then
-        HELP_ARGS["D"]="optional,Dry-run command for test."
-    fi
+    # if [[ "x${HELP_ARGS["D"]}" == "x" ]]; then
+    #     HELP_ARGS["D"]="optional,Dry-run command for test."
+    # fi
 
     if [[ "x${HELP_ARGS["h"]}" == "x" ]]; then
         HELP_ARGS["h"]="optional,Show this help message."
