@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 [[ -L $0 ]] && SCRIPT_FILE=`readlink -fn $0` || SCRIPT_FILE=$0
 pushd `dirname "${SCRIPT_FILE}"` >/dev/null
@@ -33,7 +33,7 @@ function _extra_help() {
 HELP_ARGS["c"]="optional,Clean local build image."
 HELP_ARGS["p"]="optional,Push image to registry."
 HELP_ARGS["b:build_name"]="Project name to build."
-HELP_ARGS["D"]="-"
+HELP_ARGS["D"]="optional,Dry run command for test."
 
 function _build() {
     MODULE=
@@ -132,6 +132,14 @@ if [[ ! -d "${BUILD_DIR}" ]]; then
 fi
 
 cd "${BUILD_DIR}"
+
+ORIGIN_TEMPLATE_FILE="${TEMPLATE_BASE}/dockerfile/${BUILD_NAME}/dockerfile.template"
+if [[ ! -f "${ORIGIN_TEMPLATE_FILE}" ]]; then
+    error "dockerfile template missing."
+    exit 1
+fi
+
+$SUDO cp -f "${ORIGIN_TEMPLATE_FILE}" ./
 
 ls ${PATTERN} &>/dev/null
 if [[ $? -ne 0 ]]; then

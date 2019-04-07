@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 [[ -L $0 ]] && SCRIPT_FILE=`readlink -fn $0` || SCRIPT_FILE=$0
 pushd `dirname "${SCRIPT_FILE}"` >/dev/null
@@ -23,11 +23,21 @@ DB_USER=root
 DB_PASS=quantdo123456
 DB_NAME=digital
 
-USER_BASE_DIR="/opt/pyload/CSV"
+USER_BASE_DIR="${DATA_BASE:=/opt}/pyload/CSV"
 ORIGN_USER_FILE="${USER_BASE_DIR}/Users.csv"
 SLAVE_USER_FILE="${USER_BASE_DIR}/users.csv"
 
 PYLOAD_GROUP="pyload"
+
+HELP_ARGS["u:db_user"]="optional,User used in db connection with root privilege, if not specified, default auth will be used."
+HELP_ARGS["p:db_pass"]="optional,Password used in db connection with root privilege, if not specified, default auth will be used."
+HELP_ARGS["d:db_name"]="optional,DB name used in connection, if not specified, default \`digital\` will be used."
+HELP_ARGS["g:group_name"]="optional,Group name used when pub user CSV to all pyload members if not specified, default: \"pyload\" will be used."
+
+HELP_COMMANDS["init"]="Init 10000 pre-defined users for testing."
+HELP_COMMANDS["get"]="Retrive pre-defined users'info initiated by \`init\` command from DB."
+HELP_COMMANDS["pub"]="Publish retrived users CSV to all pyload members."
+HELP_COMMANDS["deploy"]="Combine of \`get\` & \`pub\` command."
 
 function _init_users() {
     local _RESULT
@@ -65,6 +75,31 @@ function _pub_users() {
     allscp -g${PYLOAD_GROUP} "${ORIGN_USER_FILE}"
     info "publishing finished."
 }
+
+while getopts :u:p:d:g:h FLAG; do
+    case $FLAG in
+        u)
+            DB_USER=${OPTARG}
+        ;;
+        p)
+            DB_PASS=${OPTARG}
+        ;;
+        d)
+            DB_NAME=${OPTARG}
+        ;;
+        g)
+            PYLOAD_GROUP=${OPTARG}
+        ;;
+        h)
+            _help >&2
+            exit
+        ;;
+        *)
+            error "invalid args: $*"
+        ;;
+    esac
+done
+shift $((OPTIND-1))
 
 if [[ $# -lt 1 ]]; then
     error "missing command."

@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 [[ -L $0 ]] && SCRIPT_FILE=`readlink -fn $0` || SCRIPT_FILE=$0
 pushd `dirname "${SCRIPT_FILE}"` >/dev/null
@@ -19,6 +19,17 @@ for SERVICE in ${SERVICE_LIST}; do
 done
 
 GROUP=
+
+HELP_ARGS["D"]="optional,Dry run command for test."
+
+HELP_COMMANDS["start"]="Start trade cluster/standalone."
+HELP_COMMANDS["stop"]="Stop trade cluster/standalone."
+HELP_COMMANDS["kill"]="Stop trade cluster/standalone forcely."
+HELP_COMMANDS["status"]="Check trade cluster/standalone status."
+HELP_COMMANDS["check"]="Alias command for \`status\`."
+HELP_COMMANDS["destory"]="Stop trade cluster/standalone forcely & remove data files."
+HELP_COMMANDS["logs"]="Get trade cluster/standalone last 100 logs."
+HELP_COMMANDS["pub"]="Publish container module to all trade members."
 
 function _find_group() {
     if [[ $1 =~ ^(order|sso)$ ]]; then
@@ -148,10 +159,14 @@ function _pub() {
     done
 }
 
-while getopts :d FLAG; do
+while getopts :Dh FLAG; do
     case $FLAG in
-        d)
+        D)
             DRY_RUN="echo"
+        ;;
+        h)
+            _help >&2
+            exit
         ;;
         *)
             error "invalid args: $*"
@@ -168,7 +183,7 @@ fi
 COMMAND=$1
 shift
 
-if [[ ${COMMAND} =~ log|pub && $# -lt 1 ]]; then
+if [[ ${COMMAND} =~ logs|pub && $# -lt 1 ]]; then
     error "please specify module name."
     exit 1
 fi

@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 [[ -L $0 ]] && SCRIPT_FILE=`readlink -fn $0` || SCRIPT_FILE=$0
 pushd `dirname "${SCRIPT_FILE}"` >/dev/null
@@ -20,6 +20,10 @@ MASTER_HOST=`grep ${SSH_HOST} /etc/hosts | awk '{printf $1}'`
 MASTER_PORT=5557
 
 LOADER="pyload"
+
+HELP_COMMANDS["start"]="Start pyload cluster."
+HELP_COMMANDS["stop"]="Stop pyload cluster."
+HELP_COMMANDS["status"]="Check pyload cluster status."
 
 function _start() {
     declare _TOTAL_COUNT

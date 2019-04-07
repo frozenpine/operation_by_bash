@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 [[ -L $0 ]] && SCRIPT_FILE=`readlink -fn $0` || SCRIPT_FILE=$0
 pushd `dirname "${SCRIPT_FILE}"` >/dev/null
@@ -11,6 +11,12 @@ FUNC_FILE_CONFIG="${MODULE_BASE}/config.sh"
 import_functions
 
 NGINX_GROUP=front
+
+HELP_ARGS["g:group_name"]="optional,Group name for nginx cluster controlling."
+HELP_ARGS["r"]="optional,Reload tag, if specified, all memeber in nginx cluster will be reloaded."
+
+HELP_COMMANDS["data"]="Publish data files to all member in nginx cluster."
+HELP_COMMANDS["conf"]="Publish config files to all member in nginx cluster."
 
 function _pub() {
     if [[ $# -ne 1 ]]; then
@@ -36,13 +42,17 @@ function _reload_nginx() {
     allssh -g${NGINX_GROUP} container exec nginx nginx -s reload
 }
 
-while getopts :g:r FLAG; do
+while getopts :g:rh FLAG; do
     case $FLAG in
         g)
             NGINX_GROUP=${OPTARG}
         ;;
         r)
             RELOAD=1
+        ;;
+        h)
+            _help >&2
+            exit
         ;;
         *)
             error "invalid args: $*"

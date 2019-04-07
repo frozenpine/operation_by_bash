@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 [[ -L "$0" ]] && SCRIPT_FILE=`readlink -fn "$0"` || SCRIPT_FILE="$0"
 cd `dirname "${SCRIPT_FILE}"`
@@ -27,7 +27,6 @@ HTTP_AUTH="--user ${REGISTRY_USER}:${REGISTRY_PASS}"
 HELP_ARGS["H:uri"]="optional,Specify host uri used in management, if not specified, default one stored by \"default\" command will be used."
 HELP_ARGS["s:scheme"]="optional,Specify connection type(http|https), if not specified, default one stored by \"default\" command will be used."
 HELP_ARGS["p"]="optional,Format result with \`jq\`."
-HELP_ARGS["D"]="-"
 
 HELP_COMMANDS["list"]="List all images in registry."
 HELP_COMMANDS["show"]="Show all/specified image with tags."

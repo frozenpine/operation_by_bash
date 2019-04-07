@@ -14,6 +14,7 @@ HELP_ARGS["H:db_host"]="optional,Specify db host to connect to, default: random 
 HELP_ARGS["u:db_user"]="optional,Specify db user in db connection, if not sepcified, default identity will be used."
 HELP_ARGS["p:db_pass"]="optional,Specify db pass in db connection, if not sepcified, default identity will be used."
 HELP_ARGS["P:db_port"]="optional,Specify db port to connect to, default: 3306."
+HELP_ARGS["D"]="optional,Dry run command for test."
 
 HELP_COMMANDS["start"]="Start all mysql hosts without replication."
 HELP_COMMANDS["stop"]="Stop all mysql hosts."
@@ -36,8 +37,6 @@ DB_HOST=
 DB_PORT=
 DB_USER=
 DB_PASS=
-
-SQL_BASE="/opt/sql"
 
 function _shuffle_host() {
     IDX=$((RANDOM % ${#MYSQL_LIST[@]}))

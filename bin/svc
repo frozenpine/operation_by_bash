@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 [[ -L $0 ]] && SCRIPT_FILE=`readlink -fn $0` || SCRIPT_FILE=$0
 pushd `dirname "${SCRIPT_FILE}"` >/dev/null
@@ -11,7 +11,6 @@ import_functions
 
 SERVICE_LIST=
 
-HELP_ARGS["D"]="-"
 HELP_COMMANDS["sync"]="Sync specified IP-HOST mapping to \"/etc/hosts\" by service name, if no service name specified, all service in \"service.d\" will be synced."
 
 function _sync_host() {

@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 [[ -L $0 ]] && SCRIPT_FILE=`readlink -fn $0` || SCRIPT_FILE=$0
 pushd `dirname "${SCRIPT_FILE}"` >/dev/null
@@ -10,6 +10,8 @@ FUNC_FILE_CONFIG="${MODULE_BASE}/config.sh"
 import_functions
 
 DRY_RUN=
+
+HELP_ARGS["D"]="optional,Dry run command for test."
 
 HELP_COMMANDS["start"]="Start zookeeper cluster/standalone."
 HELP_COMMANDS["stop"]="Stop zookeeper cluster/standalone and keep container & local volume."

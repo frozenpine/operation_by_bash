@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 [[ -L $0 ]] && SCRIPT_FILE=`readlink -fn $0` || SCRIPT_FILE=$0
 pushd `dirname "${SCRIPT_FILE}"` >/dev/null
@@ -25,6 +25,24 @@ MANAGE_PASS="123456"
 
 TOKEN=
 RESULT=
+
+HELP_ARGS["H:host"]="optional,Specify host[:port] to connect to, if not sepcified, default host: manage will be used."
+HELP_ARGS["u:admin_user"]="optional,Specify admin user to login, if not specified, default auth will be used."
+HELP_ARGS["p:admin_pass"]="optional,Specify admin pass to login, if not specified, default auth will be used."
+HELP_ARGS["D"]="optional,Dry run command for test."
+
+HELP_COMMANDS["start"]="Start management cluster/standalone."
+HELP_COMMANDS["stop"]="Stop management cluster/standalone."
+HELP_COMMANDS["kill"]="Stop management cluster/standalone forcely."
+HELP_COMMANDS["status"]="Check management cluster/standalone status."
+HELP_COMMANDS["check"]="Alias command for status."
+HELP_COMMANDS["destory"]="Stop management cluster/standalone forcely & remove data files."
+HELP_COMMANDS["logs"]="Get management cluster/standalone last 100 logs."
+HELP_COMMANDS["pub"]="Publish container module to all management members."
+HELP_COMMANDS["truncate"]="Truncate all db tables used by management cluster/standalone."
+HELP_COMMANDS["init"]="Init all db tables' data used by management cluster/standalone."
+HELP_COMMANDS["instrument"]="Login & execute sync instrument RPC provided by manage cluster/standalone."
+HELP_COMMANDS["instrument"]="Login & execute sync fee RPC provided by manage cluster/standalone."
 
 function _login() {
     RESULT=$(curl -XPOST "${MANAGE_HOST}/sso/login" \
@@ -109,10 +127,23 @@ function _sync_fee() {
     echo "${RESULT}" | jq .result.result
 }
 
-while getopts :d FLAG; do
+while getopts :H:u:p:Dh FLAG; do
     case $FLAG in
-        d)
+        H)
+            MANAGE_HOST="http://${OPTARG}"
+        ;;
+        u)
+            MANAGE_USER=${OPTARG}
+        ;;
+        p)
+            MANAGE_PASS=${OPTARG}
+        ;;
+        D)
             DRY_RUN="echo"
+        ;;
+        h)
+            _help >&2
+            exit
         ;;
         *)
             error "invalid args: $*"
