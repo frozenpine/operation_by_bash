@@ -460,11 +460,83 @@ node03
 
 ## Redis服务
 
-> **Note：** 
+> **Note：** 同上，请先确保基础镜像存在且 **IP - HOST** 映射关系正确
+
+1. 编辑 **container.d** 下的容器启动模块 ***redis.sh***
+
+   > ```bash
+   > vim bin/container.d/redis.sh
+   > # redis 版本号
+   > VERSION="5.0.3"
+   > # 镜像名
+   > NAME=redis
+   > # redis 启动用户
+   > USER=${NAME}
+   > 
+   > # redis 依赖的服务列表
+   > SERVICE_LIST="registry"
+   > ```
+
+2. 将容器启动模块发布给所有节点服务器
+
+   > ```bash
+   > $ pwd
+   > /home/ec2-user
+   > # 需要注意发布文件时的路径参数
+   > $ allscp -gredis bin/container.d/redis.sh
+   > ```
+
+3. 使用 [ ***`container`***](documents/commands/container.md) 命令启动 **redis** 
+
+   > **Note：** 由于 **redis** 服务启动后无需多做维护，故未封装专用的集群管理命令行
+   >
+   > ```bash
+   > # 启动 redis
+   > $ allssh -gredis container start redis
+   > # 检查 redis 状态
+   > $ allssh -gredis contaienr status redis
+   > ```
 
 ## Consul集群
 
-> **Note：** 
+> **Note：** 同上，请先确保基础镜像存在且 **IP - HOST** 映射关系正确
+
+1. 编辑 **container.d** 下的容器启动模块 ***consul.sh***
+
+   > ```bash
+   > $ vim bin/container.d/consul.sh
+   > # consul 版本号
+   > VERSION="1.4.3"
+   > # consul 镜像名
+   > NAME=consul
+   > # 该配置已弃用
+   > USER=${NAME}
+   > 
+   > # consul 绑定的对外提供服务的网卡名
+   > BIND_INT="eth0"
+   > 
+   > # consul 依赖的服务列表
+   > SERVICE_LIST="registry consul"
+   > ```
+
+2. 将容器启动模块发布至所有成员节点
+
+   > ```bash
+   > $ pwd
+   > /home/ec2-user
+   > # 请注意发布路径的正确性
+   > $ allscp -gconsul bin/container.d/consul.sh
+   > ```
+
+3. 启动 **consul** 
+
+   > ```bash
+   > # 启动 consul
+   > $ allssh -gconsul container start consul
+   > # 查看 consul 状态
+   > $ allssh -gconsul container status consul
+   > ```
+
 
 ## 启动交易系统
 
