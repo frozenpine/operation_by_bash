@@ -62,9 +62,9 @@ bin
 
 ## 运维框架初始化
 
-1. 定义运维脚本需要管理的 [**`主机列表`**](documents/inventory.md/#nodes)
+1. 定义运维脚本需要管理的 [**主机列表**](documents/inventory.md/#nodes)
 
-   > 将所有节点的 **IP** 和 **主机名** 添加至 **`管理节点`** 的 ***/etc/hosts*** 文件内
+   > 将所有节点的 **IP** 和 **主机名** 添加至 **管理节点** 的 ***/etc/hosts*** 文件内
    > ```bash
    > $ cat /etc/hosts
    > 127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4 node03
@@ -77,20 +77,20 @@ bin
    > ```
    >
 
-2. 规划 [**`应用组`**](documents/inventory.md/#应用分组) 在主机上的分布
+2. 规划 [**应用组**](documents/inventory.md/#应用分组) 在主机上的分布
 
-3. 根据规划，编辑 **service.d** 下的应用服务模块中的 [**`主机别名`**](documents/inventory.md/#alias) 和 **IP** 地址的对应关系，[*示例*](documents/commands/svc.md/#服务定义示例)
+3. 根据规划，编辑 **service.d** 下的应用服务模块中的 [**主机别名**](documents/inventory.md/#alias) 和 **IP** 地址的对应关系，[*示例*](documents/commands/svc.md/#服务定义示例)
 
-4. 在 **`管理节点`** 上执行 [ ***`服务管理`***](documents/commands/svc.md "svc") 命令，完成 **IP - 主机名** 的初始化
+4. 在 **管理节点** 上执行 [ ***`服务管理`*** ](documents/commands/svc.md "svc") 命令，完成 **IP - 主机名** 的初始化
 
-5. **`管理节点`** 与 [**`应用节点`**](documents/inventory.md/#主机信息) 间建立 SSH 互信
+5. **管理节点** 与 [**应用节点**](documents/inventory.md/#主机信息) 间建立 SSH 互信
 
    > **Note：**
    >
-   > * **`管理节点`** 应该能免密登录到任意一台运行应用的节点服务器
-   > * **`管理节点`** 免密登录 **`应用节点`** 的 **`管理账号`**，应具备 **root** 权限，或至少应能免密使用 **sudo** 以运行需要特权的管理命令
+   > * **管理节点** 应该能免密登录到任意一台运行应用的节点服务器
+   > * **管理节点** 免密登录 **应用节点** 的 **管理账号**，应具备 **root** 权限，或至少应能免密使用 **sudo** 以运行需要特权的管理命令
 
-以上操作完成后，**`管理节点`** 应该具备基本的 [ ***`远程执行`***](documents/commands/allssh.md "allssh") 管理命令的功能：
+以上操作完成后，**管理节点** 应该具备基本的 [ ***`远程执行`*** ](documents/commands/allssh.md "allssh") 管理命令的功能：
 
 ```bash
 [ec2-user@node03 ~]$ allssh uname -n
@@ -102,8 +102,6 @@ node02
 
 Results from remote host[ec2-user@172.31.24.114]:
 node03
-
-[ec2-user@node03 ~]$ 
 ```
 
 ## Docker运行环境部署
@@ -123,10 +121,9 @@ node03
    > # 安装命令
    > $ allssh sudo yum install -y docker
    > ```
-   > 
+   >
 
-
-2. 将所有节点上 **`本地仓库`** 的连接方式设置为 **HTTP**
+2. 将所有节点上 **本地仓库** 的连接方式设置为 **HTTP**
 
    > 编辑 ***/etc/docker/daemon.json*** 文件， 如不存在则新建即可
    > ```yaml
@@ -134,7 +131,7 @@ node03
    > "insecure-registries" : ["registry:5000"]
    > }
    > ```
-   > 可先在 **`管理节点`** 上先创建完该文件，再使用 [ ***`远程分发`***](documents/commands/allscp.md "allscp") 命令下发至所有服务器
+   > 可先在 **管理节点** 上先创建完该文件，再使用 [ ***`远程分发`*** ](documents/commands/allscp.md "allscp") 命令下发至所有服务器
    >
    > ```bash
    > # 创建 daemon.json 文件
@@ -143,15 +140,14 @@ node03
    > "insecure-registries" : ["registry:5000"]
    > }
    > EOF
-   > 
+   >
    > # 分发至所有服务器
    > $ allscp deamon.json
-   > 
+   >
    > # 将分发文件移动至指定目录
    > $ allssh sudo mv daemon.json /etc/docker/daemon
    > ```
    >
-
 
 3. 启动 **docker** 服务，并设置开机自启动
 
@@ -170,10 +166,10 @@ node03
    >    CGroup: /system.slice/docker.service
    >            ├─4058 /usr/bin/dockerd -H fd://
    >            └─9176 /usr/bin/docker-proxy -proto tcp -host-ip 0.0.0.0 -host-port 9000 -container-ip 172.17.0.4 -container-port 9000
-   > 
+   >
    > # 设置开机自启动
    > $ allssh sudo systemctl enable docker
-   > 
+   >
    > # 如无 systemd 环境
    > $ allssh sudo service docker start
    > $ allssh sudo service docker status
@@ -182,7 +178,7 @@ node03
    > ```
    >
 
-4. 将 **`应用节点`** 及 **`管理节点`** 上的 **`管理账号`** 加入 **docker** 组，以具备 **docker** 命令执行权限
+4. 将 **应用节点** 及 **管理节点** 上的 **管理账号** 加入 **docker** 组，以具备 **docker** 命令执行权限
 
    > ```bash
    > # ec2-user 请修改为实际的用户账号
@@ -193,24 +189,24 @@ node03
    > $ sudo useradd -Gdocker -a ec2-user
    > ```
    >
-   > **`管理节点`** 上配置完 **docker** 用户组后，需重新登录以使配置生效
+   > **管理节点** 上配置完 **docker** 用户组后，需重新登录以使配置生效
 
-5. 在 **`管理节点`** 上使用 [ ***`容器管理`*** ](documents/commands/container.md "container") 命令启动 **`本地镜像仓库`**，并配置 [ ***`仓库管理`*** ](documents/commands/registry.md "registry") 命令的默认连接仓库
+5. 在 **管理节点** 上使用 [ ***`容器管理`*** ](documents/commands/container.md "container") 命令启动 **本地镜像仓库**，并配置 [ ***`仓库管理`*** ](documents/commands/registry.md "registry") 命令的默认连接仓库
 
    > ```bash 
    > # 启动容器
    > $ container start registry
-   > 
+   >
    > # 查看容器状态
    > $ container status registry
    > [ INFO] docker container[registry] is running.
-   > 
+   >
    > # 配置默认的连接仓库
    > $ registry -shttp -Hregistry:5000 default
-   > 
    > ```
+   >
 
-6. 编辑 [ **`基础镜像列表`** ](documents/images.md/#依赖的外部镜像) 并使用 [ ***`仓库管理`*** ](documents/commands/registry.md "registry") 命令从 **docker-hub** <a name="sync-image">同步</a> 这些基础镜像
+6. 编辑 [ **基础镜像列表** ](documents/images.md/#依赖的外部镜像 "topic.list") 并使用 [ ***`仓库管理`*** ](documents/commands/registry.md "registry") 命令从 **docker-hub** <a name="sync-image">同步</a> 这些基础镜像
 
    > 列表文件位于 ***config/image.list***
    >
@@ -225,10 +221,10 @@ node03
    > zookeeper:3.4.13
    > mysql:5.7.25
    > consul:1.4.3
-   > 
+   >
    > # 执行 registry 命令以同步镜像
    > $ registry sync
-   > 
+   >
    > # 查看 本地镜像仓库 的镜像列表
    > $ registry -p list
    > Results from registry: http://registry:5000
@@ -242,8 +238,9 @@ node03
    >   "redis",
    >   "zookeeper"
    > ]
-   > 
+   >
    > ```
+   >
 
 至此，**docker** 运行环境部署完成。
 
@@ -251,15 +248,11 @@ node03
 
 ------
 
-
-
 ## 应用容器镜像打包
 
 > **Note：** 该运维脚本不包括应用的编译功能，请用户自行编译目标应用
 
-
-
-1. 将编译完成的程序包存放至 **`管理节点`** 的 ***${DATA_BASE}/docker-hub/{工程名}*** 目录下
+1. 将编译完成的程序包存放至 **管理节点** 的 ***${DATA_BASE}/docker-hub/{工程名}*** 目录下
 
 2. 程序包名必须符合如下的命名规则：
 
@@ -271,30 +264,30 @@ node03
    > -rw-rw-r-- 1 ec2-user ec2-user 64425301 Apr  4 02:17 trade-clear-1.0.1-SNAPSHOT.jar
    > -rw-rw-r-- 1 ec2-user ec2-user 32671908 Apr  4 02:16 trade-match-1.0.1-SNAPSHOT.jar
    > -rw-rw-r-- 1 ec2-user ec2-user 34825790 Apr  4 02:17 trade-order-1.0.1-SNAPSHOT.jar
-   > 
+   >
    > ```
-   > 
+   >
    > 不符合规则的程序包，请手工修改为符合规则的命名
 
-3. 使用 [ ***`镜像打包`*** ](documents/commands/build-image.md "build-image") 命令，将程序包打包为 **docker** 镜像，并上传至 **`本地镜像仓库`**
+3. 使用 [ ***`镜像打包`*** ](documents/commands/build-image.md "build-image") 命令，将程序包打包为 **docker** 镜像，并上传至 **本地镜像仓库**
 
-   > 打包过程中，将自动清理 **`应用节点`** 上同名的历史镜像，以确保 **容器** 启动时，使用的是最新的镜像
+   > 打包过程中，将自动清理 **应用节点** 上同名的历史镜像，以确保 **容器** 启动时，使用的是最新的镜像
    >
    > ```bash
    > # 此处 trade 为 ${DATA_BASE}/docker-hub/ 下存在的工程名
    > # all 表示打包该工程下所有模块，也可指定模块列表（模块名以空格分隔），以更新特定的模块
    > $ build-image -cp -b trade all
-   > 
+   >
    > ```
 
----
+------
 
 ## Zookeeper集群
 
 > **Note：** 建立 **zookeeper** 集群前，请先确保以下操作完成：
 >
-> 1. **`本地仓库`** 中存在指定版本号的 **zookeeper** 镜像，该镜像应该在 [**Docker运行环境部署**](#Docker运行环境部署) 的 [同步](#sync-image) 操作中完成下载
-> 2. **service.d** 下的 ***zookeeper.sh*** 服务模块有正确的 **IP - HOST** 映射，[示例](documents/commands/svc.md/#服务定义示例)
+> 1. **本地镜像仓库** 中存在指定版本号的 **zookeeper** 镜像，该镜像应该在 [**Docker运行环境部署**](#Docker运行环境部署) 的 [同步](#sync-image) 操作中完成下载
+> 2. **service.d** 下的 ***zookeeper.sh*** 服务模块有正确的 **IP - HOST** 映射，[*示例*](documents/commands/svc.md/#服务定义示例)
 
 1. 编辑 **container.d** 下的 ***zookeeper.sh*** 容器模块：
 
@@ -306,32 +299,32 @@ node03
    > NAME=zookeeper
    > # zookeeper 启动用户
    > USER=${NAME}
-   > 
+   >
    > # zookeeper 客户端连接端口
    > CLIENT_PORT=2181
    > # zookeeper leader 开放端口
    > SVR_PORT1=2888
    > # zookeeper 选举端口
    > SVR_PORT2=3888
-   > 
+   >
    > # zookeeper 依赖的服务列表
    > # registry 服务为所有容器启动模块的固定依赖，不可变
    > # 由于该模块脚本支持启动 zookeeper 集群，集群成员需要知道所有的成员地址
    > # 故还需依赖 zookeeper 自身服务，以获取全部成员的 IP-HOST
    > SERVICE_LIST="registry zookeeper"
-   > 
+   >
    > # 以下是模块启动逻辑，不赘述...
    > ```
-   > 
+   >
 
 2. 将编辑后的启动模块分发给 **zookeeper** 应用组的全部成员节点
 
    > ```bash
    > $ zk pub
    > ```
-   > 
+   >
 
-3. 使用 [ ***`zk`***](documents/commands/zk.md) 集群管理命令启动 **zookeeper** 集群
+3. 使用 [ ***`zk`*** ](documents/commands/zk.md) 集群管理命令启动 **zookeeper** 集群
 
    > ```bash
    > # 检查集群当前状态，包括：1.容器是否运行；2.数据目录状态
@@ -341,13 +334,13 @@ node03
    > # 检查集群运行状态
    > $ zk status
    > ```
-   > 
+   >
 
 ## Kafka集群
 
 > **Note：** 建立 **kafka** 集群前请确保以下操作已完成：
 >
-> 1. **`本地仓库`** 中存在指定版本号的 **kafka** 镜像
+> 1. **本地镜像仓库** 中存在指定版本号的 **kafka** 镜像
 > 2. **service.d** 下的 ***zookeeper.sh*** & ***kafka.sh*** 模块文件有正确的 **IP - HOST** 映射关系
 > 3. **zookeeper** 集群已正确启动完成
 
@@ -361,13 +354,13 @@ node03
    > NAME=kafka
    > # kafka 容器启动所用用户
    > USER=${NAME}
-   > 
+   >
    > # kafka 依赖的服务列表
    > SERVICE_LIST="registry zookeeper kafka"
-   > 
+   >
    > # 以下为启动逻辑，无需修改
    > ```
-   > 
+   >
 
 2. 将编辑后的启动模块分发给 **kafka** 应用组的全部成员节点
 
@@ -377,7 +370,7 @@ node03
 
 3. 编辑 ***topic.list*** 列表文件，指定 **kafka** 集群需要创建的 **topic** 列表
 
-   > **Note：** 列表文件每行指定一个 **topic** 名，后可选指定 **`分区数`** 和 **`副本数`**
+   > **Note：** 列表文件每行指定一个 **topic** 名，后可选指定 **分区数** 和 **副本数**
    >
    > ```bash
    > $ vim bin/conf/topic.list
@@ -388,20 +381,20 @@ node03
    > MATCH-SS-INCREMENT
    > MATCH-JSON-SS
    > MATCH-JSON-SS-INCREMENT
-   > 
+   >
    > BACK-ORDER
    > SS-BOOK-ORDER
-   > 
+   >
    > CLEAR                   # 30
    > APO-FULL                # 30
    > APO-INCREMENT           # 30
-   > 
+   >
    > NOTIFY
    > ACCESS
    > ```
-   > 
+   >
 
-4. 使用 [ ***`kfk`***](documents/commands/kfk.md) 集群管理命令启动 **kafka** 集群
+4. 使用 [ ***`kfk`*** ](documents/commands/kfk.md) 集群管理命令启动 **kafka** 集群
 
    > ```bash
    > # 检查 kafka 集群当前状态及数据目录
@@ -413,7 +406,7 @@ node03
    > # 检查 kafka topic
    > $ kfk topic --list
    > ```
-   > 
+   >
 
 ## MySQL数据库
 
@@ -429,13 +422,13 @@ node03
    > NAME=mysql
    > # mysql 启动用户
    > USER=${NAME}
-   > 
+   >
    > # mysql root用户的密码
    > ADMIN_PASSWD="quantdo123456"
-   > 
+   >
    > # mysql 依赖的服务列表
    > SERVICE_LIST="registry"
-   > 
+   >
    > # 以下为容器的启动逻辑，无需修改
    > ```
 
@@ -445,7 +438,7 @@ node03
    > $ db pub
    > ```
 
-3. 使用 [ ***`db`***](documents/commands/db.md) 集群管理命令启动 **mysql** 集群
+3. 使用 [ ***`db`*** ](documents/commands/db.md) 集群管理命令启动 **mysql** 集群
 
    > **Note：** 该管理命令仅实现了 **mysql** 容器的启动，未实现集群内成员间的 [**主从复制**](docuemnts/mysql-replicator.md) 配置，需管理员手工完成 [**主从复制**](documents/mysql-replicator.md) 的配置工作
    >
@@ -472,7 +465,7 @@ node03
    > NAME=redis
    > # redis 启动用户
    > USER=${NAME}
-   > 
+   >
    > # redis 依赖的服务列表
    > SERVICE_LIST="registry"
    > ```
@@ -486,7 +479,7 @@ node03
    > $ allscp -gredis bin/container.d/redis.sh
    > ```
 
-3. 使用 [ ***`container`***](documents/commands/container.md) 命令启动 **redis** 
+3. 使用 [ ***`container`*** ](documents/commands/container.md) 命令启动 **redis**
 
    > **Note：** 由于 **redis** 服务启动后无需多做维护，故未封装专用的集群管理命令行
    >
@@ -528,7 +521,7 @@ node03
    > $ allscp -gconsul bin/container.d/consul.sh
    > ```
 
-3. 启动 **consul** 
+3. 启动 **consul**
 
    > ```bash
    > # 启动 consul
@@ -537,12 +530,11 @@ node03
    > $ allssh -gconsul container status consul
    > ```
 
-
 ## 启动交易系统
 
 > **Note：**
 >
-> 1. 启动容器前，请先确保 **`本地仓库`** 内的应用镜像为最新版本，如非最新，请先编译、[打包](#应用容器镜像打包) 最新镜像
+> 1. 启动容器前，请先确保 **本地镜像仓库** 内的应用镜像为最新版本，如非最新，请先编译、[打包](#应用容器镜像打包) 最新镜像
 >
 >    > 测试阶段版本号为 **SNAPSHOT** ，更新较快且每次更新不会改变版本号
 >
@@ -554,7 +546,7 @@ node03
 
    > ```bash
    > /*
-   >  *	编辑 场下管理系统 的模块文件
+   >  * 编辑 场下管理系统 的模块文件
    >  */
    > $ vim bin/container.d/rest.sh
    > # rest 模块（接口URI controller）版本号
@@ -563,18 +555,18 @@ node03
    > NAME=rest
    > # 模块启动用户，已降级，此处配置无效
    > USER=${NAME}
-   > 
+   >
    > # rest 模块启动的额外 java 参数
    > JVM_OPTS="-Duser.timezone=GMT+08"
-   > 
+   >
    > # 如在运行环境中使用了 sentry，此处配置 sentry dsn
    > SENTRY_DSN="http://654e52faff5144798b88dff78fa283b5:73a9028558844a5d88c14c50a106b9cc@monitor:9000/8"
-   > 
+   >
    > # rest 模块依赖的服务列表
    > SERVICE_LIST="registry zookeeper kafka mysql redis"
-   > 
+   >
    > # ——————————————————————————————————————————————————————
-   > 
+   >
    > $ vim bin/container.d/serviceimpl.sh
    > # serviceimpl 模块（RPC服务端）版本号
    > VERSION="1.0.3-SNAPSHOT"
@@ -582,23 +574,23 @@ node03
    > NAME=serviceimpl
    > # 模块启动用户，已降级，此处配置无效
    > USER=${NAME}
-   > 
+   >
    > # serviceimpl 模块启动的额外 java 参数
    > JVM_OPTS="-Duser.timezone=GMT+08"
-   > 
+   >
    > # 如在运行环境中使用了 sentry，此处配置 sentry dsn
    > SENTRY_DSN="http://032c281ab84f4c0798e6f3482a4d2e2e:d44ee127559b4d7e921d212a7b03fd81@monitor:9000/7"
-   > 
+   >
    > # serviceimpl 模块依赖的服务列表
    > SERVICE_LIST="registry zookeeper kafka mysql redis"
    > /*
-   >  *	场下管理系统 模块文件编辑结束
+   >  * 场下管理系统 模块文件编辑结束
    >  */
-   > 
+   >
    > /******************************************************/
-   > 
+   >
    > /*
-   >  *	编辑 交易核心系统 的模块文件
+   >  * 编辑 交易核心系统 的模块文件
    >  */
    > $ vim bin/container.d/sso.sh
    > # sso 模块（用户管理模块）版本号
@@ -607,16 +599,16 @@ node03
    > NAME=sso
    > # 模块启动用户，已降级，此处配置无效
    > USER=${NAME}
-   > 
+   >
    > # 如在运行环境中使用了 sentry，此处配置 sentry dsn
    > SENTRY_DSN="http://a18befa43f4d4d38983934e7cf7ed441:6103657ae0634a7299fc70670e295c73@monitor:9000/6"
-   > 
+   >
    > # sso 模块启动的额外 java 参数
    > JVM_OPTS="-Duser.timezone=GMT+08"
-   > 
+   >
    > # sso 模块依赖的服务列表
    > SERVICE_LIST="registry zookeeper kafka mysql redis"
-   > 
+   >
    > # ——————————————————————————————————————————————————————
    > 
    > $ vim bin/container.d/order.sh
@@ -626,15 +618,15 @@ node03
    > NAME=order
    > # 模块启动用户，已降级，此处配置无效
    > USER=${NAME}
-   > 
+   >
    > # order 模块启动的额外 java 参数
    > JVM_OPTS=""
-   > 
+   >
    > # order 模块依赖的服务列表
    > SERVICE_LIST="registry zookeeper kafka mysql redis"
-   > 
+   >
    > # ——————————————————————————————————————————————————————
-   > 
+   >
    > $ vim bin/container.d/clear.sh
    > # clear 模块（清算模块）版本号
    > VERSION="1.0.1-SNAPSHOT"
@@ -642,15 +634,15 @@ node03
    > NAME=clear
    > # 模块启动用户，已降级，此处配置无效
    > USER=${NAME}
-   > 
+   >
    > # clear 模块启动的额外 java 参数
    > JVM_OPTS="-Xms8G -Xmx8G"
-   > 
+   >
    > # clear 模块依赖的服务列表
    > SERVICE_LIST="registry zookeeper kafka mysql redis"
-   > 
+   >
    > # ——————————————————————————————————————————————————————
-   > 
+   >
    > $ vim bin/container.d/match.sh
    > # match 模块（撮合模块）版本号
    > VERSION="1.0.1-SNAPSHOT"
@@ -658,18 +650,18 @@ node03
    > NAME=match
    > # 模块启动用户，已降级，此处配置无效
    > USER=${NAME}
-   > 
+   >
    > # match 模块启动的额外 java 参数
    > JVM_OPTS="-Xms8G -Xmx8G"
-   > 
+   >
    > # match 模块依赖的服务列表
    > SERVICE_LIST="registry zookeeper kafka mysql redis"
    > /*
-   >  *	交易核心系统 模块文件编辑结束
+   >  * 交易核心系统 模块文件编辑结束
    >  */
    > ```
 
-2. 将编辑完的模块文件发布给各 **`应用节点`**
+2. 将编辑完的模块文件发布给各 **应用节点**
 
    > ```bash
    > # 发布 场下管理系统
@@ -679,12 +671,12 @@ node03
    > $ trade pub
    > ```
 
-3. 使用集群管理命令：[ ***`manage`***](documents/commands/manage.md)， [ ***`trade`***](documents/commands/trade.md) 启动各子系统
+3. 使用集群管理命令：[ ***`manage`*** ](documents/commands/manage.md)， [ ***`trade`*** ](documents/commands/trade.md) 启动各子系统
 
    > ```bash
    > /*
-   >  *	启动 场下管理系统
-   > */
+   >  * 启动 场下管理系统
+   >  */
    > # 清理 场下管理系统 数据库
    > $ manage truncate
    > # 初始化 场下管理系统 数据库
@@ -694,21 +686,21 @@ node03
    > # 检查 场下管理系统 状态
    > $ manage status
    > /*
-   >  *	场下管理系统 启动完成
-   > */
-   > 
+   >  * 场下管理系统 启动完成
+   >  */
+   >
    > /*********************************************/
-   > 
+   >
    > /*
-   >  *	启动 交易核心
-   > */
+   >  * 启动 交易核心
+   >  */
    > # 启动 交易核心
    > $ trade start
    > # 检查 交易核心
    > $ trade status
-   > 
+   >
    > /*
-   >  *	交易核心 启动完成
-   > */
+   >  * 交易核心 启动完成
+   >  */
    > ```
    >
