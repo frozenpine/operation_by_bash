@@ -284,7 +284,7 @@ function _trim_line() {
     local _COLOR
     local _FIRST_LINE
 
-    _LINE_MAX=89
+    _LINE_MAX=79
 
     _FIRST_LINE=$1
     shift

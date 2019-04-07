@@ -3,13 +3,19 @@
 > ### 命令行帮助
 >
 > ```bash
-> Usage: svc sync [service_name...]
->     sync  sync specify Host - IP mapping to "/etc/hosts" by service name, if no service name specified, all service in "service.d" will be synced.
+> $ svc -h
+> Usage: svc [-h]
+>               { sync }
+> Args:
+>         -h    Show this help message.
+> Commands:
+>       sync    Sync specified IP-HOST mapping to "/etc/hosts" by service name, if no
+>               service name specified, all service in "service.d" will be synced.
 > ```
 >
 > 将服务信息同步至 ***/etc/hosts*** 文件
 
-## 参数说明
+## 命令说明
 
 * sync：同步命令，将指定的服务列表中定义的 **IP - HOST** 映射关系添加至 ***/etc/hosts*** 文件；根据 **HOST**， **IP** 在 **/etc/hosts** 文件中不同的存在情况，有如下行为：
   1. **IP**，**HOST** 均不存在：直接添加新的映射关系
@@ -29,27 +35,27 @@
 
 ## 服务定义示例
 
-* zookeeper服务
+* ***zookeeper.sh*** 服务模块
 
-  ```bash
-  # zookeeper 命名数组声明
-  declare -A ZK_LIST
-  
-  # 主机别名 为 zk，IP 地址为 172.31.24.111 的节点，提供了 zookeeper 服务
-  ZK_LIST["zk"]="172.31.24.111"
-  
-  # 多节点集群配置参考如下示例
-  # ZK_LIST["zk001"]="172.31.11.14"
-  # ZK_LIST["zk002"]="172.31.11.15"
-  # ZK_LIST["zk003"]="172.31.11.16"
-  
-  # 此项配置留空，由 container.d 下的模块代码动态生成
-  ZK_SERVERS=
-  # 提供 zookeeper 服务的应用开放的端口号
-  ZK_PORT=2181
-  
-  # 下方还有同步 IP - HOST 至 /etc/hosts 文件的处理逻辑，不需要修改，此处不赘述
-  
-  ```
+  > ```bash
+  > # zookeeper 命名数组声明
+  > declare -A ZK_LIST
+  > 
+  > # 主机别名 为 zk，IP 地址为 172.31.24.111 的节点，提供了 zookeeper 服务
+  > ZK_LIST["zk"]="172.31.24.111"
+  > 
+  > # 多节点集群配置参考如下示例
+  > # ZK_LIST["zk001"]="172.31.11.14"
+  > # ZK_LIST["zk002"]="172.31.11.15"
+  > # ZK_LIST["zk003"]="172.31.11.16"
+  > 
+  > # 此项配置留空，由 container.d 下的模块代码动态生成
+  > ZK_SERVERS=
+  > # 提供 zookeeper 服务的应用开放的端口号
+  > ZK_PORT=2181
+  > 
+  > # 下方还有同步 IP - HOST 至 /etc/hosts 文件的处理逻辑，不需要修改，此处不赘述
+  > 
+  > ```
 
 其余服务定义大同小异，可参考上述示例

@@ -10,10 +10,13 @@ FUNC_FILE_CONFIG="${MODULE_BASE}/config.sh"
 FUNC_FILE_MYSQL="${MODULE_BASE}/mysql.sh"
 import_functions
 
+GROUP_NAME=mysql
+
 HELP_ARGS["H:db_host"]="optional,Specify db host to connect to, default: random host in mysql group."
 HELP_ARGS["u:db_user"]="optional,Specify db user in db connection, if not sepcified, default identity will be used."
 HELP_ARGS["p:db_pass"]="optional,Specify db pass in db connection, if not sepcified, default identity will be used."
 HELP_ARGS["P:db_port"]="optional,Specify db port to connect to, default: 3306."
+HELP_ARGS["g:group_name"]="optional,Group name for mysql cluster, default: \"mysql\"."
 HELP_ARGS["D"]="optional,Dry run command for test."
 
 HELP_COMMANDS["start"]="Start all mysql hosts without replication."
@@ -21,6 +24,7 @@ HELP_COMMANDS["stop"]="Stop all mysql hosts."
 HELP_COMMANDS["kill"]="Kill all mysql hosts forcely."
 HELP_COMMANDS["status"]="Check all mysql hosts' status."
 HELP_COMMANDS["destory"]="Stop all mysql hosts & remove data files."
+HELP_COMMANDS["pub"]="Publish container module to all mysql nodes."
 HELP_COMMANDS["init"]="Init specified db's talbes in sql directory, need db creation first."
 HELP_COMMANDS["truncate"]="Truncate all specified db's tables."
 
@@ -97,6 +101,9 @@ while getopts :H:u:p:P:Dh FLAG; do
         P)
             DB_PORT=${OPTARG}
         ;;
+        g)
+            GROUP_NAME=${OPTARG}
+        ;;
         h)
             _help >&2
             exit 
@@ -134,23 +141,23 @@ case ${COMMAND} in
         _init $*
     ;;
     start)
-        allssh -gmysql container start mysql
+        allssh -g${GROUP_NAME} container start mysql
     ;;
     status)
-        allssh -gmysql container status mysql
+        allssh -g${GROUP_NAME} container status mysql
     ;;
     stop)
-        allssh -gmysql container stop mysql
+        allssh -g${GROUP_NAME} container stop mysql
     ;;
     kill)
-        allssh -gmysql container stop -f mysql
+        allssh -g${GROUP_NAME} container stop -f mysql
     ;;
     destory)
-        allssh -gmysql container stop -crf mysql
+        allssh -g${GROUP_NAME} container stop -crf mysql
     ;;
-    # users)
-    #     _get_users
-    # ;;
+    pub)
+        allscp -g${GROUP_NAME} ${CONTAINER_BASE}/mysql.sh
+    ;;
     *)
         error "invalid command: ${COMMAND}"
         exit 1

@@ -21,7 +21,7 @@ HELP_COMMANDS["check"]="Check zookeeper cluster/standalone status and local volu
 HELP_COMMANDS["restart"]="Restart zookeeper cluster/standalone."
 HELP_COMMANDS["destory"]="Destory zookeeper cluster/standalone and remove container & local volume."
 HELP_COMMANDS["pub"]="Publish zookeeper container module to all memeber nodes."
-HELP_COMMANDS["log"]="Get zookeeper all memeber nodes's last logs specified by \"-t NUM\", defualt: 100."
+HELP_COMMANDS["logs"]="Get zookeeper all memeber nodes's last logs specified by \"-t NUM\", defualt: 100."
 HELP_COMMANDS["shell"]="Get zookeeper container's remote shell in random memeber nodes."
 
 SERVICE_LIST="zookeeper"
