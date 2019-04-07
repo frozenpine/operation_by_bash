@@ -1,6 +1,16 @@
 # 运维脚本使用说明
 
 > [TOC]
+>
+> 格式约定
+>
+> * **粗体**：表示专有名词
+> * ***粗斜体***：表示一个目录
+> * *斜体*：表示一个文件
+> * `cmd`：表示一个命令
+> * *`arg`*：表示一个参数
+> * ${ENV}：表示系统环境变量
+> * {value}：表示在命令行或文件路径中需要用实际值替换
 
 ## 目录结构
 
@@ -19,9 +29,9 @@ bin
         └─tradebase
 ```
 
-* **conf：** 基础配置文件目录
+* ***conf***： 基础配置文件目录
 
-  > * *common.env：* 基本环境变量
+  > * *common.env*： 基本环境变量
   > 
   >    > ```bash
   >    > $ cat bin/conf/common.env
@@ -38,33 +48,33 @@ bin
   >    > SUDO="sudo"
   >    > ```
   > 
-  > * *hosts.ini：* 应用组定义
+  > * *hosts.ini*： 应用组定义
   > 
-  > * *image.list：* 基础依赖镜像列表
+  > * *image.list*： 基础依赖镜像列表
   > 
-  > * *topic.list：* Kafka初始化 topic 列表
+  > * *topic.list*： Kafka初始化 topic 列表
   > 
-  > * **dockerfile：** dockerfile模板目录
+  > * ***dockerfile***： dockerfile模板目录
 
-* **container.d：** 容器启动模块目录，一个模块文件对应一种容器启动逻辑，模块文件名（不含 “*.sh*” 后缀）即 **`应用组`** 名
+* ***container.d***： 容器启动模块目录，一个模块文件对应一种容器启动逻辑，模块文件名（不含 “*.sh*” 后缀）即 **应用组** 名
 
-* **logger.d：** 自定义日志记录器模块目录，不同的日志模块对应不同的日志存储，目前暂无用，日志输出至 ***stdout*** & ***stderr***
+* ***logger.d***： 自定义日志记录器模块目录，不同的日志模块对应不同的日志存储，目前暂无用，日志输出至 **stdout** & **stderr**
 
-* **module.d：** 功能模块目录，提供命令行所需的各种功能函数
+* ***module.d***： 功能模块目录，提供命令行所需的各种功能函数
 
-* **service.d：** 应用服务模块目录，解决应用组成员的 **`主机别名`** 和 **IP** 地址在 ***/etc/hosts*** 文件中的映射关系
+* ***service.d***： 应用服务模块目录，解决应用组成员的 **主机别名[^ alias]** 和 **IP** 地址在 */etc/hosts* 文件中的映射关系
 
-* **sql：** 数据库初始化脚本目录
+* ***sql***： 数据库初始化脚本目录
 
-* **templates：** 模板文件目录
+* ***templates***： 模板文件目录
 
-  > * **dockerfiles：** 自定义 **docker** 镜像打包所使用的 ***dockerfile*** 模板文件目录
+  > * ***dockerfiles***： 自定义 **docker** 镜像打包所使用的 **dockerfile** 模板文件目录
 
 ## 运维框架初始化
 
 1. 定义运维脚本需要管理的 [**主机列表**](documents/inventory.md/#nodes)
 
-   > 将所有节点的 **IP** 和 **主机名** 添加至 **管理节点** 的 ***/etc/hosts*** 文件内
+   > 将所有节点的 **IP** 和 **主机名** 添加至 **管理节点** 的 */etc/hosts* 文件内
    > ```bash
    > $ cat /etc/hosts
    > 127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4 node03
@@ -77,20 +87,20 @@ bin
    > ```
    >
 
-2. 规划 [**应用组**](documents/inventory.md/#应用分组) 在主机上的分布
+2. 规划 [**应用组[^ group]**](documents/inventory.md/#应用分组) 在主机上的分布
 
-3. 根据规划，编辑 **service.d** 下的应用服务模块中的 [**主机别名**](documents/inventory.md/#alias) 和 **IP** 地址的对应关系，[*示例*](documents/commands/svc.md/#服务定义示例)
+3. 根据规划，编辑 ***service.d*** 下的应用服务模块中的 [**主机别名[^ alias]**](documents/inventory.md/#alias) 和 **IP** 地址的对应关系，[*示例*](documents/commands/svc.md/#服务定义示例)
 
-4. 在 **管理节点** 上执行 [ ***`服务管理`*** ](documents/commands/svc.md "svc") 命令，完成 **IP - 主机名** 的初始化
+4. 在 **管理节点[^ manage]** 上执行 [`svc`](documents/commands/svc.md) 命令，完成 **IP - 主机名** 的初始化
 
-5. **管理节点** 与 [**应用节点**](documents/inventory.md/#主机信息) 间建立 SSH 互信
+5. **管理节点[^ manage]** 与 [**应用节点[^ app]**](documents/inventory.md/#主机信息) 间建立 SSH 互信
 
    > **Note：**
    >
    > * **管理节点** 应该能免密登录到任意一台运行应用的节点服务器
    > * **管理节点** 免密登录 **应用节点** 的 **管理账号**，应具备 **root** 权限，或至少应能免密使用 **sudo** 以运行需要特权的管理命令
 
-以上操作完成后，**管理节点** 应该具备基本的 [ ***`远程执行`*** ](documents/commands/allssh.md "allssh") 管理命令的功能：
+以上操作完成后，**管理节点[^ manage]** 应该具备基本的 [`allssh`](documents/commands/allssh.md) 管理命令的功能：
 
 ```bash
 [ec2-user@node03 ~]$ allssh uname -n
@@ -123,15 +133,15 @@ node03
    > ```
    >
 
-2. 将所有节点上 **本地仓库** 的连接方式设置为 **HTTP**
+2. 将所有节点上 **本地仓库[^ registry]** 的连接方式设置为 **HTTP**
 
-   > 编辑 ***/etc/docker/daemon.json*** 文件， 如不存在则新建即可
+   > 编辑 */etc/docker/daemon.json* 文件， 如不存在则新建即可
    > ```yaml
    > {
    > "insecure-registries" : ["registry:5000"]
    > }
    > ```
-   > 可先在 **管理节点** 上先创建完该文件，再使用 [ ***`远程分发`*** ](documents/commands/allscp.md "allscp") 命令下发至所有服务器
+   > 可先在 **管理节点[^ manage]** 上先创建完该文件，再使用 [`allscp`](documents/commands/allscp.md) 命令下发至所有服务器
    >
    > ```bash
    > # 创建 daemon.json 文件
@@ -178,7 +188,7 @@ node03
    > ```
    >
 
-4. 将 **应用节点** 及 **管理节点** 上的 **管理账号** 加入 **docker** 组，以具备 **docker** 命令执行权限
+4. 将 **应用节点[^ app]** 及 **管理节点[^ manage]** 上的 **管理账号[^ admin]** 加入 **docker** 组，以具备 **docker** 命令执行权限
 
    > ```bash
    > # ec2-user 请修改为实际的用户账号
@@ -191,7 +201,7 @@ node03
    >
    > **管理节点** 上配置完 **docker** 用户组后，需重新登录以使配置生效
 
-5. 在 **管理节点** 上使用 [ ***`容器管理`*** ](documents/commands/container.md "container") 命令启动 **本地镜像仓库**，并配置 [ ***`仓库管理`*** ](documents/commands/registry.md "registry") 命令的默认连接仓库
+5. 在 **管理节点** 上使用 [`container`](documents/commands/container.md) 命令启动 **本地镜像仓库[^ registry]**，并配置 [`registry`](documents/images.md#镜像管理命令行) 命令的默认连接仓库
 
    > ```bash 
    > # 启动容器
@@ -206,13 +216,13 @@ node03
    > ```
    >
 
-6. 编辑 [ **基础镜像列表** ](documents/images.md/#依赖的外部镜像 "topic.list") 并使用 [ ***`仓库管理`*** ](documents/commands/registry.md "registry") 命令从 **docker-hub** <a name="sync-image">同步</a> 这些基础镜像
+6. 编辑 [**基础镜像列表**](documents/images.md/#依赖的外部镜像 "topic.list") 并使用 [`registry`](documents/commands/registry.md) 命令从 ***${DATA_BASE}/docker-hub/*** <a name="sync-image">同步</a> 这些基础镜像
 
-   > 列表文件位于 ***config/image.list***
+   > 列表文件位于 *bin/config/image.list*
    >
    > ```bash
    > # 基础镜像均从 docker-hub 同步，请确保环境能访问 docker-hub
-   > $ cat config/image.list
+   > $ cat bin/config/image.list
    > redis:5.0.3
    > nginx:1.14.2
    > elasticsearch:6.6.0
@@ -252,11 +262,11 @@ node03
 
 > **Note：** 该运维脚本不包括应用的编译功能，请用户自行编译目标应用
 
-1. 将编译完成的程序包存放至 **管理节点** 的 ***${DATA_BASE}/docker-hub/{工程名}*** 目录下
+1. 将编译完成的程序包存放至 **管理节点[^ manage]** 的 ***${DATA_BASE}/docker-hub/{工程名}*** 目录下
 
 2. 程序包名必须符合如下的命名规则：
 
-   > {工程名}-{模块名}-{版本号}.jar， 例如：
+   > *{工程名}-{模块名}-{版本号}.jar*， 例如：
    >
    > ```bash
    > $ ll /data/docker-hub/trade/
@@ -269,9 +279,9 @@ node03
    >
    > 不符合规则的程序包，请手工修改为符合规则的命名
 
-3. 使用 [ ***`镜像打包`*** ](documents/commands/build-image.md "build-image") 命令，将程序包打包为 **docker** 镜像，并上传至 **本地镜像仓库**
+3. 使用 [`build-image`](documents/commands/build-image.md) 命令，将程序包打包为 **docker** 镜像，并上传至 **本地镜像仓库[^ registry]**
 
-   > 打包过程中，将自动清理 **应用节点** 上同名的历史镜像，以确保 **容器** 启动时，使用的是最新的镜像
+   > 打包过程中，将自动清理 **应用节点** 上同名的历史镜像，以确保容器启动时，使用的是最新的镜像
    >
    > ```bash
    > # 此处 trade 为 ${DATA_BASE}/docker-hub/ 下存在的工程名
@@ -286,10 +296,10 @@ node03
 
 > **Note：** 建立 **zookeeper** 集群前，请先确保以下操作完成：
 >
-> 1. **本地镜像仓库** 中存在指定版本号的 **zookeeper** 镜像，该镜像应该在 [**Docker运行环境部署**](#Docker运行环境部署) 的 [同步](#sync-image) 操作中完成下载
-> 2. **service.d** 下的 ***zookeeper.sh*** 服务模块有正确的 **IP - HOST** 映射，[*示例*](documents/commands/svc.md/#服务定义示例)
+> 1. **本地镜像仓库[^ registry]** 中存在指定版本号的 **zookeeper** 镜像，该镜像应该在 [**Docker运行环境部署**](#Docker运行环境部署) 的 [同步](#sync-image) 操作中完成下载
+> 2. ***service.d*** 下的 *zookeeper.sh* 服务模块有正确的 **IP - HOST** 映射，[*示例*](documents/commands/svc.md/#服务定义示例)
 
-1. 编辑 **container.d** 下的 ***zookeeper.sh*** 容器模块：
+1. 编辑 ***container.d*** 下的 *zookeeper.sh* 容器模块：
 
    > ```bash
    > $ vim bin/container.d/zookeeper.sh
@@ -324,7 +334,7 @@ node03
    > ```
    >
 
-3. 使用 [ ***`zk`*** ](documents/commands/zk.md) 集群管理命令启动 **zookeeper** 集群
+3. 使用 [`zk`](documents/commands/zk.md) 集群管理命令启动 **zookeeper** 集群
 
    > ```bash
    > # 检查集群当前状态，包括：1.容器是否运行；2.数据目录状态
@@ -340,11 +350,11 @@ node03
 
 > **Note：** 建立 **kafka** 集群前请确保以下操作已完成：
 >
-> 1. **本地镜像仓库** 中存在指定版本号的 **kafka** 镜像
-> 2. **service.d** 下的 ***zookeeper.sh*** & ***kafka.sh*** 模块文件有正确的 **IP - HOST** 映射关系
+> 1. **本地镜像仓库[^ registry]** 中存在指定版本号的 **kafka** 镜像
+> 2. ***service.d*** 下的 *zookeeper.sh* & *kafka.sh* 模块文件有正确的 **IP - HOST** 映射关系
 > 3. **zookeeper** 集群已正确启动完成
 
-1. 编辑 **container.d** 下的 ***kafka.sh*** 模块文件：
+1. 编辑 ***container.d*** 下的 *kafka.sh* 模块文件：
 
    > ```bash
    > $ vim bin/container.d/kafka.sh
@@ -368,7 +378,7 @@ node03
    > $ kfk pub
    > ```
 
-3. 编辑 ***topic.list*** 列表文件，指定 **kafka** 集群需要创建的 **topic** 列表
+3. 编辑 *topic.list* 列表文件，指定 **kafka** 集群需要创建的 **topic** 列表
 
    > **Note：** 列表文件每行指定一个 **topic** 名，后可选指定 **分区数** 和 **副本数**
    >
@@ -394,7 +404,7 @@ node03
    > ```
    >
 
-4. 使用 [ ***`kfk`*** ](documents/commands/kfk.md) 集群管理命令启动 **kafka** 集群
+4. 使用 [`kfk`](documents/commands/kfk.md) 集群管理命令启动 **kafka** 集群
 
    > ```bash
    > # 检查 kafka 集群当前状态及数据目录
@@ -412,7 +422,7 @@ node03
 
 > **Note：** 同上，请先确保基础镜像存在且 **IP - HOST** 映射关系正确
 
-1. 编辑 **container.d** 下的 **mysql.sh** 模块文件
+1. 编辑 ***container.d*** 下的 *mysql.sh* 模块文件
 
    > ```bash
    > $ sudo vim bin/container.d/mysql.sh
@@ -438,9 +448,9 @@ node03
    > $ db pub
    > ```
 
-3. 使用 [ ***`db`*** ](documents/commands/db.md) 集群管理命令启动 **mysql** 集群
+3. 使用 [`db`](documents/commands/db.md) 集群管理命令启动 **mysql** 集群
 
-   > **Note：** 该管理命令仅实现了 **mysql** 容器的启动，未实现集群内成员间的 [**主从复制**](docuemnts/mysql-replicator.md) 配置，需管理员手工完成 [**主从复制**](documents/mysql-replicator.md) 的配置工作
+   > **Note：** 该管理命令仅实现了 **mysql** 容器的启动，未实现集群内成员间的 [**主从复制[^ replicator]**](docuemnts/mysql-replicator.md) 配置，需管理员手工完成 [**主从复制[^ replicator]**](documents/mysql-replicator.md) 的配置工作
    >
    > ```bash
    > # 启动 mysql 集群
@@ -449,13 +459,13 @@ node03
    > $ db status
    > ```
 
-4. 如 **mysql** 为单节点，配置至此结束，如存在多节点，管理员仍需手工完成 [**主从复制**](documents/mysql-replicator.md) 的配置工作
+4. 如 **mysql** 为单节点，配置至此结束，如存在多节点，管理员仍需手工完成 [**主从复制[^ replicator]**](documents/mysql-replicator.md) 的配置工作
 
 ## Redis服务
 
 > **Note：** 同上，请先确保基础镜像存在且 **IP - HOST** 映射关系正确
 
-1. 编辑 **container.d** 下的容器启动模块 ***redis.sh***
+1. 编辑 ***container.d*** 下的容器启动模块 *redis.sh*
 
    > ```bash
    > vim bin/container.d/redis.sh
@@ -479,7 +489,7 @@ node03
    > $ allscp -gredis bin/container.d/redis.sh
    > ```
 
-3. 使用 [ ***`container`*** ](documents/commands/container.md) 命令启动 **redis**
+3. 使用 [`container`](documents/commands/container.md) 命令启动 **redis**
 
    > **Note：** 由于 **redis** 服务启动后无需多做维护，故未封装专用的集群管理命令行
    >
@@ -494,7 +504,7 @@ node03
 
 > **Note：** 同上，请先确保基础镜像存在且 **IP - HOST** 映射关系正确
 
-1. 编辑 **container.d** 下的容器启动模块 ***consul.sh***
+1. 编辑 ***container.d*** 下的容器启动模块 *consul.sh*
 
    > ```bash
    > $ vim bin/container.d/consul.sh
@@ -534,20 +544,20 @@ node03
 
 > **Note：**
 >
-> 1. 启动容器前，请先确保 **本地镜像仓库** 内的应用镜像为最新版本，如非最新，请先编译、[打包](#应用容器镜像打包) 最新镜像
+> 1. 启动容器前，请先确保 **本地镜像仓库[^ registry]** 内的应用镜像为最新版本，如非最新，请先编译、[打包](#应用容器镜像打包) 最新镜像
 >
->    > 测试阶段版本号为 **SNAPSHOT** ，更新较快且每次更新不会改变版本号
+>    > 测试阶段版本号为 **SNAPSHOT[^ snapshot]** ，更新较快且每次更新不会改变版本号
 >
-> 2. 确定 **service.d** 下的容器模块文件的 **IP - HOST** 映射关系正确
+> 2. 确定 ***service.d*** 下的容器模块文件的 **IP - HOST** 映射关系正确
 >
 > 3. 确定 **zookeeper** & **kafka** 集群工作正常
 
-1. 编辑 **container.d** 下的各容器启动模块文件
+1. 编辑 ***container.d*** 下的各容器启动模块文件
 
    > ```bash
    > /*
    >  * 编辑 场下管理系统 的模块文件
-   >  */
+   >   */
    > $ vim bin/container.d/rest.sh
    > # rest 模块（接口URI controller）版本号
    > VERSION="1.0.3-SNAPSHOT"
@@ -585,13 +595,13 @@ node03
    > SERVICE_LIST="registry zookeeper kafka mysql redis"
    > /*
    >  * 场下管理系统 模块文件编辑结束
-   >  */
+   >   */
    >
    > /******************************************************/
    >
    > /*
    >  * 编辑 交易核心系统 的模块文件
-   >  */
+   >   */
    > $ vim bin/container.d/sso.sh
    > # sso 模块（用户管理模块）版本号
    > VERSION="1.0.0-SNAPSHOT"
@@ -658,10 +668,10 @@ node03
    > SERVICE_LIST="registry zookeeper kafka mysql redis"
    > /*
    >  * 交易核心系统 模块文件编辑结束
-   >  */
+   >   */
    > ```
 
-2. 将编辑完的模块文件发布给各 **应用节点**
+2. 将编辑完的模块文件发布给各 **应用节点[^ app]**
 
    > ```bash
    > # 发布 场下管理系统
@@ -671,7 +681,7 @@ node03
    > $ trade pub
    > ```
 
-3. 使用集群管理命令：[ ***`manage`*** ](documents/commands/manage.md)， [ ***`trade`*** ](documents/commands/trade.md) 启动各子系统
+3. 使用集群管理命令：[`manage`](documents/commands/manage.md)， [`trade`](documents/commands/trade.md) 启动各子系统
 
    > ```bash
    > /*
@@ -688,9 +698,9 @@ node03
    > /*
    >  * 场下管理系统 启动完成
    >  */
-   >
+   > 
    > /*********************************************/
-   >
+   > 
    > /*
    >  * 启动 交易核心
    >  */
@@ -698,9 +708,19 @@ node03
    > $ trade start
    > # 检查 交易核心
    > $ trade status
-   >
    > /*
    >  * 交易核心 启动完成
-   >  */
+   >   */
    > ```
    >
+
+---
+
+[^ alias]: 为方便区分不同应用对应的主机，为主机取的别名。
+[^ group]:包含运行了同一应用的所有主机的组名。
+[^ manage]: 运行运维管理脚本的主机。
+[^ app]: 运行应用程序的主机。
+[^ registry]: 由用户自建的，为容器镜像提供集中存储的服务，一般用于减少容器启动时，下载镜像的时间。
+[^ admin]: 通过SSH登录应用服务器时使用的账号。
+[^ replicator]: MySQL提供的一种数据备份机制。
+[^ snapshot]: Java代码在开发阶段的一种特殊版本名，正式版本中没有SNAPSHOT；正式版本一旦发布后，不能修改包代码，而SNAPSHOT版本代表了开发状态，可覆盖历史同版本代码。

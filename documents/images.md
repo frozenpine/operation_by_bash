@@ -12,7 +12,7 @@
 * **mysql:** mysql:5.7.25
 * **consul:** consul:1.4.3
 
-以上依赖镜像来源均为 [Docker Hub](<https://hub.docker.com/>)， 除 ***`registry`*** 外，全部推送至本地仓库存储
+以上依赖镜像来源均为 [Docker Hub](<https://hub.docker.com/>)， 除 **registry** 外，全部推送至本地仓库存储
 
 ## 本地镜像仓库配置
 
@@ -20,9 +20,9 @@
 
   > 容器名：**registry**
   >
-  > 本地卷：**/data/registry**
+  > 本地卷：*/data/registry*
 
-* 仓库配置位于： **/etc/registry/config.yml**
+* 仓库配置位于： */etc/registry/config.yml*
 
   > ```yaml
   > version: 0.1
@@ -57,33 +57,39 @@
 
 ## 镜像管理命令行
 
-命令：**registry**
+命令：`registry`
 
+> 命令行帮助：
+>
 > ```bash
-> Usage : registry [-h] [-H {registry uri}] [-s {scheme: http | https}]
->                  {list | show [tag] | manifests | default | sync {source} {target} [clean|clean_src|clean_dst]}
->
-> Option Descriptions :
->     -h      Show this help message.
->     -H      Specify an registry base uri.
->             default: registry.quantfair.com.
->     -s      Specify scheme used to connect registry.
->             default: https.
->     -p      Show result pretty.
->
-> Command Descriptions :
->     list        List all images in registry.
->     show        Show image's tag info.
->     manifests   Show image's manifests digest.
->     default     Set BASE_URI & SCHEME to param specified.
->     sync        Sync image from one registry to another.
->                 If clean specified, local image will be cleaned.
+> $ registry -h
+> Usage: registry [-H {uri}] [-s {scheme}] [-h] [-p]
+>                 { manifests | list | show | default | sync }
+> Args:
+>          -H    Specify host uri used in management, if not specified, default one
+>                stored by "default" command will be used.
+>          -s    Specify connection type(http|https), if not specified, default one
+>                stored by "default" command will be used.
+>          -h    Show this help message.
+>          -p    Format result with `jq`.
+> Commands:
+>   manifests    Show all/specified image's manifest id.
+>        list    List all images in registry.
+>        show    Show all/specified image with tags.
+>     default    Save default registry's URI & connection type.
+>        sync    Sync a image fron source registry to dest.
 > ```
 
-### 支持的功能
+### 参数说明
 
-1. **list:** 列出本地仓库内的所有镜像
-2. **show:** 显示镜像的 `tag` 信息
-3. **manifests:** 显示镜像的 `manifest` 信息
-4. **default:** 设置命令行连接的默认仓库
-5. **sync:** 同步两个仓库的指定镜像
+* *`-H {uri}`*：可选参数，指定命令行连接的仓库，如无指定，则使用 `default` 命令保存的默认地址
+* *`-s {scheme}`*：可选参数，指定连接使用的协议（http|https），如无指定，则使用 `default` 命令保存的默认协议类型
+* *`-p`*：可选参数，是否使用 `jq` 命令格式化数据信息
+
+### 命令说明
+
+1. `list`：列出本地仓库内的所有镜像
+2. `show`：显示镜像的 **tag** 信息
+3. `manifests`：显示镜像的 **manifest** 信息
+4. `default`：设置命令行连接的默认仓库
+5. `sync`：同步两个仓库的指定镜像

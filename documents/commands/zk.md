@@ -43,4 +43,5 @@
 * `destory`：强制停止 **zookeeper** 集群/standalone并删除数据文件
 * `logs`：获取 **zookeeper** 所有成员的最后100条日志记录
 * `pub`：将 **zookeeper** 容器模块发布至所有成员节点
-* `shell`：随机连接一个成员节点并获取容器的 **console** **shell**，用于执行 ***zkCli.sh***
+* `shell`：随机连接一个成员节点并获取容器的 **console** **shell**，用于执行 *zkCli.sh*
+

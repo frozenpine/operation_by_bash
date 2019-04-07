@@ -30,9 +30,9 @@
 >
 > 管理 **kafka** 集群及 **topic** 的创建、删除，同时封装了部分 **kafka** 命令行脚本：
 >
-> 1.  **topic：** *kafka-topics.sh*，封装了 *\-\-zookeeper* 参数
-> 2. **group：** *kafka-consumer-groups.sh*，封装了 *\-\-bootstrap-server* 参数
-> 3. **consumer：** *kafka-console-consumer.sh*，封装了 *\-\-bootstrap-server* 参数
+> 1.  `topic`： *kafka-topics.sh*，封装了 *`--zookeeper`* 参数
+> 2. `group`： *kafka-consumer-groups.sh*，封装了 *`--bootstrap-server`* 参数
+> 3. `consumer`：*kafka-console-consumer.sh*，封装了 *`--bootstrap-server`* 参数
 
 ## 参数说明
 

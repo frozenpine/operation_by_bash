@@ -23,7 +23,7 @@
 
 ## 命令说明
 
-* `start`：启动一个容器，启动逻辑封装于 **container.d**目录下
+* `start`：启动一个容器，启动逻辑封装于 ***container.d***目录下
 * `stop`：停止一个容器运行
   * *`-c`*：用于标记是否删除容器的本地卷
   * *`-r`*：用于标记是否删除容器
@@ -48,7 +48,7 @@
   > $ container logs clear 2>&1 > clear.log
   > ```
 
-* 获取 zookeeper 容器的 **shell**
+* 获取 **zookeeper** 容器的 **shell**
 
   > ```bash
   > # 获取名为 zookeeper 的容器的shell
