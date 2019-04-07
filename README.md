@@ -72,9 +72,9 @@ bin
 
 ## 运维框架初始化
 
-1. 定义运维脚本需要管理的 [**主机列表**](documents/inventory.md/#nodes)
+1. 定义运维脚本需要管理的 [**主机列表**](documents/inventory.md/#主机信息)
 
-   > 将所有节点的 **IP** 和 **主机名** 添加至 **管理节点** 的 */etc/hosts* 文件内
+   > 将所有节点的 **IP** 和 **主机名** 添加至 **管理节点<sup>[3](#manage-node)</sup>** 的 */etc/hosts* 文件内
    > ```bash
    > $ cat /etc/hosts
    > 127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4 node03
@@ -188,7 +188,7 @@ node03
    > ```
    >
 
-4. 将 **应用节点<sup>[4](#app-node)</sup>** 及 **管理节点<sup>[3](#manage-node)</sup>** 上的 **管理账号[^ admin]** 加入 **docker** 组，以具备 **docker** 命令执行权限
+4. 将 **应用节点<sup>[4](#app-node)</sup>** 及 **管理节点<sup>[3](#manage-node)</sup>** 上的 **管理账号<sup>[6](#admin-user)</sup>** 加入 **docker** 组，以具备 **docker** 命令执行权限
 
    > ```bash
    > # ec2-user 请修改为实际的用户账号
@@ -216,7 +216,7 @@ node03
    > ```
    >
 
-6. 编辑 [**基础镜像列表**](documents/images.md/#依赖的外部镜像 "topic.list") 并使用 [`registry`](documents/commands/registry.md) 命令从 ***${DATA_BASE}/docker-hub/*** <a name="sync-image">同步</a> 这些基础镜像
+6. 编辑 [**基础镜像列表**](documents/images.md/#依赖的外部镜像 "topic.list") 并使用 [`registry`](documents/images.md#镜像管理命令行) 命令从 ***${DATA_BASE}/docker-hub/*** <a name="sync-image">同步</a> 这些基础镜像
 
    > 列表文件位于 *bin/config/image.list*
    >
@@ -450,7 +450,7 @@ node03
 
 3. 使用 [`db`](documents/commands/db.md) 集群管理命令启动 **mysql** 集群
 
-   > **Note：** 该管理命令仅实现了 **mysql** 容器的启动，未实现集群内成员间的 [**主从复制<sup>[7]</sup>**](docuemnts/mysql-replicator.md) 配置，需管理员手工完成 **主从复制<sup>[7](#replication)</sup>** 的配置工作
+   > **Note：** 该管理命令仅实现了 **mysql** 容器的启动，未实现集群内成员间的 [**主从复制<sup>[7]</sup>**](documents/mysql-replication.md) 配置，需管理员手工完成 **主从复制<sup>[7](#replication)</sup>** 的配置工作
    >
    > ```bash
    > # 启动 mysql 集群
@@ -557,7 +557,7 @@ node03
    > ```bash
    > /*
    >  * 编辑 场下管理系统 的模块文件
-   >   */
+   >  */
    > $ vim bin/container.d/rest.sh
    > # rest 模块（接口URI controller）版本号
    > VERSION="1.0.3-SNAPSHOT"
@@ -595,13 +595,13 @@ node03
    > SERVICE_LIST="registry zookeeper kafka mysql redis"
    > /*
    >  * 场下管理系统 模块文件编辑结束
-   >   */
+   >  */
    >
    > /******************************************************/
    >
    > /*
    >  * 编辑 交易核心系统 的模块文件
-   >   */
+   >  */
    > $ vim bin/container.d/sso.sh
    > # sso 模块（用户管理模块）版本号
    > VERSION="1.0.0-SNAPSHOT"
@@ -668,7 +668,7 @@ node03
    > SERVICE_LIST="registry zookeeper kafka mysql redis"
    > /*
    >  * 交易核心系统 模块文件编辑结束
-   >   */
+   >  */
    > ```
 
 2. 将编辑完的模块文件发布给各 **应用节点<sup>[4](#app-node)</sup>**
@@ -710,7 +710,7 @@ node03
    > $ trade status
    > /*
    >  * 交易核心 启动完成
-   >   */
+   >  */
    > ```
    >
 
