@@ -79,7 +79,7 @@ case ${COMMAND} in
         allssh -gzookeeper container stop -crf zookeeper
     ;;
     pub)
-        allscp -gzookeeper "${BASE_DIR}/container.d/zookeeper.sh"
+        allscp -gzookeeper "${CONTAINER_BASE}/zookeeper.sh"
     ;;
     exec)
         allssh -gzookeeper container exec zookeeper $*

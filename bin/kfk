@@ -251,7 +251,7 @@ case ${COMMAND} in
         allssh -gkafka container stop -crf kafka
     ;;
     pub)
-        allscp -gkafka "${BASE_DIR}/container.d/kafka.sh"
+        allscp -gkafka "${CONTAINER_BASE}/kafka.sh"
     ;;
     logs)
         allssh -gkafka container logs --tail 100 kafka
