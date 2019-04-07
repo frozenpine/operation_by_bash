@@ -294,10 +294,10 @@ node03
 > 1. **`本地仓库`** 中存在指定版本号的 **zookeeper** 镜像，该镜像应该在 [**Docker运行环境部署**](#Docker运行环境部署) 的 [同步](#sync-image) 操作中完成下载
 > 2. **service.d** 下的 ***zookeeper.sh*** 服务模块有正确的 **IP - HOST** 映射，[示例](documents/commands/svc.md/#服务定义示例)
 
-1. 编辑 ***container.d/zookeeper.sh*** 容器启动模块
+1. 编辑 **container.d** 下的 ***zookeeper.sh*** 容器模块：
 
    ```bash
-   $ vim container.d/zookeeper.sh
+   $ vim bin/container.d/zookeeper.sh
    # zookeeper 镜像版本号
    VERSION="3.4.13"
    # zookeeper 镜像名，不包含 本地仓库 地址
@@ -326,19 +326,88 @@ node03
 2. 将编辑后的启动模块分发给 **zookeeper** 应用组的全部成员节点
 
    ```bash
-   $ pwd
-   /home/ec2-user
-   # 此处需注意分发路径
-   $ allscp -gzookeeper bin/container.d/zookeeper.sh
+   $ zk pub
    ```
 
-3. 使用 ***`zk`*** 集群管理命令启动 **zookeeper** 集群
+3. 使用 [ ***`zk`*** ](documents/commands/zk.md) 集群管理命令启动 **zookeeper** 集群
 
    ```bash
    # 检查集群当前状态，包括：1.容器是否运行；2.数据目录状态
    $ zk check
    # start 命令将启动集群
    $ zk start
+   # 检查集群运行状态
+   $ zk status
    ```
 
-4. 
+
+## Kafka集群搭建
+
+> **Note：** 建立 **kafka** 集群前请确保以下操作已完成：
+>
+> 1. **`本地仓库`** 中存在指定版本号的 **kafka** 镜像
+> 2. **service.d** 下的 ***zookeeper.sh*** & ***kafka.sh*** 模块文件有正确的 **IP - HOST** 映射关系
+> 3. **zookeeper** 集群已正确启动完成
+
+1. 编辑 **container.d** 下的 ***kafka.sh*** 模块文件：
+
+   ```bash
+   $ vim bin/container.d/kafka.sh
+   # kafka 的镜像版本号
+   VERSION="2.12-2.1.0"
+   # kafka 的镜像名
+   NAME=kafka
+   # kafka 容器启动所用用户
+   USER=${NAME}
+   
+   # kafka 依赖的服务列表
+   SERVICE_LIST="registry zookeeper kafka"
+   
+   # 以下为启动逻辑，无需修改
+   ```
+
+2. 将编辑后的启动模块分发给 **kafka** 应用组的全部成员节点
+
+   ```bash
+   $ kfk pub
+   ```
+
+3. 编辑 ***topic.list*** 列表文件，指定 **kafka** 集群需要创建的 **topic** 列表
+
+   > **Note：** 列表文件每行指定一个 **topic** 名，后可选指定 **`分区数`** 和 **`副本数`**
+
+   ```bash
+   $ vim bin/conf/topic.list
+   # TOPIC_NAME PARTIONS REPLICAS
+   # if want to define replicas without partions, use "null" in partions column
+   MATCH
+   MATCH-SS
+   MATCH-SS-INCREMENT
+   MATCH-JSON-SS
+   MATCH-JSON-SS-INCREMENT
+   
+   BACK-ORDER
+   SS-BOOK-ORDER
+   
+   CLEAR                   # 30
+   APO-FULL                # 30
+   APO-INCREMENT           # 30
+   
+   NOTIFY
+   ACCESS
+   ```
+
+4. 使用 [ ***`kfk`*** ](documents/commands/kfk.md) 集群管理命令启动 **kafka** 集群
+
+   ```bash
+   # 检查 kafka 集群当前状态及数据目录
+   $ kfk check
+   # 启动 kafka 集群并创建 topic.list 中指定的 topic
+   $ kfk create
+   # 检查集群运行状态
+   $ kfk status
+   # 检查 kafka topic
+   $ kfk topic --list
+   ```
+
+   
