@@ -42,7 +42,7 @@ function shell() {
     done
     shift $((OPTIND-1))
 
-    "${SCRIPT_CHECK}" $* >/dev/null
+    source "${SCRIPT_CHECK}" $* >/dev/null
     [[ $? -ne 0 ]] && exit 1
 
     docker exec -it $1 ${SHELL:=sh}
@@ -67,22 +67,22 @@ shift
 
 case $ACTION in
     status)
-        "${SCRIPT_CHECK}" $*
+        source "${SCRIPT_CHECK}" $*
         [[ $? -ne 0 ]] && exit 1
     ;;
     start)
-        "${SCRIPT_START}" $*
+        source "${SCRIPT_START}" $*
         [[ $? -ne 0 ]] && exit 1
     ;;
     stop)
-        "${SCRIPT_STOP}" $*
+        source "${SCRIPT_STOP}" $*
         [[ $? -ne 0 ]] && exit 1
     ;;
     restart)
-        "${SCRIPT_STOP}" $*
+        source "${SCRIPT_STOP}" $*
         [[ $? -ne 0 ]] && exit 1
         shift $(($#-1))
-        "${SCRIPT_START}" $*
+        source "${SCRIPT_START}" $*
         [[ $? -ne 0 ]] && exit 1
     ;;
     logs)
