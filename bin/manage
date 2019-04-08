@@ -90,7 +90,12 @@ function _sync_instrument() {
     local _RESULT
 
     info "Finding unsynced instruments..."
-    _request '/digital/instrument/findAll' '{}'
+    _request '/digital/instrument/findAll' '{"instrumentStatus": "0"}'
+    if [[ $? -ne 0 ]]; then
+        error ${RESULT}
+        exit 1
+    fi
+
     echo "${RESULT}" | jq -c '.result | .[] | select(.instrumentStatus == "0")'
     
     if [[ `echo "${RESULT}" | jq -c '.result | .[] | select(.instrumentStatus == "0") | length'` -lt 1 ]]; then
@@ -100,7 +105,7 @@ function _sync_instrument() {
 
     info "Syncing Instruments..."
     _request "/gateway/api" '{"interfaceName":"com.quantdo.digital.product.service.InstrumentService","interfaceVersion":"1.0.0","method":"beListedInstrument","params":[{"instrumentStatus":"0"}]}'
-    if [[ `echo ${RESULT} | jq .result` -eq 0 ]]; then
+    if [[ $? -eq 0 && `echo ${RESULT} | jq .result` -eq 0 ]]; then
         info "Syncing instrument successed."
     else
         error "Syncing instrument failed."
@@ -110,6 +115,10 @@ function _sync_instrument() {
 
     info "All synced instruments: "
     _request '/digital/instrument/findAll' '{"instrumentStatus": "1"}'
+    if [[ $? -ne 0 ]]; then
+        error ${RESULT}
+        exit 1
+    fi
     echo "${RESULT}" | jq -c '.result | .[] | select(.instrumentStatus == "1")'
 }
 

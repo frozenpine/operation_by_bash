@@ -54,16 +54,16 @@ docker run -d \
     registry:5000/digital/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/digital-${NAME}-${VERSION}.jar \
-        --com.quantdo.trade.data-exchange.command.producer.bootstrap.servers=${KAFKA_SERVERS} \
-        --com.quantdo.trade.data-exchange.monitor.comsumer.bootstrap.servers=${KAFKA_SERVERS} \
+        --com.quantdo.trade.data-exchange.command.producer.bootstrap.servers="${KAFKA_SERVERS}" \
+        --com.quantdo.trade.data-exchange.monitor.comsumer.bootstrap.servers="${KAFKA_SERVERS}" \
         --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?characterEncoding=utf-8" \
         --spring.datasource.username="${DB_USER}" \
         --spring.datasource.password="${DB_PASS}" \
-        --spring.datasource.list[0].url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/clear?characterEncoding=utf-8&amp;autoReconnect=true" \
+        --spring.datasource.list[0].url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/clear?characterEncoding=utf-8" \
         --spring.datasource.list[0].name="front" \
         --spring.datasource.list[0].master-dataSource="true" \
         --spring.datasource.list[0].username="${DB_USER}" \
         --spring.datasource.list[0].password="${DB_PASS}" \
-        --dubbo.provider.host=${SELF_IP} \
-        --dubbo.registry.address=${ZK_SERVERS} \
+        --dubbo.registry.address="${ZK_SERVERS}" \
+        --dubbo.provider.host="${SELF_IP}" \
         --dubbo.provider.timeout=180000

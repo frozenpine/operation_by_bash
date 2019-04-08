@@ -60,11 +60,11 @@ docker run -d \
     registry:5000/digital/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/digital-${NAME}-${VERSION}.jar \
-        --server.port=${REST_PORT} \
-        --spring.redis.host=${REDIS_HOST} \
+        --server.port="${REST_PORT}" \
+        --spring.redis.host="${REDIS_HOST}" \
         --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?characterEncoding=utf-8" \
         --spring.datasource.username="${DB_USER}" \
         --spring.datasource.password="${DB_PASS}" \
-        --dubbo.provider.host=${SELF_IP} \
-        --dubbo.registry.address=${ZK_SERVERS} \
+        --dubbo.registry.address="${ZK_SERVERS}" \
+        --dubbo.protocol.host="${SELF_IP}"" \
         --dubbo.consumer.timeout=300000
