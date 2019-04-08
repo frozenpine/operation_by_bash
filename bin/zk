@@ -102,7 +102,18 @@ case ${COMMAND} in
     ;;
     shell)
         IDX=$((RANDOM % ${#ZK_LIST[@]}))
-        container-shell -H${ZK_LIST[zk00$((IDX+1))]} zookeeper
+        ZK_HOST=
+        COUNT=0
+        for SVR_NAME in ${!ZK_LIST[@]}; do
+            if [[ ${COUNT} -eq ${IDX} ]]; then
+                ZK_HOST=${SVR_NAME}
+                break
+            fi
+
+            COUNT=$((COUNT+1))
+        done
+
+        container-shell -H${ZK_LIST[$ZK_HOST]} zookeeper
     ;;
     *)
         error "invalid command: ${COMMAND}"
