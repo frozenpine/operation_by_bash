@@ -112,7 +112,9 @@ ${SUDO} mv "${LOG_TEMP}" "${CONTAINER_BASE}/config/log4j.properties"
     
 ${SUDO} chown -R ${USER}:${USER} "${CONTAINER_BASE}"
 
-LISTENERS=PLAINTEXT://`uname -n`:${CLIENT_PORT}
+SELF_IP=`ip address show eth0 | grep inet | grep -v inet6 | awk '{print $2}' | cut -d'/' -f1`
+
+LISTENERS="PLAINTEXT://${SELF_IP}:${CLIENT_PORT}"
 
 if [[ ${#KAFKA_LIST[@]} -ge 3 ]]; then
     docker run -d \
