@@ -17,7 +17,6 @@ HELP_ARGS["u:db_user"]="optional,Specify db user in db connection, if not sepcif
 HELP_ARGS["p:db_pass"]="optional,Specify db pass in db connection, if not sepcified, default identity will be used."
 HELP_ARGS["P:db_port"]="optional,Specify db port to connect to, default: 3306."
 HELP_ARGS["g:group_name"]="optional,Group name for mysql cluster, default: \"mysql\"."
-HELP_ARGS["D"]="optional,Dry run command for test."
 
 HELP_COMMANDS["start"]="Start all mysql hosts without replication."
 HELP_COMMANDS["stop"]="Stop all mysql hosts."
@@ -95,9 +94,6 @@ function _truncate() {
 
 while getopts :H:u:p:P:Dh FLAG; do
     case $FLAG in
-        D)
-            DRY_RUN="echo"
-        ;;
         H)
             DB_HOST=${OPTARG}
         ;;
