@@ -68,7 +68,7 @@ case ${COMMAND} in
         allssh -gzookeeper container stop -f zookeeper
     ;;
     check)
-        allssh -gzookeeper ll /opt
+        allssh -gzookeeper ls -l ${DATA_BASE:=/opt}
         allssh -gzookeeper container status zookeeper
     ;;
     status)

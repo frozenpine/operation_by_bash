@@ -34,7 +34,7 @@
 > *{工程名}-{模块名}-{版本号}.jar*， 例如：
 > 
 > ```bash
-> $ ll /data/docker-hub/trade/
+> $ ls -l /data/docker-hub/trade/
 > total 128836
 > -rw-rw-r-- 1 ec2-user ec2-user 64425301 Apr  4 02:17 trade-clear-1.0.1-SNAPSHOT.jar
 > -rw-rw-r-- 1 ec2-user ec2-user 32671908 Apr  4 02:16 trade-match-1.0.1-SNAPSHOT.jar
