@@ -505,6 +505,12 @@ node03
    > mysql> grant all privileges on sso.* to trader@'%' identified by 'js2018';
    > Query OK, 0 rows affected, 1 warning (0.00 sec)
    > 
+   > mysql> grant all privileges on clear.* to trader@localhost identified by 'js2018';
+   > Query OK, 0 rows affected, 2 warnings (0.00 sec)
+   > 
+   > mysql> grant all privileges on clear.* to trader@'%' identified by 'js2018';
+   > Query OK, 0 rows affected, 1 warning (0.00 sec)
+   > 
    > mysql> flush privileges;
    > Query OK, 0 rows affected (0.00 sec)
    > 
