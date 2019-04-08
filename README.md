@@ -459,7 +459,71 @@ node03
    > $ db status
    > ```
 
-4. 如 **mysql** 为单节点，配置至此结束，如存在多节点，管理员仍需手工完成 **主从复制<sup>[7](#replication)</sup>** 的配置工作
+4. 如 **mysql** 为单节点，跳过此条配置，如存在多节点，则需手工完成 **主从复制<sup>[7](#replication)</sup>** 的配置工作
+
+5. 创建 **mysql** 数据库及用户
+
+   > ```bash
+   > # 连接至 mysql 服务器
+   > $ mysql -hmysql -uroot -pquantdo123456
+   > Welcome to the MySQL monitor.  Commands end with ; or \g.
+   > Your MySQL connection id is 2
+   > Server version: 5.7.25-log MySQL Community Server (GPL)
+   > 
+   > Copyright (c) 2000, 2018, Oracle and/or its affiliates. All rights reserved.
+   > 
+   > Oracle is a registered trademark of Oracle Corporation and/or its
+   > affiliates. Other names may be trademarks of their respective
+   > owners.
+   > 
+   > Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+   > 
+   > mysql> create database digital default charset utf8mb4;
+   > Query OK, 1 row affected (0.00 sec)
+   > 
+   > mysql> create database front default charset utf8mb4;
+   > Query OK, 1 row affected (0.00 sec)
+   > 
+   > mysql> create database sso default charset utf8mb4;
+   > Query OK, 1 row affected (0.00 sec)
+   > 
+   > mysql> create database clear default charset utf8mb4;
+   > Query OK, 1 row affected (0.00 sec)
+   > 
+   > mysql> create user trader identified by 'js2018';
+   > Query OK, 0 rows affected (0.00 sec)
+   > 
+   > mysql> grant all privileges on digital.* to trader@localhost identified by 'js2018';
+   > Query OK, 0 rows affected, 2 warnings (0.01 sec)
+   > 
+   > mysql> grant all privileges on digital.* to trader@'%' identified by 'js2018';
+   > Query OK, 0 rows affected, 1 warning (0.00 sec)
+   > 
+   > mysql> grant all privileges on sso.* to trader@localhost identified by 'js2018';
+   > Query OK, 0 rows affected, 2 warnings (0.00 sec)
+   > 
+   > mysql> grant all privileges on sso.* to trader@'%' identified by 'js2018';
+   > Query OK, 0 rows affected, 1 warning (0.00 sec)
+   > 
+   > mysql> flush privileges;
+   > Query OK, 0 rows affected (0.00 sec)
+   > 
+   > mysql> exit
+   > Bye
+   > ```
+
+6. 初始化数据库表及基础数据
+
+   > ```bash
+   > # 初始化 `digital` 库
+   > $ mysql -hmysql -uroot -pquantdo123456 digital < bin/sql/digital/digital_frame.sql
+   > 
+   > # 初始化 `sso` 库
+   > $ mysql -hmysql -uroot -pquantdo123456 sso < bin/sql/sso/sso_frame.sql
+   > 
+   > # 初始化所有的基础数据
+   > $ db init all
+   > ```
 
 ## Redis服务
 
