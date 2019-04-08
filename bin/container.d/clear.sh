@@ -19,9 +19,9 @@ done
 CONSUL_HOST=
 IDX=$((RANDOM % ${#CONSUL_LIST[@]}))
 COUNT=0
-for NAME in ${!CONSUL_LIST[@]}; do
+for SVR_NAME in ${!CONSUL_LIST[@]}; do
     if [[ ${COUNT} -eq ${IDX} ]]; then
-        CONSUL_HOST=${CONSUL_LIST[$NAME]}
+        CONSUL_HOST=${CONSUL_LIST[$SVR_NAME]}
         break
     fi
 

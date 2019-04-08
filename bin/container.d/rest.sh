@@ -23,9 +23,9 @@ done
 MYSQL_HOST=
 IDX=$((RANDOM % ${#MYSQL_LIST[@]}))
 COUNT=0
-for NAME in ${!MYSQL_LIST[@]}; do
+for SVR_NAME in ${!MYSQL_LIST[@]}; do
     if [[ ${COUNT} -eq ${IDX} ]]; then
-        MYSQL_HOST=${MYSQL_LIST[$NAME]}
+        MYSQL_HOST=${MYSQL_LIST[$SVR_NAME]}
         break
     fi
 
@@ -35,9 +35,9 @@ done
 REDIS_HOST=
 IDX=$((RANDOM % ${#REDIS_LIST[@]}))
 COUNT=0
-for NAME in ${!REDIS_LIST[@]}; do
+for SVR_NAME in ${!REDIS_LIST[@]}; do
     if [[ ${COUNT} -eq ${IDX} ]]; then
-        REDIS_HOST=${REDIS_LIST[$NAME]}
+        REDIS_HOST=${REDIS_LIST[$SVR_NAME]}
         break
     fi
 
