@@ -44,6 +44,8 @@ for SVR_NAME in ${!ZK_LIST[@]}; do
 done
 ZK_SERVERS=${ZK_SERVERS:1}
 
+SELF_IP=`ip address show ${BIND_INT:eth0} | grep inet | grep -v inet6 | awk '{print $2}' | cut -d'/' -f1`
+
 docker run -d \
     --name ${NAME} \
     --restart no \
@@ -62,6 +64,6 @@ docker run -d \
         --spring.datasource.list[0].master-dataSource="true" \
         --spring.datasource.list[0].username="${DB_USER}" \
         --spring.datasource.list[0].password="${DB_PASS}" \
-        --dubbo.provider.host=`uname -n` \
+        --dubbo.provider.host=${SELF_IP} \
         --dubbo.registry.address=${ZK_SERVERS} \
         --dubbo.provider.timeout=180000

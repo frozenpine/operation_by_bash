@@ -28,7 +28,7 @@ for SVR_NAME in ${!CONSUL_LIST[@]}; do
     COUNT=$((COUNT+1))
 done
 
-SELF_IP=`ip address show eth0 | grep inet | awk '{print $2}' | cut -d'/' -f1`
+SELF_IP=`ip address show eth0 | grep inet | grep -v inet6 | awk '{print $2}' | cut -d'/' -f1`
 
 docker run -d \
     --name ${NAME} \

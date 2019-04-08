@@ -50,6 +50,8 @@ for SVR_NAME in ${!ZK_LIST[@]}; do
 done
 ZK_SERVERS=${ZK_SERVERS:1}
 
+SELF_IP=`ip address show ${BIND_INT:=eth0} | grep inet | grep -v inet6 | awk '{print $2}' | cut -d'/' -f1`
+
 docker run -d \
     --name ${NAME} \
     --restart no \
@@ -63,6 +65,6 @@ docker run -d \
         --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?characterEncoding=utf-8" \
         --spring.datasource.username="${DB_USER}" \
         --spring.datasource.password="${DB_PASS}" \
-        --dubbo.provider.host=`uname -n` \
+        --dubbo.provider.host=${SELF_IP} \
         --dubbo.registry.address=${ZK_SERVERS} \
         --dubbo.consumer.timeout=300000
