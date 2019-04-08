@@ -643,7 +643,7 @@ node03
    > SENTRY_DSN="http://654e52faff5144798b88dff78fa283b5:73a9028558844a5d88c14c50a106b9cc@monitor:9000/8"
    >
    > # rest 模块依赖的服务列表
-   > SERVICE_LIST="registry zookeeper kafka mysql redis"
+   > SERVICE_LIST="registry zookeeper kafka mysql redis digital"
    >
    > # ——————————————————————————————————————————————————————
    >
@@ -687,7 +687,7 @@ node03
    > JVM_OPTS="-Duser.timezone=GMT+08"
    >
    > # sso 模块依赖的服务列表
-   > SERVICE_LIST="registry zookeeper kafka mysql redis"
+   > SERVICE_LIST="registry zookeeper kafka mysql redis tradebase"
    >
    > # ——————————————————————————————————————————————————————
    > 
@@ -703,7 +703,7 @@ node03
    > JVM_OPTS=""
    >
    > # order 模块依赖的服务列表
-   > SERVICE_LIST="registry zookeeper kafka mysql redis"
+   > SERVICE_LIST="registry zookeeper kafka mysql redis order"
    >
    > # ——————————————————————————————————————————————————————
    >
@@ -719,7 +719,7 @@ node03
    > JVM_OPTS="-Xms8G -Xmx8G"
    >
    > # clear 模块依赖的服务列表
-   > SERVICE_LIST="registry zookeeper kafka mysql redis"
+   > SERVICE_LIST="registry zookeeper kafka mysql redis clear"
    >
    > # ——————————————————————————————————————————————————————
    >
@@ -735,7 +735,7 @@ node03
    > JVM_OPTS="-Xms8G -Xmx8G"
    >
    > # match 模块依赖的服务列表
-   > SERVICE_LIST="registry zookeeper kafka mysql redis"
+   > SERVICE_LIST="registry zookeeper kafka mysql redis match"
    > /*
    >  * 交易核心系统 模块文件编辑结束
    >  */
