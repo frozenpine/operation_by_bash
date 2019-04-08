@@ -57,6 +57,11 @@ docker run -d \
         --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?characterEncoding=utf-8" \
         --spring.datasource.username="${DB_USER}" \
         --spring.datasource.password="${DB_PASS}" \
+        --spring.datasource.list[0].url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/clear?characterEncoding=utf-8&amp;autoReconnect=true" \
+        --spring.datasource.list[0].name="front" \
+        --spring.datasource.list[0].master-dataSource="true" \
+        --spring.datasource.list[0].username="${DB_USER}" \
+        --spring.datasource.list[0].password="${DB_PASS}" \
         --dubbo.provider.host=`uname -n` \
         --dubbo.registry.address=${ZK_SERVERS} \
         --dubbo.provider.timeout=180000
