@@ -11,7 +11,7 @@ DB_NAME="sso"
 DB_USER="trader"
 DB_PASS="js2018"
 
-SERVICE_LIST="registry zookeeper kafka mysql redis"
+SERVICE_LIST="registry zookeeper kafka mysql redis digital"
 
 for SERVICE in ${SERVICE_LIST}; do
     source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
@@ -58,6 +58,7 @@ docker run -d \
     registry:5000/digital/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/digital-${NAME}-${VERSION}.jar \
+        --server.port=${REST_PORT} \
         --spring.redis.host=${REDIS_HOST} \
         --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?characterEncoding=utf-8" \
         --spring.datasource.username="${DB_USER}" \

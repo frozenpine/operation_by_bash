@@ -7,7 +7,7 @@ SENTRY_DSN=
 
 JVM_OPTS="-Duser.timezone=GMT+08"
 
-SERVICE_LIST="registry zookeeper kafka mysql redis"
+SERVICE_LIST="registry zookeeper kafka mysql redis sso"
 
 DB_NAME="digital"
 DB_USER="trader"
@@ -60,6 +60,7 @@ docker run -d \
     registry:5000/tradebase/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/tradebase-${NAME}-${VERSION}.jar \
+        --server.port=${SSO_PORT} \
         --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?characterEncoding=utf-8" \
         --spring.datasource.username="${DB_USER}" \
         --spring.datasource.password="${DB_PASS}" \

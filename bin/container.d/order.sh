@@ -7,7 +7,7 @@ JVM_OPTS=""
 # SENTRY_DSN="http://73668afe8c674732904c6f7bc167395a:afa4c2ce16eb4352baed667d5675631b@monitor:9000/3"
 SENTRY_DSN=
 
-SERVICE_LIST="registry zookeeper kafka consul"
+SERVICE_LIST="registry zookeeper kafka consul order"
 
 for SERVICE in ${SERVICE_LIST}; do
     source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
@@ -36,6 +36,7 @@ docker run -d \
     registry:5000/trade$1/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
+        --server.port=${ORDER_PORT} \
         --com.quantdo.trade.consul.host=${CONSUL_HOST} \
         --com.quantdo.trade.consul.port=${CONSUL_PORT} \
         --com.quantdo.trade.handle.manager.producer.acks=all \

@@ -4,8 +4,7 @@ ORDER_LIST["order"]="172.31.24.112"
 # ORDER_LIST["zk002"]="172.31.11.15"
 # ORDER_LIST["zk003"]="172.31.11.16"
 
-ZK_SERVERS=
-ZK_PORT=2181
+ORDER_PORT=9191
 
 for SVR_NAME in ${!ORDER_LIST[@]}; do
     IP=`grep "${SVR_NAME}" /etc/hosts | awk '{print $1}'`
