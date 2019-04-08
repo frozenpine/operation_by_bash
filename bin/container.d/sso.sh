@@ -7,7 +7,7 @@ SENTRY_DSN=
 
 JVM_OPTS="-Duser.timezone=GMT+08"
 
-SERVICE_LIST="registry zookeeper kafka mysql redis sso"
+SERVICE_LIST="registry zookeeper kafka mysql redis tradebase"
 
 DB_NAME="digital"
 DB_USER="trader"

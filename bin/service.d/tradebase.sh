@@ -5,7 +5,7 @@ TRADEBASE_LIST["sso"]="172.31.24.111"
 # TRADEBASE_LIST["zk003"]="172.31.11.16"
 
 ZK_SERVERS=
-ZK_PORT=2181
+SSO_PORT=9091
 
 for SVR_NAME in ${!TRADEBASE_LIST[@]}; do
     IP=`grep "${SVR_NAME}" /etc/hosts | awk '{print $1}'`
