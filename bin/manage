@@ -23,13 +23,15 @@ MANAGE_HOST="http://management"
 MANAGE_USER="admin"
 MANAGE_PASS="123456"
 
+MANAGE_GROUP=digital
+
 TOKEN=
 RESULT=
 
 HELP_ARGS["H:host"]="optional,Specify host[:port] to connect to, if not sepcified, default host: manage will be used."
 HELP_ARGS["u:admin_user"]="optional,Specify admin user to login, if not specified, default auth will be used."
 HELP_ARGS["p:admin_pass"]="optional,Specify admin pass to login, if not specified, default auth will be used."
-HELP_ARGS["D"]="optional,Dry run command for test."
+HELP_ARGS["g:group_name"]="optional,Group name for digital service, default: digital."
 
 HELP_COMMANDS["start"]="Start management cluster/standalone."
 HELP_COMMANDS["stop"]="Stop management cluster/standalone."
@@ -138,8 +140,8 @@ while getopts :H:u:p:Dh FLAG; do
         p)
             MANAGE_PASS=${OPTARG}
         ;;
-        D)
-            DRY_RUN="echo"
+        g)
+            MANAGE_GROUP=${OPTARG}
         ;;
         h)
             _help >&2
@@ -163,40 +165,40 @@ shift
 case ${COMMAND} in
     start)
         if [[ $# -lt 1 ]]; then
-            allssh -gmanage container start serviceimpl
+            allssh -g${MANAGE_GROUP} container start serviceimpl
             info "delay 10s to wait for service starting."
             sleep 10
-            allssh -gmanage container start rest
+            allssh -g${MANAGE_GROUP} container start rest
         else
-            allssh -gmanage container start $*
+            allssh -g${MANAGE_GROUP} container start $*
         fi
     ;;
     stop)
         if [[ $# -lt 1 ]]; then
-            allssh -gmanage container stop rest serviceimpl
+            allssh -g${MANAGE_GROUP} container stop rest serviceimpl
         else
-            allssh -gmanage container stop $*
+            allssh -g${MANAGE_GROUP} container stop $*
         fi
     ;;
     kill)
         if [[ $# -lt 1 ]]; then
-            allssh -gmanage container stop -f rest serviceimpl
+            allssh -g${MANAGE_GROUP} container stop -f rest serviceimpl
         else
-            allssh -gmanage container stop -f $*
+            allssh -g${MANAGE_GROUP} container stop -f $*
         fi
     ;;
     status|check)
         if [[ $# -lt 1 ]]; then
-            allssh -gmanage container status rest serviceimpl
+            allssh -g${MANAGE_GROUP} container status rest serviceimpl
         else
-            allssh -gmanage container status $*
+            allssh -g${MANAGE_GROUP} container status $*
         fi
     ;;
     destory)
         if [[ $# -lt 1 ]]; then
-            allssh -gmanage container stop -crf rest serviceimpl
+            allssh -g${MANAGE_GROUP} container stop -crf rest serviceimpl
         else
-            allssh -gmanage container stop -crf $*
+            allssh -g${MANAGE_GROUP} container stop -crf $*
         fi
     ;;
     logs)
@@ -205,11 +207,11 @@ case ${COMMAND} in
             exit 1
         fi
 
-        allssh -gmanage container logs --tail 100 $1
+        allssh -g${MANAGE_GROUP} container logs --tail 100 $1
     ;;
     pub)
-        allscp -gmanage "${BASE_DIR}/container.d/rest.sh"
-        allscp -gmanage "${BASE_DIR}/container.d/serviceimpl.sh"
+        allscp -g${MANAGE_GROUP} "${BASE_DIR}/container.d/rest.sh"
+        allscp -g${MANAGE_GROUP} "${BASE_DIR}/container.d/serviceimpl.sh"
     ;;
     truncate)
         db truncate all
