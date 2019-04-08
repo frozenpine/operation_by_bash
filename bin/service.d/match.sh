@@ -4,8 +4,7 @@ MATCH_LIST["match"]="172.31.24.111"
 # MATCH_LIST["zk002"]="172.31.11.15"
 # MATCH_LIST["zk003"]="172.31.11.16"
 
-ZK_SERVERS=
-ZK_PORT=2181
+MATCH_PORT=9391
 
 for SVR_NAME in ${!MATCH_LIST[@]}; do
     IP=`grep "${SVR_NAME}" /etc/hosts | awk '{print $1}'`

@@ -19,10 +19,10 @@
 | 05   | redis     | redis    | 6379     | redis     | Redis 集群，为场下管理系统提供数据缓存服务                   |
 | 06   | elastic   | es       | 9200     | http      | Elasticsearch 集群                                           |
 | 07   | front     | nginx    | 80       | http      | 前置反向代理集群                                             |
-| 08   | tradebase | sso      | 自定义   | http      | 交易用户管理集群，提供交易用户的注册、登录、查询以及API-Key管理服务 |
-| 09   | order     | order    | 自定义   | http      | 报单录入接口集群，以nginx反向代理发布                        |
-| 10   | clear     | clear    | 自定义   | 自定义    | 清算服务集群，以 clientId 进行负载均衡                       |
-| 11   | match     | match    | 自定义   | 自定义    | 撮合服务集群，以 symbol 进行负载均衡                         |
-| 12   | digital   | mgmt     | 自定义   | http      | 场下管理系统，以nginx反向代理发布                            |
+| 08   | tradebase | sso      | 9091     | http      | 交易用户管理集群，提供交易用户的注册、登录、查询以及API-Key管理服务 |
+| 09   | order     | order    | 9191     | http      | 报单录入接口集群，以nginx反向代理发布                        |
+| 10   | clear     | clear    | 9291     | http      | 清算服务集群，以 clientId 进行负载均衡                       |
+| 11   | match     | match    | 9391     | http      | 撮合服务集群，以 symbol 进行负载均衡                         |
+| 12   | digital   | mgmt     | 9089     | http      | 场下管理系统，以nginx反向代理发布                            |
 | 13   | index     | index    | 自定义   | 自定义    | 指数计算服务                                                 |
 | 14   | schedule  | sched    | 自定义   | 自定义    | 定时任务管理服务                                             |

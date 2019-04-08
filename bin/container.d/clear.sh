@@ -7,7 +7,7 @@ JVM_OPTS="-Xms8G -Xmx8G"
 # SENTRY_DSN="http://68634f3a3c434dd7904b9383ea9f47a4:f71cf64ccf1a4972a4c6b421f5a37769@monitor:9000/4"
 SENTRY_DSN=
 
-SERVICE_LIST="registry zookeeper kafka consul"
+SERVICE_LIST="registry zookeeper kafka consul clear"
 
 for SERVICE in ${SERVICE_LIST}; do
     source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
@@ -40,6 +40,7 @@ docker run -d \
         ${JVM_OPTS} \
         -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
         --server.address=${SELF_IP} \
+        --server.port=${CLEAR_PORT} \
         --com.quantdo.trade.consul.host=${CONSUL_HOST} \
         --com.quantdo.trade.consul.port=${CONSUL_PORT} \
         --com.quantdo.trade.handle.manager.consumer.receive.buffer.bytes=10240000 \

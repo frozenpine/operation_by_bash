@@ -32,13 +32,23 @@ HELP_COMMANDS["logs"]="Get trade cluster/standalone last 100 logs."
 HELP_COMMANDS["pub"]="Publish container module to all trade members."
 
 function _find_group() {
-    if [[ $1 =~ ^(order|sso)$ ]]; then
-        GROUP="front"
+    # if [[ $1 =~ ^(order|sso)$ ]]; then
+    #     GROUP="front"
+    #     return
+    # fi
+
+    # if [[ $1 =~ ^(clear|match)$ ]]; then
+    #     GROUP="trade-core"
+    #     return
+    # fi
+
+    if [[ $1 == "sso" ]]; then
+        GROUP="tradebase"
         return
     fi
-
-    if [[ $1 =~ ^(clear|match)$ ]]; then
-        GROUP="trade-core"
+    
+    if [[ $1 =~ ^(order|clear|match)$ ]]; then
+        GROUP=$1
         return
     fi
     
@@ -47,21 +57,23 @@ function _find_group() {
 
 function _status() {
     if [[ $# -gt 0 && ! "$*" =~ all ]]; then
-        for MODULE in $*; do
-            info "checking ${MODULE}"
-
-            _find_group ${MODULE}
-            if [[ $? -ne 0 ]]; then
-                error "invalid module name: ${MODULE}"
-                continue
-            fi
-            
-            allssh -g${GROUP} container status ${MODULE}
-        done
+        MODULE_LIST="$*"
     else
-        allssh -gfront container status order sso
-        allssh -gtrade-core container status clear match
+        info "checking all."
+        MODULE_LIST="order sso clear match"
     fi
+
+    for MODULE in ${MODULE_LIST}; do
+        info "checking ${MODULE}"
+
+        _find_group ${MODULE}
+        if [[ $? -ne 0 ]]; then
+            error "invalid module name: ${MODULE}"
+            continue
+        fi
+        
+        allssh -g${GROUP} container status ${MODULE}
+    done
 }
 
 function _start() {
@@ -73,22 +85,23 @@ function _start() {
     fi
 
     if [[ $# -gt 0 && ! "$*" =~ all ]]; then
-        for MODULE in $*; do
-            info "starting ${MODULE}"
-
-            _find_group ${MODULE}
-            if [[ $? -ne 0 ]]; then
-                error "invalid module name: ${MODULE}"
-                continue
-            fi
-            
-            allssh -g${GROUP} container start ${_ARG} ${MODULE}
-        done
+        MODULE_LIST="$*"
     else
         info "starting all."
-        allssh -gtrade-core container start ${_ARG} clear match
-        allssh -gfront container start ${_ARG} order sso
+        MODULE_LIST="order sso clear match"
     fi
+
+    for MODULE in ${MODULE_LIST}; do
+        info "starting ${MODULE}"
+
+        _find_group ${MODULE}
+        if [[ $? -ne 0 ]]; then
+            error "invalid module name: ${MODULE}"
+            continue
+        fi
+        
+        allssh -g${GROUP} container start ${_ARG} ${MODULE}
+    done
 }
 
 function _stop() {
@@ -114,22 +127,23 @@ function _stop() {
     shift $((OPTIND-1))
 
     if [[ $# -gt 0 && ! "$*" =~ all ]]; then
-        for MODULE in $*; do
-            info "stoping ${MODULE}"
-            
-            _find_group ${MODULE}
-            if [[ $? -ne 0 ]]; then
-                error "invalid module name: ${MODULE}"
-                continue
-            fi
-            
-            allssh -g${GROUP} container stop ${_ARGS} ${MODULE}
-        done
+        MODULE_LIST="$*"
     else
         info "stopping all"
-        allssh -gfront container stop ${_ARGS} order sso
-        allssh -gtrade-core container stop ${_ARGS} clear match
+        MODULE_LIST="order sso clear match"
     fi
+
+    for MODULE in ${MODULE_LIST}; do
+        info "stoping ${MODULE}"
+        
+        _find_group ${MODULE}
+        if [[ $? -ne 0 ]]; then
+            error "invalid module name: ${MODULE}"
+            continue
+        fi
+        
+        allssh -g${GROUP} container stop ${_ARGS} ${MODULE}
+    done
 }
 
 function _logs() {
