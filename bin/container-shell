@@ -42,5 +42,11 @@ if [[ -z ${REMOTE_HOST} ]]; then
     exit 1
 fi
 
-ssh -t ${REMOTE_USER:=`whoami`}@${REMOTE_HOST} -p${REMOTE_PORT:=22} bin/container shell "${SHELL_ARG}" $1
+if [[ -n ${IDENTITY_FILE} ]]; then
+    SSH="ssh -i ${IDENTITY_FILE}"
+else
+    SSH="ssh"
+fi
+
+${SSH} -t ${REMOTE_USER:=`whoami`}@${REMOTE_HOST} -p${REMOTE_PORT:=22} bin/container shell "${SHELL_ARG}" $1
 info "Connection to ${REMOTE_HOST}'s container[$1] closed."
