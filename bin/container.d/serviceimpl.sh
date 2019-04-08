@@ -44,7 +44,7 @@ for SVR_NAME in ${!ZK_LIST[@]}; do
 done
 ZK_SERVERS=${ZK_SERVERS:1}
 
-SELF_IP=`ip address show ${BIND_INT:eth0} | grep inet | grep -v inet6 | awk '{print $2}' | cut -d'/' -f1`
+SELF_IP=`ip address show ${BIND_INT:=eth0} | grep inet | grep -v inet6 | awk '{print $2}' | cut -d'/' -f1`
 
 docker run -d \
     --name ${NAME} \
