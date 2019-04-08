@@ -11,15 +11,15 @@ for SERVICE in ${SERVICE_LIST}; do
     }
 done
 
-make_dir -b "/opt/${NAME}" data conf/conf.d log cache || exit 1
+make_dir -b "${DATA_BASE:=/opt}/${NAME}" data conf/conf.d log cache || exit 1
 
 docker run -d \
     --name ${NAME} \
     --restart always \
     --network host \
-    -v /opt/${NAME}/data:/var/lib/${NAME} \
-    -v /opt/${NAME}/conf/nginx.conf:/etc/${NAME}/nginx.conf:ro \
-    -v /opt/${NAME}/conf/conf.d:/etc/${NAME}/conf.d:ro \
-    -v /opt/${NAME}/log:/var/log/${NAME} \
-    -v /opt/${NAME}/cache:/var/cache/${NAME} \
+    -v ${DATA_BASE:=/opt}/${NAME}/data:/var/lib/${NAME} \
+    -v ${DATA_BASE:=/opt}/${NAME}/conf/nginx.conf:/etc/${NAME}/nginx.conf:ro \
+    -v ${DATA_BASE:=/opt}/${NAME}/conf/conf.d:/etc/${NAME}/conf.d:ro \
+    -v ${DATA_BASE:=/opt}/${NAME}/log:/var/log/${NAME} \
+    -v ${DATA_BASE:=/opt}/${NAME}/cache:/var/cache/${NAME} \
     registry:5000/${NAME}:${VERSION}

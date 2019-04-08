@@ -18,6 +18,12 @@ HELP_ARGS["r"]="optional,Reload tag, if specified, all memeber in nginx cluster 
 HELP_COMMANDS["data"]="Publish data files to all member in nginx cluster."
 HELP_COMMANDS["conf"]="Publish config files to all member in nginx cluster."
 
+if [[ -n "${IDENTITY_FILE}" ]]; then
+    RSYNC="rsync -e \"ssh -i ${IDENTITY_FILE}\" "
+else
+    RSYNC="rsync"
+fi
+
 function _pub() {
     if [[ $# -ne 1 ]]; then
         error "invalid pub arg: $*"
@@ -33,7 +39,7 @@ function _pub() {
             continue
         fi
 
-        rsync -a --compress --human-readable --progress --delete /opt/nginx/$1 ${SSH_HOST}:/opt/nginx/
+        ${RSYNC} -a --compress --human-readable --progress --delete ${DATA_BASE:=/opt}/nginx/$1 ${SSH_HOST}:${DATA_BASE:=/opt}/nginx/
     done
 }
 

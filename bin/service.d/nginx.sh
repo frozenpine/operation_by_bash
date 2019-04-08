@@ -5,7 +5,6 @@ NGINX_LIST["nginx"]="172.31.24.114"
 # NGINX_LIST["front003"]="172.31.11.7"
 
 NGINX_SERVERS=
-MYSQL_PORT=3306
 
 for SVR_NAME in ${!NGINX_LIST[@]}; do
     IP=`grep "${SVR_NAME}" /etc/hosts | awk '{print $1}'`
