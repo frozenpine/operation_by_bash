@@ -17,9 +17,7 @@ for SERVICE in ${SERVICE_LIST}; do
 done
 
 CONSUL_HOST=
-
 IDX=$((RANDOM % ${#CONSUL_LIST[@]}))
-
 COUNT=0
 for NAME in ${!CONSUL_LIST[@]}; do
     if [[ ${COUNT} -eq ${IDX} ]]; then
