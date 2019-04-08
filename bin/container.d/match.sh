@@ -4,7 +4,10 @@ USER=${NAME}
 
 JVM_OPTS="-Xms8G -Xmx8G"
 
-SERVICE_LIST="registry zookeeper kafka mysql redis"
+# SENTRY_DSN="http://ebd586b285bc4fd08c7026c36007a182:f8fae917d105440ca9301e597d5ff179@monitor:9000/5"
+SENTRY_DSN=
+
+SERVICE_LIST="registry zookeeper kafka"
 
 for SERVICE in ${SERVICE_LIST}; do
     source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
@@ -17,7 +20,7 @@ docker run -d \
     --name ${NAME} \
     --restart no \
     --network host \
-    -e SENTRY_DSN="http://ebd586b285bc4fd08c7026c36007a182:f8fae917d105440ca9301e597d5ff179@monitor:9000/5" \
+    -e SENTRY_DSN="${SENTRY_DSN}" \
     registry:5000/trade$1/${NAME}:${VERSION} ${JVM_OPTS} \
         -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
         --logging.level.root=info \
