@@ -106,14 +106,14 @@ case ${COMMAND} in
         COUNT=0
         for SVR_NAME in ${!ZK_LIST[@]}; do
             if [[ ${COUNT} -eq ${IDX} ]]; then
-                ZK_HOST=${SVR_NAME}
+                ZK_HOST=${ZK_LIST[$SVR_NAME]}
                 break
             fi
 
             COUNT=$((COUNT+1))
         done
 
-        container-shell -H${ZK_LIST[$ZK_HOST]} zookeeper
+        container-shell -H${ZK_HOST} zookeeper
     ;;
     *)
         error "invalid command: ${COMMAND}"
