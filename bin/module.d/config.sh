@@ -28,6 +28,16 @@ function extract_ini_sec() {
     sed 's/#.*//g' "${_INI_FILE}" | sed -n '/^\['"${_SEC_NAME}"'\]/,/^\[/ p' | sed '/^\[/d; /^[ '"\t"']*$/d'
 }
 
+function list_sections() {
+    if [[ $# -gt 0 ]]; then
+        SEC_FILE="$1"
+    else
+        SEC_FILE="${HOST_FILE}"
+    fi
+
+    sed -n 's/^\[\(.*\)\]/\1/p' "${SEC_FILE}"
+}
+
 function parse_ssh() {
     local _SSH_PATTERN
     _SSH_PATTERN="ssh://([^:@]{0,})?(:[^@]*)?@?([^:]*)(:.*)?"
@@ -102,4 +112,47 @@ function host_list() {
     else
         get_all_hosts
     fi
+}
+
+function alias_address() {
+    for ALIAS_SEC_NAME in `list_sections ${CONF_BASE}/alias.ini`; do
+        HOST_IP=`echo ${ALIAS_SEC_NAME} | cut -d':' -f2`
+        for ALIAS_NAME in `extract_ini_sec ${ALIAS_SEC_NAME} "${CONF_BASE}/alias.ini"`; do
+            HOST_ALIAS["$ALIAS_NAME"]=${HOST_IP}
+        done
+    done
+
+    # for NAME in ${!HOST_ALIAS[@]}; do
+    #     echo $NAME=${HOST_ALIAS[$NAME]}
+    # done
+}
+
+function app_ports() {
+    if [[ ! -f "${CONF_BASE}/ports.ini" ]]; then
+        cat <<EOF >"${CONF_BASE}/ports.ini"
+zookeeper=2181
+kafka=9092
+elastic=9200
+consul=8500
+mysql=3306
+redis=6379
+front=80
+digital=9089
+sms=8180
+tradebase=9091
+order=9191
+clear=9291
+match=9391
+EOF
+    fi
+
+    for PORT_DEFINE in `sed 's/#.*$//g; /^ *$/d' "${CONF_BASE}/ports.ini"`; do
+        NAME=`echo ${PORT_DEFINE} | cut -d'=' -f1`
+        NAME=${NAME## }
+        NAME=${NAME%% }
+        PORT=`echo ${PORT_DEFINE} | cut -d'=' -f2`
+        PORT=${PORT## }
+        PORT=${PORT%% }
+        PORTS[${NAME}]=${PORT}
+    done
 }
