@@ -529,6 +529,9 @@ node03
    > # 初始化 `sso` 库
    > $ mysql -hmysql -uroot -pquantdo123456 sso < bin/sql/sso/sso_frame.sql
    > 
+   > # 初始化 `clear` 库
+   > $ mysql -hmysql -uroot -pquantdo123456 clear < bin/sql/clear/clear_frame.sql
+   > 
    > # 初始化所有的基础数据
    > $ db init all
    > ```
@@ -620,137 +623,33 @@ node03
 >
 >    > 测试阶段版本号为 **SNAPSHOT<sup>[8](#snapshot)</sup>** ，更新较快且每次更新不会改变版本号
 >
-> 2. 确定 ***service.d*** 下的容器模块文件的 **IP - HOST** 映射关系正确
+> 2. 确定 ***conf*** 下的 **IP - HOST** 映射关系文件（*hosts.ini*，*alias.ini*，*ports.ini*）配置正确，且已分发给所有 **应用节点**，并在所有应用节点上已执行了 `svc create`
 >
 > 3. 确定 **zookeeper** & **kafka** 集群工作正常
 
-1. 编辑 ***container.d*** 下的各容器启动模块文件
+1. 编辑 ***bin/conf/*** 下的 *common.env* 配置文件，以指定交易系统各组件的版本号
 
    > ```bash
-   > /*
-   >  * 编辑 场下管理系统 的模块文件
-   >  */
-   > $ vim bin/container.d/rest.sh
-   > # rest 模块（接口URI controller）版本号
-   > VERSION="1.0.3-SNAPSHOT"
-   > # 模块名
-   > NAME=rest
-   > # 模块启动用户，已降级，此处配置无效
-   > USER=${NAME}
-   >
-   > # rest 模块启动的额外 java 参数
-   > JVM_OPTS="-Duser.timezone=GMT+08"
-   >
-   > # 如在运行环境中使用了 sentry，此处配置 sentry dsn
-   > SENTRY_DSN="http://654e52faff5144798b88dff78fa283b5:73a9028558844a5d88c14c50a106b9cc@monitor:9000/8"
-   >
-   > # rest 模块依赖的服务列表
-   > SERVICE_LIST="registry zookeeper kafka mysql redis digital"
-   >
-   > # ——————————————————————————————————————————————————————
-   >
-   > $ vim bin/container.d/serviceimpl.sh
-   > # serviceimpl 模块（RPC服务端）版本号
-   > VERSION="1.0.3-SNAPSHOT"
-   > # 模块名
-   > NAME=serviceimpl
-   > # 模块启动用户，已降级，此处配置无效
-   > USER=${NAME}
-   >
-   > # serviceimpl 模块启动的额外 java 参数
-   > JVM_OPTS="-Duser.timezone=GMT+08"
-   >
-   > # 如在运行环境中使用了 sentry，此处配置 sentry dsn
-   > SENTRY_DSN="http://032c281ab84f4c0798e6f3482a4d2e2e:d44ee127559b4d7e921d212a7b03fd81@monitor:9000/7"
-   >
-   > # serviceimpl 模块依赖的服务列表
-   > SERVICE_LIST="registry zookeeper kafka mysql redis"
-   > /*
-   >  * 场下管理系统 模块文件编辑结束
-   >  */
-   >
-   > /******************************************************/
-   >
-   > /*
-   >  * 编辑 交易核心系统 的模块文件
-   >  */
-   > $ vim bin/container.d/sso.sh
-   > # sso 模块（用户管理模块）版本号
-   > VERSION="1.0.0-SNAPSHOT"
-   > # 模块名
-   > NAME=sso
-   > # 模块启动用户，已降级，此处配置无效
-   > USER=${NAME}
-   >
-   > # 如在运行环境中使用了 sentry，此处配置 sentry dsn
-   > SENTRY_DSN="http://a18befa43f4d4d38983934e7cf7ed441:6103657ae0634a7299fc70670e295c73@monitor:9000/6"
-   >
-   > # sso 模块启动的额外 java 参数
-   > JVM_OPTS="-Duser.timezone=GMT+08"
-   >
-   > # sso 模块依赖的服务列表
-   > SERVICE_LIST="registry zookeeper kafka mysql redis tradebase"
-   >
-   > # ——————————————————————————————————————————————————————
+   > $ vim bin/conf/common.env
+   > # container version definitions
+   > # 场下管理系统 rest 接口服务版本号
+   > DIGITAL_REST_VERSION=1.0.4-SNAPSHOT
+   > # 场下管理系统 service RPC服务版本号
+   > DIGITAL_SERVICEIMPL_VERSION=1.0.4-SNAPSHOT
    > 
-   > $ vim bin/container.d/order.sh
-   > # order 模块（委托输入模块）版本号
-   > VERSION="1.0.1-SNAPSHOT"
-   > # 模块名
-   > NAME=order
-   > # 模块启动用户，已降级，此处配置无效
-   > USER=${NAME}
-   >
-   > # order 模块启动的额外 java 参数
-   > JVM_OPTS=""
-   >
-   > # order 模块依赖的服务列表
-   > SERVICE_LIST="registry zookeeper kafka mysql redis order"
-   >
-   > # ——————————————————————————————————————————————————————
-   >
-   > $ vim bin/container.d/clear.sh
-   > # clear 模块（清算模块）版本号
-   > VERSION="1.0.1-SNAPSHOT"
-   > # 模块名
-   > NAME=clear
-   > # 模块启动用户，已降级，此处配置无效
-   > USER=${NAME}
-   >
-   > # clear 模块启动的额外 java 参数
-   > JVM_OPTS="-Xms8G -Xmx8G"
-   >
-   > # clear 模块依赖的服务列表
-   > SERVICE_LIST="registry zookeeper kafka mysql redis clear"
-   >
-   > # ——————————————————————————————————————————————————————
-   >
-   > $ vim bin/container.d/match.sh
-   > # match 模块（撮合模块）版本号
-   > VERSION="1.0.1-SNAPSHOT"
-   > # 模块名
-   > NAME=match
-   > # 模块启动用户，已降级，此处配置无效
-   > USER=${NAME}
-   >
-   > # match 模块启动的额外 java 参数
-   > JVM_OPTS="-Xms8G -Xmx8G"
-   >
-   > # match 模块依赖的服务列表
-   > SERVICE_LIST="registry zookeeper kafka mysql redis match"
-   > /*
-   >  * 交易核心系统 模块文件编辑结束
-   >  */
+   > # 交易核心 委托录入版本号
+   > TRADE_ORDER_VERSION=1.0.1-SNAPSHOT
+   > # 交易核心 清算系统版本号
+   > TRADE_CLEAR_VERSION=1.0.1-SNAPSHOT
+   > # 交易核心 撮合系统版本号
+   > TRADE_MATCH_VERSION=1.0.1-SNAPSHOT
    > ```
 
-2. 将编辑完的模块文件发布给各 **应用节点<sup>[4](#app-node)</sup>**
+2. 将编辑完的 *common.env* 文件分发给所有 **应用节点<sup>[4](#app-node)</sup>**
 
    > ```bash
-   > # 发布 场下管理系统
-   > $ manage pub
-   > 
-   > # 发布 交易核心
-   > $ trade pub
+   > # 发布 common.env
+   > $ allscp bin/conf/common.env
    > ```
 
 3. 使用集群管理命令：[`manage`](documents/commands/manage.md)， [`trade`](documents/commands/trade.md) 启动各子系统
