@@ -97,7 +97,7 @@ bin
    > # 自动创建 service.d 下的服务定义模块
    > $ svc create
    > # 根据服务定义模块，完成主机 /etc/hosts 内的 IP-主机名 的映射
-   > $ svc init
+   > $ svc sync
    > ```
 
 5. **管理节点<sup>[3](#manage-node)</sup>** 与 [**应用节点<sup>[4]</sup>**](documents/inventory.md/#主机信息) 间建立 SSH 互信
@@ -108,6 +108,10 @@ bin
    > * **管理节点<sup>[3](#manage-node)</sup>** 免密登录 **应用节点<sup>[4](#app-node)</sup>** 的 **管理账号**，应具备 **root** 权限，或至少应能免密使用 **sudo** 以运行需要特权的管理命令
 
 6. 将定义文件分发给所有节点
+
+   > ```bash
+   > $ allscp bin/* bin/
+   > ```
 
 以上操作完成后，**管理节点<sup>[3](#manage-node)</sup>** 应该具备基本的 [`allssh`](documents/commands/allssh.md) 管理命令的功能：
 
