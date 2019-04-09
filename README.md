@@ -32,28 +32,28 @@ bin
 * ***conf***： 基础配置文件目录
 
   > * *common.env*： 基本环境变量
-  > 
+  >
   >    > ```bash
   >    > $ cat bin/conf/common.env
   >    > # 数据基础目录
   >    > DATA_BASE=/data
-  >    > 
+  >    >
   >    > # 应用基础目录
   >    > APP_BASE=/opt
-  >    > 
+  >    >
   >    > # SSH 免密连接至应用节点使用的私钥，如为空，则使用管理用户的默认私钥
   >    > IDENTITY_FILE="~/.ssh/Jisheng-func-test.pem"
-  >    > 
+  >    >
   >    > # 管理用户需要sudo以提升权限，如为root用户，则留空
   >    > SUDO="sudo"
   >    > ```
-  > 
+  >
   > * *hosts.ini*： 应用组<sup>[2](#app-group)</sup>定义
-  > 
+  >
   > * *image.list*： 基础依赖镜像列表
-  > 
+  >
   > * *topic.list*： Kafka初始化 topic 列表
-  > 
+  >
   > * ***dockerfile***： dockerfile模板目录
 
 * ***container.d***： 容器启动模块目录，一个模块文件对应一种容器启动逻辑，模块文件名（不含 “*.sh*” 后缀）即 **应用组<sup>[2](#app-group)</sup>** 名
@@ -166,17 +166,6 @@ node03
    > $ allssh sudo systemctl start docker
    > # 检查服务状态
    > $ allssh sudo systemctl status docker
-   > ● docker.service - Docker Application Container Engine
-   >    Loaded: loaded (/usr/lib/systemd/system/docker.service; enabled; vendor preset: disabled)
-   >    Active: active (running) since Wed 2019-01-30 17:39:03 CST; 2 months 2 days ago
-   >      Docs: https://docs.docker.com
-   >  Main PID: 4058 (dockerd)
-   >     Tasks: 21
-   >    Memory: 6.2G
-   >    CGroup: /system.slice/docker.service
-   >            ├─4058 /usr/bin/dockerd -H fd://
-   >            └─9176 /usr/bin/docker-proxy -proto tcp -host-ip 0.0.0.0 -host-port 9000 -container-ip 172.17.0.4 -container-port 9000
-   >
    > # 设置开机自启动
    > $ allssh sudo systemctl enable docker
    >
