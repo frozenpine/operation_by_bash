@@ -463,9 +463,11 @@ node03
 
 4. 如 **mysql** 为单节点，跳过此条配置，如存在多节点，则需手工完成 **主从复制<sup>[7](#replication)</sup>** 的配置工作
 
-5. 创建 **mysql** 数据库及用户
+5. 创建 **mysql** 数据库及用户，并初始化基础数据
 
    > ```bash
+   > # 创建数据库
+   > $ db create all
    > # 连接至 mysql 服务器
    > $ mysql -hmysql -uroot -pquantdo123456
    > Welcome to the MySQL monitor.  Commands end with ; or \g.
@@ -479,18 +481,6 @@ node03
    > owners.
    > 
    > Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
-   > 
-   > mysql> create database digital default charset utf8mb4;
-   > Query OK, 1 row affected (0.00 sec)
-   > 
-   > mysql> create database front default charset utf8mb4;
-   > Query OK, 1 row affected (0.00 sec)
-   > 
-   > mysql> create database sso default charset utf8mb4;
-   > Query OK, 1 row affected (0.00 sec)
-   > 
-   > mysql> create database clear default charset utf8mb4;
-   > Query OK, 1 row affected (0.00 sec)
    > 
    > mysql> create user trader identified by 'js2018';
    > Query OK, 0 rows affected (0.00 sec)
@@ -518,23 +508,11 @@ node03
    > 
    > mysql> exit
    > Bye
-   > ```
-
-6. 初始化数据库表及基础数据
-
-   > ```bash
-   > # 初始化 `digital` 库
-   > $ mysql -hmysql -uroot -pquantdo123456 digital < bin/sql/digital/digital_frame.sql
    > 
-   > # 初始化 `sso` 库
-   > $ mysql -hmysql -uroot -pquantdo123456 sso < bin/sql/sso/sso_frame.sql
-   > 
-   > # 初始化 `clear` 库
-   > $ mysql -hmysql -uroot -pquantdo123456 clear < bin/sql/clear/clear_frame.sql
-   > 
-   > # 初始化所有的基础数据
+   > # 初始化数据库
    > $ db init all
    > ```
+
 
 ## Redis服务
 
