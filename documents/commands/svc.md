@@ -18,7 +18,7 @@
 
 ## 命令说明
 
-* `create`：服务模块文件创建命令，该命令根据 *hosts.ini*，*alias.ini*，*ports.ini*，中的定义自动生成 ***service.d*** 目录下的服务模块
+* `create`：服务模块文件创建命令，该命令根据 *hosts.ini*，*alias.ini*，*ports.ini*，中的定义自动生成 ***service.d*** 目录下的服务模块，同时更新 */etc/hosts* 下的主机映射
 * `sync`：同步命令，将指定的服务列表中定义的 **IP - HOST** 映射关系添加至 */etc/hosts* 文件；根据 **HOST**， **IP** 在 */etc/hosts* 文件中不同的存在情况，有如下行为：
   1. **IP**，**HOST** 均不存在：直接添加新的映射关系
   2. **IP** 存在，**HOST** 不存在（该 **IP** 还关联其他 **`主机别名`**）：在原有的映射关系的行尾，添加新的 **HOST**

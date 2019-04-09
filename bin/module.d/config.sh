@@ -117,8 +117,23 @@ function host_list() {
 function alias_address() {
     for ALIAS_SEC_NAME in `list_sections ${CONF_BASE}/alias.ini`; do
         HOST_IP=`echo ${ALIAS_SEC_NAME} | cut -d':' -f2`
+        HOST_NAME=`echo ${ALIAS_SEC_NAME} | cut -d':' -f1`
+
+        IP=`grep "${HOST_NAME}" /etc/hosts | awk '{print $1}'`
+
+        if [[ -z ${IP} || ${IP} != "${HOST_IP}" ]]; then
+            ${SUDO} sed -i 's/'"${HOST_NAME}"' //'  /etc/hosts
+
+            grep "${HOST_IP}" /etc/hosts >/dev/null
+            if [[ $? -eq 0 ]]; then
+                ${SUDO} sed -i '/'${HOST_IP}'/ s/\(.*\)/\1 '"${HOST_NAME}"'/' /etc/hosts
+            else
+                ${SUDO} sed -i '$a'"${HOST_IP} ${HOST_NAME}" /etc/hosts
+            fi
+        fi
+        
         for ALIAS_NAME in `extract_ini_sec ${ALIAS_SEC_NAME} "${CONF_BASE}/alias.ini"`; do
-            HOST_ALIAS["$ALIAS_NAME"]=${HOST_IP}
+            HOST_ALIAS["$ALIAS_NAME"]="${HOST_IP}"
         done
     done
 

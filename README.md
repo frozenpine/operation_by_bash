@@ -107,6 +107,8 @@ bin
    > * **管理节点<sup>[3](#namage-node)</sup>** 应该能免密登录到任意一台运行应用的节点服务器
    > * **管理节点<sup>[3](#manage-node)</sup>** 免密登录 **应用节点<sup>[4](#app-node)</sup>** 的 **管理账号**，应具备 **root** 权限，或至少应能免密使用 **sudo** 以运行需要特权的管理命令
 
+6. 将定义文件分发给所有节点
+
 以上操作完成后，**管理节点<sup>[3](#manage-node)</sup>** 应该具备基本的 [`allssh`](documents/commands/allssh.md) 管理命令的功能：
 
 ```bash
