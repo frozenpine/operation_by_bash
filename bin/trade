@@ -47,7 +47,7 @@ function _find_group() {
         return
     fi
     
-    if [[ $1 =~ ^(order|clear|match)$ ]]; then
+    if [[ $1 =~ ^(order|clear|match|tmdb)$ ]]; then
         GROUP=$1
         return
     fi
@@ -60,7 +60,7 @@ function _status() {
         MODULE_LIST="$*"
     else
         info "checking all."
-        MODULE_LIST="order sso clear match"
+        MODULE_LIST="order sso clear match tmdb"
     fi
 
     for MODULE in ${MODULE_LIST}; do
@@ -88,7 +88,7 @@ function _start() {
         MODULE_LIST="$*"
     else
         info "starting all."
-        MODULE_LIST="order sso clear match"
+        MODULE_LIST="order sso clear match tmdb"
     fi
 
     for MODULE in ${MODULE_LIST}; do
@@ -130,7 +130,7 @@ function _stop() {
         MODULE_LIST="$*"
     else
         info "stopping all"
-        MODULE_LIST="order sso clear match"
+        MODULE_LIST="order sso clear match tmdb"
     fi
 
     for MODULE in ${MODULE_LIST}; do

@@ -1,10 +1,10 @@
 VERSION=${TRADE_TMDB_VERSION}
 
 if [[ -z ${VERSION} ]]; then
-    error "clear version missing."
+    error "tmdb version missing."
 fi
 
-NAME=clear
+NAME=tmdb
 USER=${NAME}
 
 JVM_OPTS="-Xms8G -Xmx8G"
@@ -16,7 +16,7 @@ DB_NAME="clear"
 DB_USER=${DB_USER:="trader"}
 DB_PASS=${DB_PASS:="js2018"}
 
-SERVICE_LIST="registry zookeeper kafka consul mysql clear"
+SERVICE_LIST="registry zookeeper kafka consul mysql elastic tmdb"
 
 for SERVICE in ${SERVICE_LIST}; do
     source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
@@ -55,6 +55,12 @@ for SVR_NAME in ${!KAFKA_LIST[@]}; do
 done
 KAFKA_SERVERS=${KAFKA_SERVERS:1}
 
+ELASTIC_SERVERS=
+for SVR_NAME in ${!ELASTIC_LIST[@]}; do
+    ELASTIC_SERVERS="${ELASTIC_SERVERS},http://${SVR_NAME}:${KAFKA_PORT}"
+done
+ELASTIC_SERVERS=${ELASTIC_SERVERS:1}
+
 SELF_IP=`ip address show eth0 | grep inet | grep -v inet6 | awk '{print $2}' | cut -d'/' -f1`
 
 docker run -d \
@@ -63,16 +69,16 @@ docker run -d \
     --network host \
     -e SENTRY_DSN="${SENTRY_DSN}" \
     -e CLASSPATH=/docker-java-home/jre/lib \
-    registry:5000/trade$1/${NAME}:${VERSION} \
+    registry:5000/trade$1/clear:${VERSION} \
         ${JVM_OPTS} \
-        -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
+        -jar /clear/trade$1-clear-${VERSION}.jar \
         --server.address=${SELF_IP} \
-        --server.port=${CLEAR_PORT} \
+        --server.port=${TMDB_PORT} \
         --com.quantdo.trade.handle.manager.mode=database \
-        --spring.elasticsearch.jest.uris[0]=http://es:9200 \
         --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/clear?characterEncoding=utf-8" \
         --spring.datasource.username=${DB_USER} \
         --spring.datasource.password=${DB_PASS} \
+        --spring.elasticsearch.jest.uris=${ELASTIC_SERVERS} \
         --com.quantdo.trade.consul.host=${CONSUL_HOST} \
         --com.quantdo.trade.consul.port=${CONSUL_PORT} \
         --com.quantdo.trade.handle.manager.producer.bootstrap.servers=${KAFKA_SERVERS} \
