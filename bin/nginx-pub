@@ -12,6 +12,15 @@ import_functions
 
 NGINX_GROUP=front
 
+SERVICE_LIST="digital order tradebase"
+
+for SERVICE in ${SERVICE_LIST}; do
+    source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
+        echo "service list file missing: ${SERVICE}.sh" >&2
+        exit 1
+    }
+done
+
 HELP_ARGS["g:group_name"]="optional,Group name for nginx cluster controlling."
 HELP_ARGS["r"]="optional,Reload tag, if specified, all memeber in nginx cluster will be reloaded."
 
@@ -19,18 +28,30 @@ HELP_COMMANDS["data"]="Publish data files to all member in nginx cluster."
 HELP_COMMANDS["conf"]="Publish config files to all member in nginx cluster."
 
 if [[ -n "${IDENTITY_FILE}" ]]; then
-    RSYNC="rsync -e \"ssh -i ${IDENTITY_FILE}\" "
-else
-    RSYNC="rsync"
+    RSYOPT="--rsh='ssh -i ${IDENTITY_FILE}'"
 fi
 
-function _pub() {
-    if [[ $# -ne 1 ]]; then
-        error "invalid pub arg: $*"
-        exit 1
-    fi
+if [[ -n ${SUDO} ]]; then
+    RSYOPT="${RSYOPT} --rsync-path='sudo rsync'"
+fi
 
-    info "pub $1 to nginx cluster."
+function _pub_conf() {
+    info "pub config to nginx-conf cluster."
+
+    CONF_TEMP=`mktemp --suffix nginx --directory`
+    mkdir -p "${CONF_TEMP}/conf.d"
+    cp ${TEMPLATE_BASE}/nginx/*.conf "${CONF_TEMP}/"
+
+    pushd "${TEMPLATE_BASE}/nginx/conf.d" >/dev/null
+
+    for TEMPLATE_FILE in `ls *.template`; do
+        eval "cat<<EOF
+$(<"${TEMPLATE_FILE}")
+EOF
+" > "${CONF_TEMP}/conf.d/${TEMPLATE_FILE%%.template}"
+    done
+
+    popd >/dev/null
 
     host_list | while read HOST_CONF;do
         parse_ssh ${HOST_CONF}
@@ -39,7 +60,7 @@ function _pub() {
             continue
         fi
 
-        ${RSYNC} -a --compress --human-readable --progress --delete ${DATA_BASE:=/opt}/nginx/$1 ${SSH_HOST}:${DATA_BASE:=/opt}/nginx/
+        rsync ${RSYOPT} -rlptzv --progress --delete "${CONF_TEMP}" ${SSH_USER}@${SSH_HOST}:${DATA_BASE:=/opt}/nginx/conf/
     done
 }
 
@@ -79,10 +100,11 @@ shift
 GROUP_NAME=${NGINX_GROUP}
 case ${COMMAND} in
     data)
-        _pub data
+        warning "not implemented."
+        exit 1
     ;;
     conf)
-        _pub conf
+        _pub_conf
     ;;
     *)
         error "invalid command: ${COMMAND}"

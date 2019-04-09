@@ -1,6 +1,9 @@
 upstream manage-front {
-    server 172.31.11.12:9089;
-    server 172.31.11.13:9089;
+`
+for SVR_NAME in ${!DIGITAL_LIST[@]}; do
+    echo "    server ${DIGITAL_LIST[$SVR_NAME]}:${DIGITAL_PORT}"
+done
+`
 }
 
 server {

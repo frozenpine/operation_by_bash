@@ -1,13 +1,17 @@
 upstream order-front {
-    server 172.31.11.1:9191;
-    server 172.31.11.2:9191;
-    server 172.31.11.7:9191;
+`
+for SVR_NAME in ${!ORDER_LIST[@]}; do
+    echo "    server ${ORDER_LIST[$SVR_NAME]}:${ORDER_PORT}"
+done
+`
 }
 
 upstream sso-front {
-    server 172.31.11.1:9091;
-    server 172.31.11.2:9091;
-    server 172.31.11.7:9091;
+`
+for SVR_NAME in ${!TRADEBASE_LIST[@]}; do
+    echo "    server ${TRADEBASE_LIST[$SVR_NAME]}:${TRADEBASE_PORT}"
+done
+`
 }
 
 server {
