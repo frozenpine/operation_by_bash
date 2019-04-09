@@ -13,9 +13,59 @@ SERVICE_LIST=
 
 HELP_COMMANDS["sync"]="Sync specified IP-HOST mapping to \"/etc/hosts\" by service name, if no service name specified, all service in \"service.d\" will be synced."
 
+function _make_serivce() {
+    if [[ $# -lt 1 ]]; then
+        error "app group name missing."
+        exit 1
+    fi
+
+    typeset -u APP_GROUP_NAME
+
+    APP_GROUP_NAME=$1
+
+    declare -A ARRAY_LIST
+
+    for APP_CONNECTION in `extract_ini_sec $1 "${HOST_FILE}"`; do
+        parse_ssh ${APP_CONNECTION}
+
+        if [[ $? -ne 0 ]]; then
+            error "invalid connection config in host.ini: ${APP_CONNECTION}"
+            exit 1
+        fi
+
+        ARRAY_LIST[${SSH_HOST}]=${HOST_ALIAS[$SSH_HOST]}
+    done
+
+    cat <<EOF >"${SERVICE_BASE}/$1.sh"
+declare -A ${APP_GROUP_NAME}_LIST
+`
+for HOST in ${!ARRAY_LIST[@]}; do
+    echo "${APP_GROUP_NAME}_LIST[\"$HOST\"]=\"${ARRAY_LIST[$HOST]}\""
+done
+`
+
+${APP_GROUP_NAME}_PORT=${PORTS[$1]}
+
+for SVR_NAME in \${!${APP_GROUP_NAME}_LIST[@]}; do
+    IP=\`grep "\${SVR_NAME}" /etc/hosts | awk '{print \$1}'\`
+    
+    if [[ -z \${IP} || \${IP} != "\${${APP_GROUP_NAME}_LIST[\$SVR_NAME]}" ]]; then
+        \${SUDO} sed -i 's/'"\${SVR_NAME}"' //'  /etc/hosts
+
+        grep "\${${APP_GROUP_NAME}_LIST[\$SVR_NAME]}" /etc/hosts >/dev/null
+        if [[ \$? -eq 0 ]]; then
+            \${SUDO} sed -i '/'\${${APP_GROUP_NAME}_LIST[\${SVR_NAME}]}'/ s/\(.*\)/\1 '"\${SVR_NAME}"'/' /etc/hosts
+        else
+            \${SUDO} sed -i '\$a'"\${${APP_GROUP_NAME}_LIST[\$SVR_NAME]} \${SVR_NAME}" /etc/hosts
+        fi
+    fi
+done
+EOF
+}
+
 function _sync_host() {
     for SERVICE in ${SERVICE_LIST}; do
-        source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
+        source "${SERVICE_BASE}/${SERVICE}.sh" || {
             echo "service list file missing: ${SERVICE}.sh" >&2
             exit 1
         }
@@ -51,6 +101,16 @@ case ${COMMAND} in
     sync)
         _list_services
         _sync_host
+    ;;
+    create)
+        declare -A HOST_ALIAS
+        alias_address
+        declare -A PORTS
+        app_ports
+
+        for HOST_SEC_NAME in `list_sections`; do
+            _make_serivce ${HOST_SEC_NAME}
+        done
     ;;
     *)
         error "invalid command"
