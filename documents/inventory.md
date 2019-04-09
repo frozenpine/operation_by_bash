@@ -5,7 +5,7 @@
 | 序号 | 主机名 | 内部地址      | 外部地址     | <a name="alias">主机别名</a>               |
 | ---- | ------ | ------------- | ------------ | ------------------------------------------ |
 | 01   | node01 | 172.31.24.111 | 3.112.87.67  | zk \| redis \| sso \| match \| index       |
-| 02   | node02 | 172.31.24.112 | 3.112.74.27  | kfk \| mysql \| order \| mgmt \| sched     |
+| 02   | node02 | 172.31.24.112 | 3.112.74.27  | kfk \| mysql \| order \| mgmt \| sms       |
 | 03   | node03 | 172.31.24.114 | 3.112.97.161 | consul \| es \| clear \| nginx \| registry |
 
 ## 应用分组
@@ -25,4 +25,4 @@
 | 11   | match     | match    | 9391     | http      | 撮合服务集群，以 symbol 进行负载均衡                         |
 | 12   | digital   | mgmt     | 9089     | http      | 场下管理系统，以nginx反向代理发布                            |
 | 13   | index     | index    | 自定义   | 自定义    | 指数计算服务                                                 |
-| 14   | schedule  | sched    | 自定义   | 自定义    | 定时任务管理服务                                             |
+| 14   | sms       | sms      | 8180     | http      | 短信验证码服务                                               |

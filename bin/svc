@@ -12,6 +12,7 @@ import_functions
 SERVICE_LIST=
 
 HELP_COMMANDS["sync"]="Sync specified IP-HOST mapping to \"/etc/hosts\" by service name, if no service name specified, all service in \"service.d\" will be synced."
+HELP_COMMANDS["create"]="Create service module in \"service.d\" by definition in \"hosts.ini\" \"alias.ini\" \"ports.ini\""
 
 function _make_serivce() {
     if [[ $# -lt 1 ]]; then

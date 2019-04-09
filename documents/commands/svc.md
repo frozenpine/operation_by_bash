@@ -3,20 +3,22 @@
 > ### 命令行帮助
 >
 > ```bash
-> $ svc -h
 > Usage: svc [-h]
->               { sync }
+>            { create | sync }
 > Args:
->         -h    Show this help message.
+>      -h    Show this help message.
 > Commands:
->       sync    Sync specified IP-HOST mapping to "/etc/hosts" by service name, if no
->               service name specified, all service in "service.d" will be synced.
+>  create    Create service module in "service.d" by definition in "hosts.ini"
+>            "alias.ini" "ports.ini"
+>    sync    Sync specified IP-HOST mapping to "/etc/hosts" by service name, if no
+>            service name specified, all service in "service.d" will be synced.
 > ```
 >
 > 将服务信息同步至 */etc/hosts* 文件
 
 ## 命令说明
 
+* `create`：服务模块文件创建命令，该命令根据 *hosts.ini*，*alias.ini*，*ports.ini*，中的定义自动生成 ***service.d*** 目录下的服务模块
 * `sync`：同步命令，将指定的服务列表中定义的 **IP - HOST** 映射关系添加至 */etc/hosts* 文件；根据 **HOST**， **IP** 在 */etc/hosts* 文件中不同的存在情况，有如下行为：
   1. **IP**，**HOST** 均不存在：直接添加新的映射关系
   2. **IP** 存在，**HOST** 不存在（该 **IP** 还关联其他 **`主机别名`**）：在原有的映射关系的行尾，添加新的 **HOST**
@@ -25,35 +27,102 @@
 
 ## 可自定义的配置项
 
-所有的服务定义均保存于 ***bin/service.d/*** 目录下，且以 *{服务名}.sh* 命名
+> 所有此章节提到的配置文件，均支持以 “#” 开始的单行注释
 
-该服务定义保存了提供该服务的所有主机的 **`主机别名`** 和 **IP** 的对应关系
+所有的服务定义均保存于 ***bin/conf/*** 目录下
 
-服务定义仅需要修改文件中 **XXX_LIST ** 命名数组
+1. *hosts.ini*：主机 **应用组** 定义文件，此处配置了 **应用组** 的所有成员 **应用节点** ，及远程管理这些节点时使用的连接方式，连接格式：ssh://[[管理用户\]\[:管理密码]@]主机别名[:连接端口]，配置节名即 **应用组** 名
 
-## 服务定义示例
+   > ```bash
+   > $ vim bin/conf/hosts.ini
+   > ## pattern in [] is optional
+   > ## ssh://[[[user][:password]]@]host[:port]
+   > [elastic]
+   > ssh://es
+   > 
+   > [zookeeper]
+   > ssh://zk
+   > 
+   > [consul]
+   > ssh://consul
+   > 
+   > [digital]
+   > ssh://mgmt
+   > 
+   > [mysql]
+   > ssh://mysql
+   > 
+   > [redis]
+   > ssh://redis
+   > 
+   > [kafka]
+   > ssh://kfk
+   > 
+   > [clear]
+   > ssh://clear
+   > 
+   > [match]
+   > ssh://match
+   > 
+   > [order]
+   > ssh://order
+   > 
+   > [tradebase]
+   > ssh://sso
+   > 
+   > [front]
+   > ssh://nginx
+   > 
+   > [index]
+   > ssh://index
+   > 
+   > [sms]
+   > ssh://sms
+   > ```
 
-* *zookeeper.sh* 服务模块
+2. *alias.ini*：主机别名定义，配置节格式为：[节点主机名:节点IP]，配置内容为该主机的其他 **主机别名**
 
-  > ```bash
-  > # zookeeper 命名数组声明
-  > declare -A ZK_LIST
-  > 
-  > # 主机别名 为 zk，IP 地址为 172.31.24.111 的节点，提供了 zookeeper 服务
-  > ZK_LIST["zk"]="172.31.24.111"
-  > 
-  > # 多节点集群配置参考如下示例
-  > # ZK_LIST["zk001"]="172.31.11.14"
-  > # ZK_LIST["zk002"]="172.31.11.15"
-  > # ZK_LIST["zk003"]="172.31.11.16"
-  > 
-  > # 此项配置留空，由 container.d 下的模块代码动态生成
-  > ZK_SERVERS=
-  > # 提供 zookeeper 服务的应用开放的端口号
-  > ZK_PORT=2181
-  > 
-  > # 下方还有同步 IP - HOST 至 /etc/hosts 文件的处理逻辑，不需要修改，此处不赘述
-  > 
-  > ```
+   > ```bash
+   > $ vim bin/conf/alias.ini
+   > [node01:172.31.24.111]
+   > zk
+   > redis
+   > sso
+   > match
+   > index
+   > 
+   > [node02:172.31.24.112]
+   > kfk
+   > mysql
+   > order
+   > mgmt
+   > sms
+   > 
+   > [node03:172.31.24.114]
+   > consul
+   > es
+   > clear
+   > nginx
+   > registry
+   > ```
+   >
+   > 
 
-其余服务定义大同小异，可参考上述示例
+3. *ports.ini*：应用服务的默认端口号，如该文件不存在，运行 `create` 命令时将自动创建默认值
+
+   > ```bash
+   > $ vim bin/conf/ports.ini
+   > zookeeper=2181
+   > kafka=9092
+   > elastic=9200
+   > consul=8500
+   > mysql=3306
+   > redis=6379
+   > front=80
+   > digital=9089
+   > sms=8180
+   > tradebase=9091
+   > order=9191
+   > clear=9291
+   > match=9391
+   > ```

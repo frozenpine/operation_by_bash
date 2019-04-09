@@ -89,9 +89,16 @@ bin
 
 2. 规划 [**应用组<sup>[2]</sup>**](documents/inventory.md/#应用分组) 在主机上的分布
 
-3. 根据规划，编辑 ***service.d*** 下的应用服务模块中的 [**主机别名<sup>[1]</sup>**](documents/inventory.md/#alias) 和 **IP** 地址的对应关系，[*示例*](documents/commands/svc.md/#服务定义示例)
+3. 根据规划，编辑 ***conf*** 下的服务定义相关的配置文件，[*示例*](documents/commands/svc.md/#可自定义的配置项)
 
 4. 在 **管理节点<sup>[3](#manage-node)</sup>** 上执行 [`svc`](documents/commands/svc.md) 命令，完成 **IP - 主机名** 的初始化
+
+   > ```bash
+   > # 自动创建 service.d 下的服务定义模块
+   > $ svc create
+   > # 根据服务定义模块，完成主机 /etc/hosts 内的 IP-主机名 的映射
+   > $ svc init
+   > ```
 
 5. **管理节点<sup>[3](#manage-node)</sup>** 与 [**应用节点<sup>[4]</sup>**](documents/inventory.md/#主机信息) 间建立 SSH 互信
 
