@@ -59,9 +59,14 @@ function _build() {
 
             echo -n ${NEW_SIG} >"${SIG_FILE}"
             
-            [[ ! -d build ]] && mkdir build
+            [[ ! -d build ]] && ${SUDO} mkdir build
             pushd build >/dev/null
                 template "${BUILD_DIR}/dockerfile.template" dockerfile
+
+                if [[ -d "../${MODULE}_conf" ]]; then
+                    ${SUDO} rm -rf ./config
+                    ${SUDO} cp -r "../${MODULE}_conf" ./config
+                fi
 
                 rm -f *.jar &>/dev/null
                 cp "${BUILD_DIR}/${FILE_NAME}" . &>/dev/null
