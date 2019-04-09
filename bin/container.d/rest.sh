@@ -66,5 +66,5 @@ docker run -d \
         --spring.datasource.username="${DB_USER}" \
         --spring.datasource.password="${DB_PASS}" \
         --dubbo.registry.address="${ZK_SERVERS}" \
-        --dubbo.protocol.host="${SELF_IP}"" \
+        --dubbo.protocol.host="${SELF_IP}" \
         --dubbo.consumer.timeout=300000
