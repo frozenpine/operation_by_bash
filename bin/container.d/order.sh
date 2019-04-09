@@ -1,4 +1,9 @@
-VERSION="1.0.1-SNAPSHOT"
+VERSION=${TRADE_ORDER_VERSION}
+
+if [[ -z ${VERSION} ]]; then
+    error "order version missing."
+fi
+
 NAME=order
 USER=${NAME}
 

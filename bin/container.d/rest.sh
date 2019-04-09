@@ -1,8 +1,13 @@
-VERSION="1.0.4-SNAPSHOT"
+VERSION=${DIGITAL_REST_VERSION}
+
+if [[ -z ${VERSION} ]]; then
+    error "rest version missing."
+fi
+
 NAME=rest
 USER=${NAME}
 
-JVM_OPTS="-Duser.timezone=GMT+08"
+JVM_OPTS=""
 
 # SENTRY_DSN="http://654e52faff5144798b88dff78fa283b5:73a9028558844a5d88c14c50a106b9cc@monitor:9000/8"
 SENTRY_DSN=

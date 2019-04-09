@@ -1,8 +1,13 @@
-VERSION="1.0.4-SNAPSHOT"
+VERSION=${TRADE_SERVICEIMPL_VERSION}
+
+if [[ -z ${VERSION} ]]; then
+    error "serviceimpl version missing."
+fi
+
 NAME=serviceimpl
 USER=${NAME}
 
-JVM_OPTS="-Duser.timezone=GMT+08"
+JVM_OPTS=""
 
 # SENTRY_DSN="http://032c281ab84f4c0798e6f3482a4d2e2e:d44ee127559b4d7e921d212a7b03fd81@monitor:9000/7"
 SENTRY_DSN=

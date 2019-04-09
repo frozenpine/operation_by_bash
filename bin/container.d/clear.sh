@@ -1,4 +1,9 @@
-VERSION="1.0.1-SNAPSHOT"
+VERSION=${TRADE_CLEAR_VERSION}
+
+if [[ -z ${VERSION} ]]; then
+    error "clear version missing."
+fi
+
 NAME=clear
 USER=${NAME}
 

@@ -1,4 +1,9 @@
-VERSION="1.0.1-SNAPSHOT"
+VERSION=${TRADE_MATCH_VERSION}
+
+if [[ -z ${VERSION} ]]; then
+    error "match version missing."
+fi
+
 NAME=match
 USER=${NAME}
 
