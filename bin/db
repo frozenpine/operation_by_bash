@@ -41,6 +41,8 @@ DB_PORT=
 DB_USER=
 DB_PASS=
 
+DBS=
+
 function _shuffle_host() {
     IDX=$((RANDOM % ${#MYSQL_LIST[@]}))
 
@@ -55,13 +57,18 @@ function _shuffle_host() {
     done
 }
 
+function _create() {
+    for DB_NAME in ${DBS}; do
+        info "Creating ${DB_NAME}..."
+        pushd "${SQL_BASE}/${DB_NAME}" >/dev/null
+            cat "${DB_NAME}_frame.sql" | mysql_exec -D${DB_NAME}
+        popd >/dev/null
+        info "Creating finished."
+        echo
+    done
+}
+
 function _init() {
-    if [[ $1 == "all" ]]; then
-        DBS=$(find ${SQL_BASE} -maxdepth 1 -type d -not -name `basename ${SQL_BASE}` -exec basename {} \;)
-    else
-        DBS="$*"
-    fi
-    
     for DB_NAME in ${DBS}; do
         info "Initiating ${DB_NAME} datas..."
         pushd "${SQL_BASE}/${DB_NAME}" >/dev/null
@@ -76,12 +83,6 @@ function _init() {
 }
 
 function _truncate() {
-    if [[ $1 == "all" ]]; then
-        DBS=$(find ${SQL_BASE} -maxdepth 1 -type d -not -name `basename ${SQL_BASE}` -exec basename {} \;)
-    else
-        DBS="$*"
-    fi
-    
     for DB_NAME in ${DBS}; do
         info "Truncating ${DB_NAME}'s tables..."
         echo "show full tables where Table_Type != 'VIEW';" | mysql_exec -D${DB_NAME} -N | while read TABLE_NAME TABLE_TYPE; do
@@ -129,7 +130,7 @@ fi
 COMMAND=$1
 shift
 
-if [[ ${COMMAND} =~ truncate|init ]]; then
+if [[ ${COMMAND} =~ truncate|init|create ]]; then
     [[ -z ${DB_HOST} ]] && _shuffle_host
 
     if [[ $# -lt 1 ]]; then
@@ -138,12 +139,21 @@ if [[ ${COMMAND} =~ truncate|init ]]; then
     fi
 fi
 
+if [[ $1 == "all" ]]; then
+    DBS=$(find ${SQL_BASE} -maxdepth 1 -type d -not -name `basename ${SQL_BASE}` -exec basename {} \;)
+else
+    DBS="$*"
+fi
+
 case ${COMMAND} in
+    create)
+        _create
+    ;;
     truncate)
-        _truncate $*
+        _truncate
     ;;
     init)
-        _init $*
+        _init
     ;;
     start)
         allssh -g${GROUP_NAME} container start mysql
