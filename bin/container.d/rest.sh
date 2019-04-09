@@ -45,7 +45,7 @@ for SVR_NAME in ${!REDIS_LIST[@]}; do
 done
 
 ZK_SERVERS=
-for SVR_NAME in ${!ZK_LIST[@]}; do
+for SVR_NAME in ${!ZOOKEEPER_LIST[@]}; do
     ZK_SERVERS="${ZK_SERVERS},${SVR_NAME}:${ZK_PORT}"
 done
 ZK_SERVERS=${ZK_SERVERS:1}
@@ -60,7 +60,7 @@ docker run -d \
     registry:5000/digital/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/digital-${NAME}-${VERSION}.jar \
-        --server.port="${REST_PORT}" \
+        --server.port="${DIGITAL_PORT}" \
         --spring.redis.host="${REDIS_HOST}" \
         --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?characterEncoding=utf-8" \
         --spring.datasource.username="${DB_USER}" \

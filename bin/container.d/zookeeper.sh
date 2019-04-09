@@ -32,10 +32,10 @@ ZID=${ID}
 
 ZSERVERS=
 
-if [[ ${#ZK_LIST[@]} -gt 1 ]]; then
-    for SVR_NAME in ${!ZK_LIST[@]}; do
+if [[ ${#ZOOKEEPER_LIST[@]} -gt 1 ]]; then
+    for SVR_NAME in ${!ZOOKEEPER_LIST[@]}; do
         get_id ${SVR_NAME}
-        ZSERVERS="${ZSERVERS} server.${ID}=${ZK_LIST[$SVR_NAME]}:${SVR_PORT1}:${SVR_PORT2}"
+        ZSERVERS="${ZSERVERS} server.${ID}=${ZOOKEEPER_LIST[$SVR_NAME]}:${SVR_PORT1}:${SVR_PORT2}"
     done
 
     docker run -d \

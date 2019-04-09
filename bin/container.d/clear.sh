@@ -28,6 +28,12 @@ for SVR_NAME in ${!CONSUL_LIST[@]}; do
     COUNT=$((COUNT+1))
 done
 
+KAFKA_SERVERS=
+for SVR_NAME in ${!KAFKA_LIST[@]}; do
+    KAFKA_SERVERS="${KAFKA_SERVERS},${SVR_NAME}:${KAFKA_PORT}"
+done
+KAFKA_SERVERS=${KAFKA_SERVERS:1}
+
 SELF_IP=`ip address show eth0 | grep inet | grep -v inet6 | awk '{print $2}' | cut -d'/' -f1`
 
 docker run -d \
@@ -43,6 +49,8 @@ docker run -d \
         --server.port=${CLEAR_PORT} \
         --com.quantdo.trade.consul.host=${CONSUL_HOST} \
         --com.quantdo.trade.consul.port=${CONSUL_PORT} \
+        --com.quantdo.trade.handle.manager.producer.bootstrap.servers=${KAFKA_SERVERS} \
+        --com.quantdo.trade.handle.manager.consumer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.handle.manager.consumer.receive.buffer.bytes=10240000 \
         --com.quantdo.trade.handle.manager.consumer.fetch.max.bytes=10240000 \
         --com.quantdo.trade.handle.manager.consumer.fetch.min.bytes=1024000 \

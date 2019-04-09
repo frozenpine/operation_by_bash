@@ -101,12 +101,12 @@ case ${COMMAND} in
         allssh -gzookeeper container logs --tail ${TAIL} zookeeper
     ;;
     shell)
-        IDX=$((RANDOM % ${#ZK_LIST[@]}))
+        IDX=$((RANDOM % ${#ZOOKEEPER_LIST[@]}))
         ZK_HOST=
         COUNT=0
-        for SVR_NAME in ${!ZK_LIST[@]}; do
+        for SVR_NAME in ${!ZOOKEEPER_LIST[@]}; do
             if [[ ${COUNT} -eq ${IDX} ]]; then
-                ZK_HOST=${ZK_LIST[$SVR_NAME]}
+                ZK_HOST=${ZOOKEEPER_LIST[$SVR_NAME]}
                 break
             fi
 

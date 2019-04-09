@@ -16,6 +16,12 @@ for SERVICE in ${SERVICE_LIST}; do
     }
 done
 
+KAFKA_SERVERS=
+for SVR_NAME in ${!KAFKA_LIST[@]}; do
+    KAFKA_SERVERS="${KAFKA_SERVERS},${SVR_NAME}:${KAFKA_PORT}"
+done
+KAFKA_SERVERS=${KAFKA_SERVERS:1}
+
 docker run -d \
     --name ${NAME} \
     --restart no \
@@ -26,6 +32,7 @@ docker run -d \
         --server.port=${MATCH_PORT} \
         --logging.level.root=info \
         --logging.level.com.quantdo.trade=info \
+        --com.quantdo.trade.match.producer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.handle.manager.transaction-batch-size=1000 \
         --com.quantdo.trade.match.consumer.receive.buffer.bytes=10240000 \
         --com.quantdo.trade.match.consumer.fetch.max.bytes=10240000 \

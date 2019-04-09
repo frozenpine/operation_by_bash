@@ -28,6 +28,12 @@ for SVR_NAME in ${!CONSUL_LIST[@]}; do
     COUNT=$((COUNT+1))
 done
 
+KAFKA_SERVERS=
+for SVR_NAME in ${!KAFKA_LIST[@]}; do
+    KAFKA_SERVERS="${KAFKA_SERVERS},${SVR_NAME}:${KAFKA_PORT}"
+done
+KAFKA_SERVERS=${KAFKA_SERVERS:1}
+
 docker run -d \
     --name ${NAME} \
     --restart no \
@@ -39,5 +45,7 @@ docker run -d \
         --server.port=${ORDER_PORT} \
         --com.quantdo.trade.consul.host=${CONSUL_HOST} \
         --com.quantdo.trade.consul.port=${CONSUL_PORT} \
+        --com.quantdo.trade.front.order.kafka.producer.bootstrap.servers=${KAFKA_SERVERS} \
+        --com.quantdo.trade.data-exchange.monitor.consumer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.handle.manager.producer.acks=all \
         --com.quantdo.trade.handle.manager.producer.max.in.flight.requests.per.connection=1

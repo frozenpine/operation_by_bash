@@ -20,6 +20,10 @@ function _make_serivce() {
         exit 1
     fi
 
+    if [[ ! -d "${SERVICE_BASE}" ]]; then
+        ${SUDO} mkdir -p "${SERVICE_BASE}"
+    fi
+
     typeset -u APP_GROUP_NAME
 
     APP_GROUP_NAME=$1

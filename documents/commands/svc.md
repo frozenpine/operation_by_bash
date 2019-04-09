@@ -78,6 +78,9 @@
    > 
    > [sms]
    > ssh://sms
+   > 
+   > [registry]
+   > ssh://registry
    > ```
 
 2. *alias.ini*：主机别名定义，配置节格式为：[节点主机名:节点IP]，配置内容为该主机的其他 **主机别名**
@@ -125,4 +128,5 @@
    > order=9191
    > clear=9291
    > match=9391
+   > registry=5000
    > ```

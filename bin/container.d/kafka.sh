@@ -15,7 +15,7 @@ get_id `uname -n`
 BROKER_ID=${ID}
 CLIENT_PORT=9092
 
-for SVR_NAME in ${!ZK_LIST[@]}; do
+for SVR_NAME in ${!ZOOKEEPER_LIST[@]}; do
     ZK_SERVERS="${ZK_SERVERS},${SVR_NAME}:${ZK_PORT}"
 done
 ZK_SERVERS=${ZK_SERVERS:1}
