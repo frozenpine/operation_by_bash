@@ -4,6 +4,7 @@ redis
 sso
 match
 index
+tmdb
 
 [node02:172.31.24.112]
 kfk

@@ -13,8 +13,8 @@ JVM_OPTS=""
 SENTRY_DSN=
 
 DB_NAME="digital"
-DB_USER="trader"
-DB_PASS="js2018"
+DB_USER=${DB_USER:="trader"}
+DB_PASS=${DB_PASS:="js2018"}
 
 SERVICE_LIST="registry zookeeper kafka mysql"
 

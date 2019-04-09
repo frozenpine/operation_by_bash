@@ -43,5 +43,8 @@ ssh://index
 [sms]
 ssh://sms
 
+[tmdb]
+ssh://tmdb
+
 [registry]
 ssh://registry
