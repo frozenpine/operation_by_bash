@@ -55,16 +55,29 @@ function _get_users() {
     local _MY_ID
     local _MY_NAME
 
-    _MY_ID=$((RANDOM % ${#MYSQL_LIST[@]}))
-    _MY_NAME="mysql00$((_MY_ID+1))"
+    if [[ ! -d "${USER_BASE_DIR}" ]]; then
+        ${SUDO} mkdir -p "${USER_BASE_DIR}"
+    fi
 
-    info "getting user info from mysql: ${_MY_NAME}"
+    MYSQL_HOST=
+    IDX=$((RANDOM % ${#MYSQL_LIST[@]}))
+    COUNT=0
+    for SVR_NAME in ${!MYSQL_LIST[@]}; do
+        if [[ ${COUNT} -eq ${IDX} ]]; then
+            MYSQL_HOST=${MYSQL_LIST[$SVR_NAME]}
+            break
+        fi
+
+        COUNT=$((COUNT+1))
+    done
+
+    info "getting user info from mysql: ${SVR_NAME}"
     
-    mysql -h${MYSQL_LIST[${_MY_NAME}]} \
+    mysql -h${MYSQL_HOST} \
          -u${DB_USER} -p${DB_PASS} ${DB_NAME} \
          -e 'select u.email as identity, u.password as password, k.key_id as api_key, k.secret_key as api_secret \
                     from t_trade_user as u inner join t_api_key as k on u.user_id = k.user_id' | \
-        awk '{printf("%s,%s,%s,%s\n", $1,$2,$3,$4)}' | tee "${ORIGN_USER_FILE}"
+        awk '{printf("%s,%s,%s,%s\n", $1,$2,$3,$4)}' | ${SUDO} tee "${ORIGN_USER_FILE}"
     
     info "Total user count: $((`wc -l "${ORIGN_USER_FILE}" | cut -d' ' -f1` - 1))"
     sleep 1
