@@ -18,9 +18,9 @@ USE `digital`;
 
 insert into `t_product` (`product_id`, `product_name`, `underlying_id`, `product_type`, `currency`, `trade_mode`, `quote_currency`, `clear_currency`, `deliv_series_num`, `cycle_type`, `product_status`, `operate_time`, `operator_id`, `recheck_operate_time`, `recheck_operator_id`, `match_rule`, `price_limit_before_fuse`, `price_mode`, `market_id`)
     values('XBT','BTC比特币','XBT-USD','1','XBT','1','XBT','XBT','1','1','1','1550645616397','admin','1550645616397','admin','1','21','1','1');
-insert into `t_trade_fee_set` (`product_id`,  `user_group_id`, `fee_mode`, `maker_fee_rate`, `taker_fee_rate`, `maker_fee_amt`, `taker_fee_amt`, `operate_time`, `operator_id`) values('XBT',NULL,'1','0.1120000000','0.1125000000','0.0000000000','0.0000000000','1550826690893',NULL);
-insert into `t_risk_limit` (`product_id`, `instrument_id`, `level`, `base_risk_limit`, `step_risk_limit`, `step_times`, `base_maint_margin`, `base_init_margin`, `operator_id`, `operate_time`) values('XBT',NULL,NULL,'0.1000000000','0.0100000000','10','0.2','0.1','admin','1545896347124');
 
+insert into `t_trade_fee_set` (notice_status,`product_id`,  `user_group_id`, `fee_mode`, `maker_fee_rate`, `taker_fee_rate`, `maker_fee_amt`, `taker_fee_amt`, `operate_time`, `operator_id`) values('0','XBT',NULL,'1','0.1120000000','0.1125000000','0.0000000000','0.0000000000','1550826690893',NULL);
+insert into `t_risk_limit` (notice_status,`product_id`, `instrument_id`, `level`, `base_risk_limit`, `step_risk_limit`, `step_times`, `base_maint_margin`, `base_init_margin`, `operator_id`, `operate_time`) values('0','XBT',NULL,NULL,'0.1000000000','0.0100000000','10','0.2','0.1','admin','1545896347124');
 
 insert into `t_risk_leverage_point_detail` (`id`, `product_id`, `risk_limit`, `leverage`) values('1','XBT','0.1000000000','100.00');
 insert into `t_risk_leverage_point_detail` (`id`, `product_id`, `risk_limit`, `leverage`) values('2','XBT','0.2000000000','500.00');

@@ -495,6 +495,8 @@ CREATE TABLE `t_risk_limit` (
   `base_init_margin` decimal(5,4) DEFAULT NULL COMMENT '基础起始保证金',
   `operator_id` varchar(20) DEFAULT NULL COMMENT '操作人',
   `operate_time` bigint(20) DEFAULT NULL COMMENT '操作时间',
+  `old_id` bigint(20) DEFAULT NULL COMMENT '原Id',
+  `notice_status` varchar(3) DEFAULT NULL COMMENT '通知交易状态 0 完成 1 通知中 2 通知失败',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COMMENT='风险限额';
 
@@ -663,6 +665,8 @@ CREATE TABLE `t_trade_fee_set` (
   `taker_fee_amt` decimal(30,10) NOT NULL COMMENT 'taker每手费用',
   `operate_time` bigint(20) DEFAULT NULL COMMENT '操作时间',
   `operator_id` varchar(20) DEFAULT NULL COMMENT '操作员',
+  `old_id` bigint(20) DEFAULT NULL COMMENT '源id',
+  `notice_status` varchar(3) DEFAULT NULL COMMENT '通知交易状态 0 完成 1 通知中 2 通知失败',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COMMENT='交易手续费';
 
