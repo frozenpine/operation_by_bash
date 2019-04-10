@@ -101,6 +101,18 @@ case ${COMMAND} in
         allssh -gzookeeper container logs --tail ${TAIL} zookeeper
     ;;
     shell)
+        while getopts :s: FLAG do
+            case $FLAG in
+                s)
+                    SHELL=${OPTARG}
+                ;;
+                *)
+                    error "invalid shell args: $*"
+                ;;
+            esac
+        done
+        shift $((OPTIND-1))
+
         IDX=$((RANDOM % ${#ZOOKEEPER_LIST[@]}))
         ZK_HOST=
         COUNT=0
@@ -113,7 +125,7 @@ case ${COMMAND} in
             COUNT=$((COUNT+1))
         done
 
-        container-shell -H${ZK_HOST} zookeeper
+        container-shell -H${ZK_HOST} -s ${SHELL:=bin/zkCli.sh} zookeeper
     ;;
     *)
         error "invalid command: ${COMMAND}"
