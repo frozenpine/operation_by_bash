@@ -60,6 +60,7 @@ function _shuffle_host() {
 
 function _create() {
     for DB_NAME in ${DBS}; do
+        info "creating user for db ${DB_NAME}"
         USER=
         PASS=
         for CONF in `extract_ini_sec ${DB_NAME} "${CONF_BASE}/dbs.ini"`; do
@@ -77,9 +78,9 @@ function _create() {
 
         mysql_create_user ${DB_NAME} ${USER:=$DEFAULT_DB_USER} ${PASS:=DEFAULT_DB_PASS}
 
-        continue
+        info "user ${USER:=$DEFAULT_DB_USER} created."
 
-        info "Creating ${DB_NAME}..."
+        info "creating ${DB_NAME}..."
         pushd "${SQL_BASE}/${DB_NAME}" >/dev/null
             cat "${DB_NAME}_frame.sql" | mysql_exec -D${DB_NAME}
             if [[ $? -ne 0 ]]; then
@@ -88,7 +89,7 @@ function _create() {
                 continue
             fi
         popd >/dev/null
-        info "Creating finished."
+        info "db[${DB_NAME}] creating finished."
         echo
     done
 }

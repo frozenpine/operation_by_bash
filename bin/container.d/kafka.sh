@@ -132,6 +132,7 @@ if [[ ${#KAFKA_LIST[@]} -ge 3 ]]; then
         -e KAFKA_LISTENERS=${LISTENERS} \
         -e KAFKA_BROKER_ID=${BROKER_ID} \
         -e KAFKA_DELETE_TOPIC_ENABLE="true" \
+        -e KAFKA_AUTO_CREATE_TOPICS_ENABLE="false" \
         -e KAFKA_NUM_PARTITIONS=3 \
         -e KAFKA_DEFAULT_REPLICATION_FACTOR=3 \
         -e KAFKA_MIN_INSYNC_REPLICAS=2 \
@@ -159,6 +160,7 @@ else
         -e KAFKA_LISTENERS=${LISTENERS} \
         -e KAFKA_BROKER_ID=${BROKER_ID} \
         -e KAFKA_DELETE_TOPIC_ENABLE="true" \
+        -e KAFKA_AUTO_CREATE_TOPICS_ENABLE="false" \
         -e KAFKA_NUM_PARTITIONS=3 \
         -e KAFKA_DEFAULT_REPLICATION_FACTOR=1 \
         -e KAFKA_MIN_INSYNC_REPLICAS=1 \

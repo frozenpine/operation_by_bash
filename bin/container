@@ -6,6 +6,8 @@ BASE_DIR=`pwd`
 popd >/dev/null
 
 source "${BASE_DIR}/module.d/common.sh" || exit 1
+FUNC_FILE_CONFIG="${MODULE_BASE}/config.sh"
+import_functions
 
 SCRIPT_START="${MODULE_BASE}/start-container.sh"
 SCRIPT_STOP="${MODULE_BASE}/stop-container.sh"
