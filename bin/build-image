@@ -16,6 +16,7 @@ BUILD_NAME=
 
 CLEAN_LOCAL=0
 PUSH_REGISTRY=0
+FORCE=0
 
 function _extra_help() {
     local _IDX
@@ -34,6 +35,7 @@ HELP_ARGS["c"]="optional,Clean local build image."
 HELP_ARGS["p"]="optional,Push image to registry."
 HELP_ARGS["b:build_name"]="Project name to build."
 HELP_ARGS["D"]="optional,Dry run command for test."
+HELP_ARGS["f"]="optional,Build image forcely without checking md5."
 
 function _build() {
     MODULE=
@@ -52,7 +54,7 @@ function _build() {
             SIG_FILE="${BUILD_DIR}/${FILE_NAME}.md5"
 
             NEW_SIG=`openssl md5 "${BUILD_DIR}/${FILE_NAME}"`
-            if [[ -f "${SIG_FILE}" && `cat "${SIG_FILE}"` == ${NEW_SIG} ]]; then
+            if [[ ${FORCE} -eq 0 && -f "${SIG_FILE}" && `cat "${SIG_FILE}"` == ${NEW_SIG} ]]; then
                 warning "module[${MODULE}] with version[${VERSION}] not modified, skip building."
                 continue
             fi
@@ -70,10 +72,10 @@ function _build() {
                     ${SUDO} cp -r "../${MODULE}_conf" ./config
                 fi
 
-                rm -f *.jar &>/dev/null
-                cp "${BUILD_DIR}/${FILE_NAME}" . &>/dev/null
-                find "${BUILD_DIR}" -type f -name "*.sh" -exec cp {} . \; &>/dev/null
-                chmod u+x *.sh &>/dev/null
+                ${SUDO} rm -f *.jar &>/dev/null
+                ${SUDO} cp "${BUILD_DIR}/${FILE_NAME}" ./ &>/dev/null
+                find "${BUILD_DIR}" -type f -name "*.sh" -exec ${SUDO} cp {} . \; &>/dev/null
+                ${SUDO} chmod u+x *.sh &>/dev/null
 
                 _IMAGE_NAME="registry:5000/${BUILD_NAME}/${MODULE}:${VERSION}"
                 eval "${DRY_RUN} docker build . -t ${_IMAGE_NAME}"
@@ -89,7 +91,7 @@ function _build() {
     )
 }
 
-while getopts :b:cpdh FLAG; do
+while getopts :b:cpfDh FLAG; do
     case $FLAG in
         c)
             CLEAN_LOCAL=1
@@ -97,7 +99,10 @@ while getopts :b:cpdh FLAG; do
         p)
             PUSH_REGISTRY=1
         ;;
-        d)
+        f)
+            FORCE=1
+        ;;
+        D)
             DRY_RUN="echo"
         ;;
         b)
