@@ -8,7 +8,7 @@ fi
 NAME=query
 USER=${NAME}
 
-JVM_OPTS=""
+JVM_OPTS=${TRADE_QUERY_JVM}
 
 # SENTRY_DSN="http://73668afe8c674732904c6f7bc167395a:afa4c2ce16eb4352baed667d5675631b@monitor:9000/3"
 SENTRY_DSN=
@@ -83,7 +83,7 @@ docker run -d \
         ${JVM_OPTS} \
         -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
         --server.port=${QUERY_PORT} \
-        --com.quantdo.trade.front.order.kafka.producer.bootstrap.servers=${KAFKA_SERVERS} \
+        --com.quantdo.trade.data-exchange.command.producer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.data-exchange.monitor.consumer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.handle.manager.producer.acks=all \
         --com.quantdo.trade.handle.manager.producer.max.in.flight.requests.per.connection=1 \

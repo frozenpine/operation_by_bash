@@ -8,7 +8,7 @@ fi
 NAME=match
 USER=${NAME}
 
-JVM_OPTS="-Xms8G -Xmx8G"
+JVM_OPTS=${TRADE_MATCH_JVM}
 
 # SENTRY_DSN="http://ebd586b285bc4fd08c7026c36007a182:f8fae917d105440ca9301e597d5ff179@monitor:9000/5"
 SENTRY_DSN=
@@ -38,6 +38,7 @@ docker run -d \
         --server.port=${MATCH_PORT} \
         --logging.level.root=info \
         --logging.level.com.quantdo.trade=info \
+        --com.quantdo.trade.match.consumer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.match.producer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.match.global.outputIndexTopic=${INDEX_TOPIC} \
         --com.quantdo.trade.handle.manager.transaction-batch-size=1000 \
