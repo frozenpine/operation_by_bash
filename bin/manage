@@ -210,6 +210,7 @@ case ${COMMAND} in
         else
             allssh -g${MANAGE_GROUP} container stop -crf $*
         fi
+        db truncate all
     ;;
     logs)
         if [[ $# -lt 1 ]]; then
