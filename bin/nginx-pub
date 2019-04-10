@@ -12,7 +12,7 @@ import_functions
 
 NGINX_GROUP=front
 
-DRY_RUN=
+DRY_RUN=eval
 
 SERVICE_LIST="digital order tradebase"
 
@@ -30,7 +30,7 @@ HELP_ARGS["D"]="optional,Dry run command and show command line in console instea
 HELP_COMMANDS["data"]="Publish data files to all member in nginx cluster."
 HELP_COMMANDS["conf"]="Publish config files to all member in nginx cluster."
 
-RSYOPT=(-rlptzv --progress --delete)
+RSYOPT=(-rlptzv --progress --delete --human-readable --chmod="D+rx,Fo+r")
 
 if [[ -n "${IDENTITY_FILE}" ]]; then
     RSYOPT=(${RSYOPT[@]} "--rsh='ssh -i ${IDENTITY_FILE}'")
@@ -65,8 +65,10 @@ EOF
             continue
         fi
 
-        eval ${DRY_RUN} rsync "${RSYOPT[@]}" "${CONF_TEMP}" ${SSH_USER}@${SSH_HOST}:${DATA_BASE:=/opt}/nginx/conf/
+        ${DRY_RUN} rsync "${RSYOPT[@]}" "${CONF_TEMP}/" ${SSH_USER}@${SSH_HOST}:${DATA_BASE:=/opt}/nginx/conf/
     done
+
+    rm -rf "${CONF_TEMP}"
 }
 
 function _reload_nginx() {
