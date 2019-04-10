@@ -1,7 +1,7 @@
 upstream order-front {
 `
 for SVR_NAME in ${!ORDER_LIST[@]}; do
-    echo "    server ${ORDER_LIST[$SVR_NAME]}:${ORDER_PORT}"
+    echo "    server ${ORDER_LIST[$SVR_NAME]}:${ORDER_PORT};"
 done
 `
 }
@@ -9,7 +9,7 @@ done
 upstream sso-front {
 `
 for SVR_NAME in ${!TRADEBASE_LIST[@]}; do
-    echo "    server ${TRADEBASE_LIST[$SVR_NAME]}:${TRADEBASE_PORT}"
+    echo "    server ${TRADEBASE_LIST[$SVR_NAME]}:${TRADEBASE_PORT};"
 done
 `
 }
@@ -35,10 +35,10 @@ server {
         
         proxy_pass http://order-front/order/;
 
-        proxy_set_header HOST $HOST;
-        proxy_set_header X-REAL-IP $remote_addr;
-        proxy_set_header X-Forwarded-SERVER $HOST;
-        proxy_set_header Request-Url $request_uri;
+        proxy_set_header HOST \$HOST;
+        proxy_set_header X-REAL-IP \$remote_addr;
+        proxy_set_header X-Forwarded-SERVER \$HOST;
+        proxy_set_header Request-Url \$request_uri;
 
         proxy_pass_header api-key;
         proxy_pass_header api-expires;
@@ -52,17 +52,17 @@ server {
 
         proxy_pass http://sso-front;
 
-        proxy_set_header HOST $HOST;
-        proxy_set_header X-REAL-IP $remote_addr;
-        proxy_set_header X-Forwarded-SERVER $HOST;
-        proxy_set_header Request-Url $request_uri;
+        proxy_set_header HOST \$HOST;
+        proxy_set_header X-REAL-IP \$remote_addr;
+        proxy_set_header X-Forwarded-SERVER \$HOST;
+        proxy_set_header Request-Url \$request_uri;
 
         proxy_pass_header api-key;
         proxy_pass_header api-expires;
         proxy_pass_header api-signature;
 
-        if ( $request_method = 'OPTIONS' ) { 
-            add_header Access-Control-Allow-Origin $http_origin; 
+        if ( \$request_method = 'OPTIONS' ) { 
+            add_header Access-Control-Allow-Origin \$http_origin; 
             add_header Access-Control-Allow-Headers Authorization,Content-Type,Accept,Origin,User-Agent,DNT,Cache-Control,X-Mx-ReqToken,X-Data-Type,X-Requested-With; 
             add_header Access-Control-Allow-Methods GET,POST,OPTIONS,HEAD,PUT; 
             add_header Access-Control-Allow-Credentials true; 
@@ -75,8 +75,8 @@ server {
 
         add_header Access-Control-Allow-Headers X-Requested-With;
         add_header Access-Control-Allow-Methods GET,POST,OPTIONS;
-        if ( $request_method = 'OPTIONS' ) {
-            add_header Access-Control-Allow-Origin $http_origin;
+        if ( \$request_method = 'OPTIONS' ) {
+            add_header Access-Control-Allow-Origin \$http_origin;
             add_header Access-Control-Allow-Headers Authorization,Content-Type,Accept,Origin,User-Agent,DNT,Cache-Control,X-Mx-ReqToken,X-Data-Type,X-Requested-With;
             add_header Access-Control-Allow-Methods GET,POST,OPTIONS,HEAD,PUT;
             add_header Access-Control-Allow-Credentials true;
@@ -88,10 +88,10 @@ server {
 
         proxy_pass http://sso-front;
 
-        proxy_set_header HOST $HOST;
-        proxy_set_header X-REAL-IP $remote_addr;
-        proxy_set_header X-Forwarded-SERVER $HOST;
-        proxy_set_header Request-Url $request_uri;
+        proxy_set_header HOST \$HOST;
+        proxy_set_header X-REAL-IP \$remote_addr;
+        proxy_set_header X-Forwarded-SERVER \$HOST;
+        proxy_set_header Request-Url \$request_uri;
 
         proxy_pass_header api-key;
         proxy_pass_header api-expires;

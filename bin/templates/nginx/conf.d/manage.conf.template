@@ -1,7 +1,7 @@
 upstream manage-front {
 `
 for SVR_NAME in ${!DIGITAL_LIST[@]}; do
-    echo "    server ${DIGITAL_LIST[$SVR_NAME]}:${DIGITAL_PORT}"
+    echo "    server ${DIGITAL_LIST[$SVR_NAME]}:${DIGITAL_PORT};"
 done
 `
 }
