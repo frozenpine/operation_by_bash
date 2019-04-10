@@ -12,6 +12,8 @@ import_functions
 
 NGINX_GROUP=front
 
+DRY_RUN=
+
 SERVICE_LIST="digital order tradebase"
 
 for SERVICE in ${SERVICE_LIST}; do
@@ -23,16 +25,19 @@ done
 
 HELP_ARGS["g:group_name"]="optional,Group name for nginx cluster controlling."
 HELP_ARGS["r"]="optional,Reload tag, if specified, all memeber in nginx cluster will be reloaded."
+HELP_ARGS["D"]="optional,Dry run command and show command line in console instead of execution, for test use."
 
 HELP_COMMANDS["data"]="Publish data files to all member in nginx cluster."
 HELP_COMMANDS["conf"]="Publish config files to all member in nginx cluster."
 
+RSYOPT=(-rlptzv --progress --delete)
+
 if [[ -n "${IDENTITY_FILE}" ]]; then
-    RSYOPT="--rsh='ssh -i ${IDENTITY_FILE}'"
+    RSYOPT=(${RSYOPT[@]} "--rsh='ssh -i ${IDENTITY_FILE}'")
 fi
 
 if [[ -n ${SUDO} ]]; then
-    RSYOPT="${RSYOPT} --rsync-path='sudo rsync'"
+    RSYOPT=(${RSYOPT[@]} "--rsync-path='sudo rsync'")
 fi
 
 function _pub_conf() {
@@ -60,17 +65,20 @@ EOF
             continue
         fi
 
-        rsync ${RSYOPT} -rlptzv --progress --delete "${CONF_TEMP}" ${SSH_USER}@${SSH_HOST}:${DATA_BASE:=/opt}/nginx/conf/
+        eval ${DRY_RUN} rsync "${RSYOPT[@]}" "${CONF_TEMP}" ${SSH_USER}@${SSH_HOST}:${DATA_BASE:=/opt}/nginx/conf/
     done
 }
 
 function _reload_nginx() {
-    info "reload nginx cluster."
+    info "reload nginx cluster."\
     allssh -g${NGINX_GROUP} container exec nginx nginx -s reload
 }
 
-while getopts :g:rh FLAG; do
+while getopts :g:Drh FLAG; do
     case $FLAG in
+        D)
+            DRY_RUN="echo"
+        ;;
         g)
             NGINX_GROUP=${OPTARG}
         ;;
