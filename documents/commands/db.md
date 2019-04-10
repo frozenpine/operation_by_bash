@@ -4,28 +4,29 @@
 >
 > ```bash
 > $ db -h
-> Usage: db [-g {group_name}] [-p {db_pass}] [-D] [-H {db_host}] [-u {db_user}]
->           [-h] [-P {db_port}]
->           { stop | start | init | status | destory | kill | truncate | pub }
+> Usage: db [-H {db_host}] [-u {db_user}] [-h] [-g {group_name}] [-P {db_port}] 
+>           [-p {db_pass}]
+>           { kill | stop | create | truncate | start | init | status | pub | 
+>           destory }
 > Args:
->         -g    Group name for mysql cluster, default: "mysql".
->         -p    Specify db pass in db connection, if not sepcified, default identity
->               will be used.
->         -D    Dry run command for test.
 >         -H    Specify db host to connect to, default: random host in mysql group.
->         -u    Specify db user in db connection, if not sepcified, default identity
+>         -u    Specify db user in db connection, if not sepcified, default identity 
 >               will be used.
 >         -h    Show this help message.
+>         -g    Group name for mysql cluster, default: "mysql".
 >         -P    Specify db port to connect to, default: 3306.
+>         -p    Specify db pass in db connection, if not sepcified, default identity 
+>               will be used.
 > Commands:
+>       kill    Kill all mysql hosts forcely.
 >       stop    Stop all mysql hosts.
+>     create    Create databases defined in bin/sql/ & default user.
+>   truncate    Truncate all specified db's tables.
 >      start    Start all mysql hosts without replication.
 >       init    Init specified db's talbes in sql directory, need db creation first.
 >     status    Check all mysql hosts' status.
->    destory    Stop all mysql hosts & remove data files.
->       kill    Kill all mysql hosts forcely.
->   truncate    Truncate all specified db's tables.
 >        pub    Publish container module to all mysql nodes.
+>    destory    Stop all mysql hosts & remove data files.
 > ```
 >
 > 管理 **mysql** 集群的启动、删除，同时支持根据 ***sql*** 目录下的sql脚本定义初始化数据库表结构及基础数据
