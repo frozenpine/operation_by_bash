@@ -854,6 +854,17 @@ CREATE TABLE `t_withdraw` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COMMENT='提现申请';
 
+
+DROP TABLE IF EXISTS `t_trade_user_oper_log`;
+
+CREATE TABLE `t_trade_user_oper_log` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID自增长序列',
+  `operation_type` varchar(3) DEFAULT NULL COMMENT '日志类型 1注册 2 登录 3 丛植密码 4 邮箱验证 5 修改邮箱 6 身份认证 7 设置手机绑定 8 修改手机绑定  9 google 绑定 10 google 解除绑定 11 设置资金密码',
+  `operate_time` bigint(20) DEFAULT NULL COMMENT '操作时间',
+  `user_id` varchar(20) DEFAULT NULL COMMENT '操作人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=829 DEFAULT CHARSET=utf8 COMMENT='用户操作日志';
+
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
