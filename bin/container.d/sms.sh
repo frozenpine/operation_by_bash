@@ -1,21 +1,27 @@
-VERSION=${DIGITAL_REST_VERSION}
+VERSION=${SERVICE_SMS_VERSION}
 
 if [[ -z ${VERSION} ]]; then
-    error "rest version missing."
+    error "index version missing."
     exit 1
 fi
 
-NAME=rest
+NAME=sms
 USER=${NAME}
+
+# SENTRY_DSN="http://a18befa43f4d4d38983934e7cf7ed441:6103657ae0634a7299fc70670e295c73@monitor:9000/6"
+SENTRY_DSN=
 
 JVM_OPTS=""
 
-# SENTRY_DSN="http://654e52faff5144798b88dff78fa283b5:73a9028558844a5d88c14c50a106b9cc@monitor:9000/8"
-SENTRY_DSN=
+DB_NAME="sms"
 
-DB_NAME="sso"
+MAIL_HOST=
+MAIL_PORT=
+MAIL_USER=
+MAIL_PASS=
+MAIL_FROM=
 
-SERVICE_LIST="registry zookeeper kafka mysql redis digital"
+SERVICE_LIST="registry mysql consul"
 for SERVICE in ${SERVICE_LIST}; do
     source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
         echo "service list file missing: ${SERVICE}.sh" >&2
@@ -50,39 +56,29 @@ for SVR_NAME in ${!MYSQL_LIST[@]}; do
     COUNT=$((COUNT+1))
 done
 
-REDIS_HOST=
-IDX=$((RANDOM % ${#REDIS_LIST[@]}))
+CONSUL_HOST=
+IDX=$((RANDOM % ${#CONSUL_LIST[@]}))
 COUNT=0
-for SVR_NAME in ${!REDIS_LIST[@]}; do
+for SVR_NAME in ${!CONSUL_LIST[@]}; do
     if [[ ${COUNT} -eq ${IDX} ]]; then
-        REDIS_HOST=${REDIS_LIST[$SVR_NAME]}
+        CONSUL_HOST=${CONSUL_LIST[$SVR_NAME]}
         break
     fi
 
     COUNT=$((COUNT+1))
 done
 
-ZK_SERVERS=
-for SVR_NAME in ${!ZOOKEEPER_LIST[@]}; do
-    ZK_SERVERS="${ZK_SERVERS},${SVR_NAME}:${ZOOKEEPER_PORT}"
-done
-ZK_SERVERS=${ZK_SERVERS:1}
-
-SELF_IP=`ip address show ${BIND_INT:=eth0} | grep inet | grep -v inet6 | awk '{print $2}' | cut -d'/' -f1`
-
 docker run -d \
     --name ${NAME} \
     --restart no \
     --network host \
     -e SENTRY_DSN="${SENTRY_DSN}" \
-    registry:5000/digital/${NAME}:${VERSION} \
+    registry:5000/service/${NAME}:${VERSION} \
         ${JVM_OPTS} \
-        -jar /${NAME}/digital-${NAME}-${VERSION}.jar \
-        --server.port="${DIGITAL_PORT}" \
-        --spring.redis.host="${REDIS_HOST}" \
+        -jar /${NAME}/service-${NAME}-${VERSION}.jar \
+        --server.port=${SMS_PORT} \
+        --spring.cloud.consul.host=${CONSUL_HOST} \
+        --spring.cloud.consul.port=${CONSUL_PORT} \
         --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?characterEncoding=utf-8" \
         --spring.datasource.username="${DB_USER:=$DEFAULT_DB_USER}" \
-        --spring.datasource.password="${DB_PASS:=$DEFAULT_DB_PASS}" \
-        --dubbo.registry.address="${ZK_SERVERS}" \
-        --dubbo.protocol.host="${SELF_IP}" \
-        --dubbo.consumer.timeout=300000
+        --spring.datasource.password="${DB_PASS:=$DEFAULT_DB_PASS}"

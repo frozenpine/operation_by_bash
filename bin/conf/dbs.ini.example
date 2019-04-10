@@ -1,5 +1,6 @@
 # database definitions
 # section name is database name
+# if no user or password specified, default config in common.env will be used.
 
 [digital]
 user=digital

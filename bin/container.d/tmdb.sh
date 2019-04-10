@@ -14,16 +14,28 @@ JVM_OPTS="-Xms8G -Xmx8G"
 SENTRY_DSN=
 
 DB_NAME="clear"
-DB_USER=${DB_USER:="trader"}
-DB_PASS=${DB_PASS:="js2018"}
 
 SERVICE_LIST="registry zookeeper kafka consul mysql elastic tmdb"
-
 for SERVICE in ${SERVICE_LIST}; do
     source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
         echo "service list file missing: ${SERVICE}.sh" >&2
         exit 1
     }
+done
+
+DB_USER=
+DB_PASS=
+for CONF in `extract_ini_sec ${DB_NAME} "${CONF_BASE}/dbs.ini"`; do
+    if [[ $CONF =~ .*[Uu][Ss][Ee][Rr] ]]; then
+        DB_USER=`echo ${CONF} | cut -d'=' -f2`
+        DB_USER=${DB_USER## }
+        DB_USER=${DB_USER%% }
+    fi
+    if [[ $CONF =~ .*[Pp][Aa][Ss][Ss]([Ww][Oo][Rr][Dd])? ]]; then
+        DB_PASS=`echo ${CONF} | cut -d'=' -f2`
+        DB_PASS=${DB_PASS## }
+        DB_PASS=${DB_PASS%% }
+    fi
 done
 
 CONSUL_HOST=
@@ -76,9 +88,9 @@ docker run -d \
         --server.address=${SELF_IP} \
         --server.port=${TMDB_PORT} \
         --com.quantdo.trade.handle.manager.mode=database \
-        --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/clear?characterEncoding=utf-8" \
-        --spring.datasource.username=${DB_USER} \
-        --spring.datasource.password=${DB_PASS} \
+        --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?characterEncoding=utf-8" \
+        --spring.datasource.username=${DB_USER:=$DEFAULT_DB_USER} \
+        --spring.datasource.password=${DB_PASS:=$DEFAULT_DB_PASS} \
         --spring.elasticsearch.jest.uris=${ELASTIC_SERVERS} \
         --com.quantdo.trade.consul.host=${CONSUL_HOST} \
         --com.quantdo.trade.consul.port=${CONSUL_PORT} \

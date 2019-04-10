@@ -75,7 +75,7 @@ function _create() {
             fi
         done
 
-        mysql_create_user ${DB_NAME} ${USER} ${PASS}
+        mysql_create_user ${DB_NAME} ${USER:=$DEFAULT_DB_USER} ${PASS:=DEFAULT_DB_PASS}
 
         continue
 
