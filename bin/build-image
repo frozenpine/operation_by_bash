@@ -61,7 +61,9 @@ function _build() {
             
             [[ ! -d build ]] && ${SUDO} mkdir build
             pushd build >/dev/null
-                template "${BUILD_DIR}/dockerfile.template" dockerfile
+                TEMP_DOCKERFILE=`mktemp`
+                template "${BUILD_DIR}/dockerfile.template" "${TEMP_DOCKERFILE}"
+                $SUDO mv "${TEMP_DOCKERFILE}" ./dockerfile
 
                 if [[ -d "../${MODULE}_conf" ]]; then
                     ${SUDO} rm -rf ./config
