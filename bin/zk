@@ -101,7 +101,7 @@ case ${COMMAND} in
         allssh -gzookeeper container logs --tail ${TAIL} zookeeper
     ;;
     shell)
-        while getopts :s: FLAG do
+        while getopts :s: FLAG; do
             case $FLAG in
                 s)
                     SHELL=${OPTARG}
