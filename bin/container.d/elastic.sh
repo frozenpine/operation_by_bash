@@ -1,6 +1,7 @@
 VERSION="6.6.0"
 NAME=elasticsearch
-USER=elastic
+SHORT_NAME=elastic
+USER=${SHORT_NAME}
 
 CLUSTER_NAME=Js
 
@@ -39,7 +40,7 @@ if [[ ${#ES_LIST[@]} -ge 3 ]]; then
     FIRST_IP=${ES_LIST[es001]}
 
     docker run -d \
-        --name ${USER} \
+        --name ${SHORT_NAME} \
         --restart always \
         --network host \
         --user `grep ${USER} /etc/passwd | cut -d':' -f3` \
@@ -49,7 +50,7 @@ if [[ ${#ES_LIST[@]} -ge 3 ]]; then
         registry:5000/${NAME}:${VERSION}
 else
     docker run -d \
-        --name ${USER} \
+        --name ${SHORT_NAME} \
         --restart always \
         --network host \
         --user `grep ${USER} /etc/passwd | cut -d':' -f3` \

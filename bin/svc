@@ -39,7 +39,10 @@ function _make_serivce() {
         fi
 
         ARRAY_LIST[${SSH_HOST}]=${HOST_ALIAS[$SSH_HOST]}
-    done
+    done || {
+        error "parse hosts.ini failed"
+        exit 1
+    }
 
     cat <<EOF >"${SERVICE_BASE}/$1.sh"
 declare -A ${APP_GROUP_NAME}_LIST

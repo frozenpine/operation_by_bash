@@ -55,8 +55,11 @@ docker run -d \
         --server.port=${CLEAR_PORT} \
         --com.quantdo.trade.consul.host=${CONSUL_HOST} \
         --com.quantdo.trade.consul.port=${CONSUL_PORT} \
+        --com.quantdo.trade.handle.manager.mode=memory \
         --com.quantdo.trade.handle.manager.producer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.handle.manager.consumer.bootstrap.servers=${KAFKA_SERVERS} \
+        --com.quantdo.trade.handle.manager.snapshot-topic=${CLEAR_SNAPSHOT_TOPIC} \
+        --com.quantdo.trade.handle.manager.checkpoint-topic=${CLEAR_CHECKPOINT_TOPIC} \
         --com.quantdo.trade.handle.manager.consumer.receive.buffer.bytes=10240000 \
         --com.quantdo.trade.handle.manager.consumer.fetch.max.bytes=10240000 \
         --com.quantdo.trade.handle.manager.consumer.fetch.min.bytes=1024000 \

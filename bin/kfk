@@ -60,6 +60,30 @@ for SVR_NAME in ${!KAFKA_LIST[@]}; do
 done
 KAFKA_SERVERS=${KAFKA_SERVERS:1}
 
+function _create_topic() {
+    cat <<EOF >"${TOPIC_LIST_FILE}"
+# TOPIC_NAME PARTIONS REPLICAS
+# if want to define replicas without partions, use "null" in partions column
+MATCH
+MATCH-SS
+MATCH-SS-INCREMENT
+MATCH-JSON-SS
+MATCH-JSON-SS-INCREMENT
+
+${INDEX_TOPIC}
+
+BACK-ORDER
+SS-BOOK-ORDER
+
+CLEAR                   # 30
+${CLEAR_CHECKPOINT_TOPIC}                # 30
+${CLEAR_SNAPSHOT_TOPIC}           # 30
+
+NOTIFY
+ACCESS
+EOF
+}
+
 function _topic() {
     eval "${DRY_RUN} ${TOPIC_SCRIPT} --zookeeper ${ZK_SERVERS} $*" 2> >(grep -v "SLF4J: " >&2)
 }
@@ -102,8 +126,8 @@ function _init() {
     shift $((OPTIND-1))
 
     if [[ ! -f "${TOPIC_LIST_FILE}" ]]; then
-        error "no topic list specified by args or topic file."
-        exit 1
+        warning "no topic list specified by args or topic file, auto creating."
+        _create_topic
     fi
 
     info "reading kafka topics from file."
@@ -227,6 +251,7 @@ case ${COMMAND} in
         allssh -gkafka container start kafka
         info "delay 3s for broker connections."
         sleep 3
+        _create_topic
         _init 
     ;;
     stop)

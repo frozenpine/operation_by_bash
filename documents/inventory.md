@@ -2,11 +2,11 @@
 
 ## 主机信息
 
-| 序号 | 主机名 | 内部地址      | 外部地址     | <a name="alias">主机别名</a>                  |
-| ---- | ------ | ------------- | ------------ | --------------------------------------------- |
-| 01   | node01 | 172.31.24.111 | 3.112.87.67  | zk \| redis \| sso \| match \| index \| tmdb  |
-| 02   | node02 | 172.31.24.112 | 3.112.74.27  | kfk \| mysql \| order \| mgmt \| sms \| sched |
-| 03   | node03 | 172.31.24.114 | 3.112.97.161 | consul \| es \| clear \| nginx \| registry    |
+| 序号 | 主机名 | 内部地址      | 外部地址     | <a name="alias">主机别名</a>                        |
+| ---- | ------ | ------------- | ------------ | --------------------------------------------------- |
+| 01   | node01 | 172.31.24.111 | 3.112.87.67  | zk \| redis \| sso \| match \| index \| tmdb        |
+| 02   | node02 | 172.31.24.112 | 3.112.74.27  | kfk \| mysql \| order \| mgmt \| sms \| sched       |
+| 03   | node03 | 172.31.24.114 | 3.112.97.161 | consul \| es \| clear \| nginx \| registry \| query |
 
 ## 应用分组
 
@@ -22,10 +22,11 @@
 | 07   | front     | nginx    | 80       | http      | 前置反向代理集群                                             |
 | 08   | tradebase | sso      | 9091     | http      | 交易用户管理集群，提供交易用户的注册、登录、查询以及API-Key管理服务 |
 | 09   | order     | order    | 9191     | http      | 报单录入接口集群，以nginx反向代理发布                        |
-| 10   | clear     | clear    | 9291     | http      | 清算服务集群，以 clientId 进行负载均衡                       |
-| 11   | tmdb      | tmdb     | 9292     | http      | 数据落地服务                                                 |
-| 12   | match     | match    | 9391     | http      | 撮合服务集群，以 symbol 进行负载均衡                         |
-| 13   | digital   | mgmt     | 9089     | http      | 场下管理系统，以nginx反向代理发布                            |
-| 14   | sms       | sms      | 9189     | http      | 短信验证码服务                                               |
-| 15   | scheduler | sched    | 9289     | http      | 定时任务                                                     |
-| 16   | index     | index    |          |           | 指数计算服务                                                 |
+| 10   | query     | query    | 9192     | http      | 查询接口集群，以nginx反向代理发布                            |
+| 11   | clear     | clear    | 9291     | http      | 清算服务集群，以 clientId 进行负载均衡                       |
+| 12   | tmdb      | tmdb     | 9292     | http      | 数据落地服务                                                 |
+| 13   | match     | match    | 9391     | http      | 撮合服务集群，以 symbol 进行负载均衡                         |
+| 14   | digital   | mgmt     | 9089     | http      | 场下管理系统，以nginx反向代理发布                            |
+| 15   | sms       | sms      | 9189     | http      | 短信验证码服务                                               |
+| 16   | scheduler | sched    | 9289     | http      | 定时任务                                                     |
+| 17   | index     | index    |          |           | 指数计算服务                                                 |

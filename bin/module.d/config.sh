@@ -134,7 +134,10 @@ function alias_address() {
         
         for ALIAS_NAME in `extract_ini_sec ${ALIAS_SEC_NAME} "${CONF_BASE}/alias.ini"`; do
             HOST_ALIAS["$ALIAS_NAME"]="${HOST_IP}"
-        done
+        done || {
+            error "parse alias.ini failed."
+            exit 1
+        }
     done
 
     # for NAME in ${!HOST_ALIAS[@]}; do
@@ -144,21 +147,8 @@ function alias_address() {
 
 function app_ports() {
     if [[ ! -f "${CONF_BASE}/ports.ini" ]]; then
-        cat <<EOF >"${CONF_BASE}/ports.ini"
-zookeeper=2181
-kafka=9092
-elastic=9200
-consul=8500
-mysql=3306
-redis=6379
-front=80
-digital=9089
-sms=8180
-tradebase=9091
-order=9191
-clear=9291
-match=9391
-EOF
+        error "ports.ini missing."
+        exit 1
     fi
 
     for PORT_DEFINE in `sed 's/#.*$//g; /^ *$/d' "${CONF_BASE}/ports.ini"`; do

@@ -82,20 +82,22 @@ docker run -d \
     --network host \
     -e SENTRY_DSN="${SENTRY_DSN}" \
     -e CLASSPATH=/docker-java-home/jre/lib \
-    registry:5000/trade$1/clear:${VERSION} \
+    registry:5000/trade$1/${NAME}:${VERSION} \
         ${JVM_OPTS} \
-        -jar /clear/trade$1-clear-${VERSION}.jar \
+        -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
         --server.address=${SELF_IP} \
         --server.port=${TMDB_PORT} \
-        --com.quantdo.trade.handle.manager.mode=database \
-        --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?characterEncoding=utf-8" \
+        --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&connectionCollation=utf8_general_ci&useSSL=false&serverTimezone=Asia/Shanghai" \
         --spring.datasource.username=${DB_USER:=$DEFAULT_DB_USER} \
         --spring.datasource.password=${DB_PASS:=$DEFAULT_DB_PASS} \
         --spring.elasticsearch.jest.uris=${ELASTIC_SERVERS} \
         --com.quantdo.trade.consul.host=${CONSUL_HOST} \
         --com.quantdo.trade.consul.port=${CONSUL_PORT} \
+        --com.quantdo.trade.handle.manager.mode=database \
         --com.quantdo.trade.handle.manager.producer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.handle.manager.consumer.bootstrap.servers=${KAFKA_SERVERS} \
+        --com.quantdo.trade.handle.manager.snapshot-topic=${CLEAR_SNAPSHOT_TOPIC} \
+        --com.quantdo.trade.handle.manager.checkpoint-topic=${CLEAR_CHECKPOINT_TOPIC} \
         --com.quantdo.trade.handle.manager.consumer.receive.buffer.bytes=10240000 \
         --com.quantdo.trade.handle.manager.consumer.fetch.max.bytes=10240000 \
         --com.quantdo.trade.handle.manager.consumer.fetch.min.bytes=1024000 \

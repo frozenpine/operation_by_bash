@@ -39,6 +39,7 @@ docker run -d \
         --logging.level.root=info \
         --logging.level.com.quantdo.trade=info \
         --com.quantdo.trade.match.producer.bootstrap.servers=${KAFKA_SERVERS} \
+        --com.quantdo.trade.match.global.outputIndexTopic=${INDEX_TOPIC} \
         --com.quantdo.trade.handle.manager.transaction-batch-size=1000 \
         --com.quantdo.trade.match.consumer.receive.buffer.bytes=10240000 \
         --com.quantdo.trade.match.consumer.fetch.max.bytes=10240000 \

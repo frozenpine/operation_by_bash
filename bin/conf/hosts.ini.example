@@ -31,6 +31,9 @@ ssh://match
 [order]
 ssh://order
 
+[query]
+ssh://query
+
 [tradebase]
 ssh://tradebase
 
@@ -45,6 +48,9 @@ ssh://sms
 
 [tmdb]
 ssh://tmdb
+
+[scheduler]
+ssh://sched
 
 [registry]
 ssh://registry

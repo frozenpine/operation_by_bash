@@ -6,11 +6,13 @@ MATCH-SS-INCREMENT
 MATCH-JSON-SS
 MATCH-JSON-SS-INCREMENT
 
+INDEX
+
 BACK-ORDER
 SS-BOOK-ORDER
 
 CLEAR                   # 30
-APO-FULL                # 30
+APO                # 30
 APO-INCREMENT           # 30
 
 NOTIFY

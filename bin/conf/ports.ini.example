@@ -8,6 +8,7 @@ elastic=9200
 front=80
 tradebase=9091
 order=9191
+query=9192
 clear=9291
 tmdb=9292
 match=9391
