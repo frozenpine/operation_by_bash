@@ -2,6 +2,7 @@ VERSION=${TRADE_ORDER_VERSION}
 
 if [[ -z ${VERSION} ]]; then
     error "order version missing."
+    exit 1
 fi
 
 NAME=order

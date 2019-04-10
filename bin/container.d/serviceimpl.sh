@@ -1,7 +1,8 @@
-VERSION=${TRADE_SERVICEIMPL_VERSION}
+VERSION=${DIGITAL_SERVICEIMPL_VERSION}
 
 if [[ -z ${VERSION} ]]; then
     error "serviceimpl version missing."
+    exit 1
 fi
 
 NAME=serviceimpl

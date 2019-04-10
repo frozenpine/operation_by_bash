@@ -20,6 +20,8 @@ done
 
 GROUP=
 
+MODULE_LIST="order clear match tmdb tradebase index sms"
+
 HELP_ARGS["D"]="optional,Dry run command for test."
 
 HELP_COMMANDS["start"]="Start trade cluster/standalone."
@@ -32,22 +34,13 @@ HELP_COMMANDS["logs"]="Get trade cluster/standalone last 100 logs."
 HELP_COMMANDS["pub"]="Publish container module to all trade members."
 
 function _find_group() {
-    # if [[ $1 =~ ^(order|sso)$ ]]; then
-    #     GROUP="front"
-    #     return
-    # fi
-
-    # if [[ $1 =~ ^(clear|match)$ ]]; then
-    #     GROUP="trade-core"
-    #     return
-    # fi
-
-    if [[ $1 == "sso" ]]; then
-        GROUP="tradebase"
-        return
-    fi
+    MODULE_PATTERN=
+    for MODULE in ${MODULE_LIST}; do
+        MODULE_PATTERN="${MODULE_PATTERN}|${MODULE}"
+    done
+    MODULE_PATTERN=${MODULE_PATTERN:1}
     
-    if [[ $1 =~ ^(order|clear|match|tmdb)$ ]]; then
+    if [[ $1 =~ ^(${MODULE_PATTERN})$ ]]; then
         GROUP=$1
         return
     fi
@@ -60,7 +53,6 @@ function _status() {
         MODULE_LIST="$*"
     else
         info "checking all."
-        MODULE_LIST="order sso clear match tmdb"
     fi
 
     for MODULE in ${MODULE_LIST}; do
@@ -88,7 +80,6 @@ function _start() {
         MODULE_LIST="$*"
     else
         info "starting all."
-        MODULE_LIST="order sso clear match tmdb"
     fi
 
     for MODULE in ${MODULE_LIST}; do
@@ -130,7 +121,6 @@ function _stop() {
         MODULE_LIST="$*"
     else
         info "stopping all"
-        MODULE_LIST="order sso clear match tmdb"
     fi
 
     for MODULE in ${MODULE_LIST}; do

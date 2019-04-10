@@ -1,7 +1,7 @@
 [node01:172.31.24.111]
 zk
 redis
-sso
+tradebase
 match
 index
 tmdb

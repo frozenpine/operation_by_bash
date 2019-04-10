@@ -2,6 +2,7 @@ VERSION=${TRADE_TMDB_VERSION}
 
 if [[ -z ${VERSION} ]]; then
     error "tmdb version missing."
+    exit 1
 fi
 
 NAME=tmdb

@@ -1,5 +1,11 @@
-VERSION="1.0.0-SNAPSHOT"
-NAME=sso
+VERSION=${SERVICE_TRADEBASE_VERSION}
+
+if [[ -z ${VERSION} ]]; then
+    error "clear version missing."
+    exit 1
+fi
+
+NAME=tradebase
 USER=${NAME}
 
 # SENTRY_DSN="http://a18befa43f4d4d38983934e7cf7ed441:6103657ae0634a7299fc70670e295c73@monitor:9000/6"
@@ -57,9 +63,9 @@ docker run -d \
     --restart no \
     --network host \
     -e SENTRY_DSN="${SENTRY_DSN}" \
-    registry:5000/tradebase/${NAME}:${VERSION} \
+    registry:5000/service/${NAME}:${VERSION} \
         ${JVM_OPTS} \
-        -jar /${NAME}/tradebase-${NAME}-${VERSION}.jar \
+        -jar /${NAME}/service-${NAME}-${VERSION}.jar \
         --server.port=${TRADEBASE_PORT} \
         --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?characterEncoding=utf-8" \
         --spring.datasource.username="${DB_USER}" \

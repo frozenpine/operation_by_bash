@@ -2,6 +2,7 @@ VERSION=${TRADE_CLEAR_VERSION}
 
 if [[ -z ${VERSION} ]]; then
     error "clear version missing."
+    exit 1
 fi
 
 NAME=clear

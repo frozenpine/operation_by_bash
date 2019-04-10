@@ -2,6 +2,7 @@ VERSION=${TRADE_MATCH_VERSION}
 
 if [[ -z ${VERSION} ]]; then
     error "match version missing."
+    exit 1
 fi
 
 NAME=match

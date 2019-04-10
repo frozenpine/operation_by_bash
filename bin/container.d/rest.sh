@@ -2,6 +2,7 @@ VERSION=${DIGITAL_REST_VERSION}
 
 if [[ -z ${VERSION} ]]; then
     error "rest version missing."
+    exit 1
 fi
 
 NAME=rest

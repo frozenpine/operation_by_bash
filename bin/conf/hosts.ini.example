@@ -32,7 +32,7 @@ ssh://match
 ssh://order
 
 [tradebase]
-ssh://sso
+ssh://tradebase
 
 [front]
 ssh://nginx
