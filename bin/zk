@@ -101,6 +101,7 @@ case ${COMMAND} in
         allssh -gzookeeper container logs --tail ${TAIL} zookeeper
     ;;
     shell)
+        SHELL="bin/zkCli.sh"
         while getopts :s: FLAG; do
             case $FLAG in
                 s)
@@ -125,7 +126,7 @@ case ${COMMAND} in
             COUNT=$((COUNT+1))
         done
 
-        container-shell -H${ZK_HOST} -s ${SHELL:=bin/zkCli.sh} zookeeper
+        container-shell -H${ZK_HOST} -s ${SHELL} zookeeper
     ;;
     *)
         error "invalid command: ${COMMAND}"
