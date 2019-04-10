@@ -20,7 +20,7 @@ done
 
 GROUP=
 
-MODULE_LIST="order clear match tmdb tradebase index sms"
+MODULE_LIST=(order clear match tmdb tradebase index sms)
 
 HELP_ARGS["D"]="optional,Dry run command for test."
 
@@ -35,8 +35,8 @@ HELP_COMMANDS["pub"]="Publish container module to all trade members."
 
 function _find_group() {
     MODULE_PATTERN=
-    for MODULE in ${MODULE_LIST}; do
-        MODULE_PATTERN="${MODULE_PATTERN}|${MODULE}"
+    for MODULE_NAME in ${MODULE_LIST[@]}; do
+        MODULE_PATTERN="${MODULE_PATTERN}|${MODULE_NAME}"
     done
     MODULE_PATTERN=${MODULE_PATTERN:1}
     
@@ -50,12 +50,12 @@ function _find_group() {
 
 function _status() {
     if [[ $# -gt 0 && ! "$*" =~ all ]]; then
-        MODULE_LIST="$*"
+        MODULE_LIST=($*)
     else
         info "checking all."
     fi
 
-    for MODULE in ${MODULE_LIST}; do
+    for MODULE in ${MODULE_LIST[@]}; do
         info "checking ${MODULE}"
 
         _find_group ${MODULE}
@@ -77,12 +77,12 @@ function _start() {
     fi
 
     if [[ $# -gt 0 && ! "$*" =~ all ]]; then
-        MODULE_LIST="$*"
+        MODULE_LIST=($*)
     else
         info "starting all."
     fi
 
-    for MODULE in ${MODULE_LIST}; do
+    for MODULE in ${MODULE_LIST[@]}; do
         info "starting ${MODULE}"
 
         _find_group ${MODULE}
@@ -118,12 +118,12 @@ function _stop() {
     shift $((OPTIND-1))
 
     if [[ $# -gt 0 && ! "$*" =~ all ]]; then
-        MODULE_LIST="$*"
+        MODULE_LIST=($*)
     else
         info "stopping all"
     fi
 
-    for MODULE in ${MODULE_LIST}; do
+    for MODULE in ${MODULE_LIST[@]}; do
         info "stoping ${MODULE}"
         
         _find_group ${MODULE}
