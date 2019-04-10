@@ -30,7 +30,7 @@ HELP_ARGS["D"]="optional,Dry run command and show command line in console instea
 HELP_COMMANDS["data"]="Publish data files to all member in nginx cluster."
 HELP_COMMANDS["conf"]="Publish config files to all member in nginx cluster."
 
-RSYOPT=(-rlptzv --progress --delete --human-readable --chmod="D+rx,Fo+r")
+RSYOPT=(-rlptzv --progress --delete --human-readable --chmod="D+rx,Fgo+r")
 
 if [[ -n "${IDENTITY_FILE}" ]]; then
     RSYOPT=(${RSYOPT[@]} "--rsh='ssh -i ${IDENTITY_FILE}'")
@@ -69,6 +69,25 @@ EOF
     done
 
     rm -rf "${CONF_TEMP}"
+}
+
+function _pub_data() {
+    if [[ $# -lt 1 ]]; then
+        error "missing data name."
+        exit 1
+    fi
+
+    info "pub data to nginx-conf cluster."
+
+    host_list | while read HOST_CONF;do
+        parse_ssh ${HOST_CONF}
+        if [[ $? -ne 0 ]]; then
+            warning "invalid config in group ${GROUP_NAME}: $HOST_CONF"
+            continue
+        fi
+
+        ${DRY_RUN} rsync "${RSYOPT[@]}" "${DATA_BASE:=/opt}/nginx/data/$1" ${SSH_USER}@${SSH_HOST}:${DATA_BASE:=/opt}/nginx/data/
+    done
 }
 
 function _reload_nginx() {
@@ -110,8 +129,7 @@ shift
 GROUP_NAME=${NGINX_GROUP}
 case ${COMMAND} in
     data)
-        warning "not implemented."
-        exit 1
+        _pub_data $*
     ;;
     conf)
         _pub_conf
