@@ -138,13 +138,13 @@ fi
 
 cd "${BUILD_DIR}"
 
-ORIGIN_TEMPLATE_FILE="${TEMPLATE_BASE}/dockerfile/${BUILD_NAME}/dockerfile.template"
+ORIGIN_TEMPLATE_FILE="${TEMPLATE_BASE}/dockerfile/${BUILD_NAME}.template"
 if [[ ! -f "${ORIGIN_TEMPLATE_FILE}" ]]; then
     error "dockerfile template missing."
     exit 1
 fi
 
-$SUDO cp -f "${ORIGIN_TEMPLATE_FILE}" ./
+$SUDO cp -f "${ORIGIN_TEMPLATE_FILE}" ./dockerfile.template
 
 ls ${PATTERN} &>/dev/null
 if [[ $? -ne 0 ]]; then
