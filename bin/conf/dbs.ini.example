@@ -1,0 +1,18 @@
+# database definitions
+# section name is database name
+
+[digital]
+user=digital
+pass=digital123456
+
+[clear]
+user=clear
+pass=clear123456
+
+[sso]
+user=sso
+pass=sso123456
+
+[sms]
+user=sms
+pass=sms123456

@@ -60,23 +60,37 @@ function _shuffle_host() {
 
 function _create() {
     for DB_NAME in ${DBS}; do
+        USER=
+        PASS=
+        for CONF in `extract_ini_sec ${DB_NAME} "${CONF_BASE}/dbs.ini"`; do
+            if [[ $CONF =~ .*[Uu][Ss][Ee][Rr] ]]; then
+                USER=`echo ${CONF} | cut -d'=' -f2`
+                USER=${USER## }
+                USER=${USER%% }
+            fi
+            if [[ $CONF =~ .*[Pp][Aa][Ss][Ss]([Ww][Oo][Rr][Dd])? ]]; then
+                PASS=`echo ${CONF} | cut -d'=' -f2`
+                PASS=${PASS## }
+                PASS=${PASS%% }
+            fi
+        done
+
+        mysql_create_user ${DB_NAME} ${USER} ${PASS}
+
+        continue
+
         info "Creating ${DB_NAME}..."
         pushd "${SQL_BASE}/${DB_NAME}" >/dev/null
             cat "${DB_NAME}_frame.sql" | mysql_exec -D${DB_NAME}
+            if [[ $? -ne 0 ]]; then
+                error "${DB_NAME} create failed."
+                popd >/dev/null
+                continue
+            fi
         popd >/dev/null
         info "Creating finished."
         echo
     done
-
-    if [[ -n ${DB_USER} && -n ${DB_PASS} ]]; then
-        info "Creating & authorize user ${DB_USER}..."
-        echo "CREATE USER ${DB_USER} IDENTIFIED BY '${DB_PASS}';" | mysql_exec
-        for DB_NAME in ${DBS}; do
-            echo "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO ${DB_USER}@localhost IDENTIFIED BY '${DB_PASS}';"
-            echo "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO ${DB_USER}@'%' IDENTIFIED BY '${DB_PASS}';"
-        done | sed '$a FLUSH PRIVILEGES;' | mysql_exec
-        info "User[${DB_USER}] created."
-    fi
 }
 
 function _init() {

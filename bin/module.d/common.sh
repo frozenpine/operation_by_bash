@@ -7,14 +7,6 @@ SQL_BASE="${BASE_DIR}/sql"
 
 COMMON_ENV="${CONF_BASE}/common.env"
 
-if [[ -f "${COMMON_ENV}" ]]; then
-    source "${COMMON_ENV}"
-fi
-
-if [[ -n ${IDENTITY_FILE} ]]; then
-    IDENTITY="-i ${IDENTITY_FILE}"
-fi
-
 # Bash Color start
 # to display color with enhanced echo command: "echo -e"
 # color only functioned properly under xterm terminal
@@ -487,3 +479,14 @@ function _help() {
         _trim_line 1 ${_HEAD_LEN} 4 ${COLOR["light_blue"]} ${DESCRIPTION}
     done
 }
+
+if [[ -f "${COMMON_ENV}" ]]; then
+    source "${COMMON_ENV}"
+else
+    error "common.env missing."
+    exit 1
+fi
+
+if [[ -n ${IDENTITY_FILE} ]]; then
+    IDENTITY="-i ${IDENTITY_FILE}"
+fi
