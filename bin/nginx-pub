@@ -14,7 +14,7 @@ NGINX_GROUP=front
 
 DRY_RUN=eval
 
-SERVICE_LIST="digital order tradebase"
+SERVICE_LIST="digital order tradebase query"
 
 for SERVICE in ${SERVICE_LIST}; do
     source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
@@ -91,7 +91,7 @@ function _pub_data() {
 }
 
 function _reload_nginx() {
-    info "reload nginx cluster."\
+    info "reload nginx cluster."
     allssh -g${NGINX_GROUP} container exec nginx nginx -s reload
 }
 

@@ -15,7 +15,7 @@ SENTRY_DSN=
 
 DB_NAME="clear"
 
-SERVICE_LIST="registry zookeeper kafka mysql elastic query"
+SERVICE_LIST="registry zookeeper kafka mysql elastic consul query"
 for SERVICE in ${SERVICE_LIST}; do
     source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
         echo "service list file missing: ${SERVICE}.sh" >&2
@@ -36,6 +36,18 @@ for CONF in `extract_ini_sec ${DB_NAME} "${CONF_BASE}/dbs.ini"`; do
         DB_PASS=${DB_PASS## }
         DB_PASS=${DB_PASS%% }
     fi
+done
+
+CONSUL_HOST=
+IDX=$((RANDOM % ${#CONSUL_LIST[@]}))
+COUNT=0
+for SVR_NAME in ${!CONSUL_LIST[@]}; do
+    if [[ ${COUNT} -eq ${IDX} ]]; then
+        CONSUL_HOST=${CONSUL_LIST[$SVR_NAME]}
+        break
+    fi
+
+    COUNT=$((COUNT+1))
 done
 
 MYSQL_HOST=
@@ -75,6 +87,8 @@ docker run -d \
         --com.quantdo.trade.data-exchange.monitor.consumer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.handle.manager.producer.acks=all \
         --com.quantdo.trade.handle.manager.producer.max.in.flight.requests.per.connection=1 \
+        --com.quantdo.trade.consul.host=${CONSUL_HOST} \
+        --com.quantdo.trade.consul.port=${CONSUL_PORT} \
         --spring.elasticsearch.jest.uris=${ELASTIC_SERVERS} \
         --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?useUnicode=true&characterEncoding=utf-8&connectionCollation=utf8_general_ci&useSSL=false&serverTimezone=Asia/Shanghai" \
         --spring.datasource.username=${DB_USER:=$DEFAULT_DB_USER} \
