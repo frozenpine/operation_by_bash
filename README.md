@@ -69,6 +69,7 @@ bin
 * ***templates***： 模板文件目录
 
   > * ***dockerfiles***： 自定义 **docker** 镜像打包所使用的 **dockerfile** 模板文件目录
+  > * ***nginx***：nginx配置模板
 
 ## 运维框架初始化
 
