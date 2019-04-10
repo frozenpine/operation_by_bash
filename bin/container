@@ -42,9 +42,6 @@ function shell() {
     done
     shift $((OPTIND-1))
 
-    source "${SCRIPT_CHECK}" $* >/dev/null
-    [[ $? -ne 0 ]] && exit 1
-
     docker exec -it $1 ${SHELL:=sh}
 }
 
