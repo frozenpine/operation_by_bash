@@ -23,10 +23,9 @@ bin
 ├─service.d
 ├─sql
 └─templates
-    └─dockerfile
-        ├─digital
-        ├─trade
-        └─tradebase
+    ├─dockerfile
+    └─nginx
+        └─conf.d
 ```
 
 * ***conf***： 基础配置文件目录
@@ -50,11 +49,13 @@ bin
   >
   > * *hosts.ini*： 应用组<sup>[2](#app-group)</sup>定义
   >
+  > * *alias.ini*：主机别名<sup>[1](#node-alias)</sup>定义
+  >
+  > * *ports.ini*：应用的默认端口号定义
+  >
   > * *image.list*： 基础依赖镜像列表
   >
   > * *topic.list*： Kafka初始化 topic 列表
-  >
-  > * ***dockerfile***： dockerfile模板目录
 
 * ***container.d***： 容器启动模块目录，一个模块文件对应一种容器启动逻辑，模块文件名（不含 “*.sh*” 后缀）即 **应用组<sup>[2](#app-group)</sup>** 名
 
