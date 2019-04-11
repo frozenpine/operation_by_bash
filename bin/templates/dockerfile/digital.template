@@ -1,4 +1,4 @@
-FROM registry:5000/openjdk:8u181-jre
+FROM registry:5000/openjdk:8u201-jre-alpine
 COPY . /${MODULE}
 WORKDIR /${MODULE}
 ENTRYPOINT ["java"]
