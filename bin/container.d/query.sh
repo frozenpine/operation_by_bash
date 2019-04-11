@@ -82,6 +82,7 @@ docker run -d \
     registry:5000/trade$1/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
+        --logging.level.com.quantdo.trade=${LOG_LEVEL:=info} \
         --server.port=${QUERY_PORT} \
         --com.quantdo.trade.data-exchange.command.producer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.data-exchange.monitor.consumer.bootstrap.servers=${KAFKA_SERVERS} \

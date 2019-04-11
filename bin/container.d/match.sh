@@ -36,8 +36,7 @@ docker run -d \
     registry:5000/trade$1/${NAME}:${VERSION} ${JVM_OPTS} \
         -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
         --server.port=${MATCH_PORT} \
-        --logging.level.root=info \
-        --logging.level.com.quantdo.trade=info \
+        --logging.level.com.quantdo.trade=${LOG_LEVEL:=info} \
         --com.quantdo.trade.match.consumer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.match.producer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.match.global.outputIndexTopic=${INDEX_TOPIC} \

@@ -42,6 +42,8 @@ ${BASE_DIR}/trade status
 ${BASE_DIR}/manage status
 
 ${BASE_DIR}/manage init
+info "sleep 3 seconds..."
+sleep 3
 ${BASE_DIR}/manage instrument
 ${BASE_DIR}/manage fee
 

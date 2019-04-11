@@ -51,6 +51,7 @@ docker run -d \
     registry:5000/trade$1/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
+        --logging.level.com.quantdo.trade=${LOG_LEVEL:=info} \
         --server.address=${SELF_IP} \
         --server.port=${CLEAR_PORT} \
         --com.quantdo.trade.consul.host=${CONSUL_HOST} \

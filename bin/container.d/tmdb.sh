@@ -70,7 +70,7 @@ KAFKA_SERVERS=${KAFKA_SERVERS:1}
 
 ELASTIC_SERVERS=
 for SVR_NAME in ${!ELASTIC_LIST[@]}; do
-    ELASTIC_SERVERS="${ELASTIC_SERVERS},http://${SVR_NAME}:${KAFKA_PORT}"
+    ELASTIC_SERVERS="${ELASTIC_SERVERS},http://${SVR_NAME}:${ELASTIC_PORT}"
 done
 ELASTIC_SERVERS=${ELASTIC_SERVERS:1}
 
@@ -85,6 +85,7 @@ docker run -d \
     registry:5000/trade$1/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
+        --logging.level.com.quantdo.trade=${LOG_LEVEL:=info} \
         --server.address=${SELF_IP} \
         --server.port=${TMDB_PORT} \
         --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&connectionCollation=utf8_general_ci&useSSL=false&serverTimezone=Asia/Shanghai" \
