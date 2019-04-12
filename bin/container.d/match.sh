@@ -49,7 +49,8 @@ docker run -d \
         --com.quantdo.trade.match.consumer.fetch.min.bytes=1024000 \
         --com.quantdo.trade.match.consumer.fetch.max.wait.ms=10 \
         --com.quantdo.trade.match.consumer.max.poll.records=10000 \
-        --com.quantdo.trade.match.consumer.heartbeat.interval.ms=100000 \
+        --com.quantdo.trade.match.consumer.heartbeat.interval.ms=10000 \
+        --com.quantdo.trade.match.consumer.session.timeout.ms=30000 \
         --com.quantdo.trade.match.producer.acks=all \
         --com.quantdo.trade.match.producer.max.in.flight.requests.per.connection=1 \
         --com.quantdo.trade.match.producer.max.request.size=2147483647 \

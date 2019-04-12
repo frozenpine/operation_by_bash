@@ -97,7 +97,6 @@ docker run -d \
         --spring.elasticsearch.jest.uris=${ELASTIC_SERVERS} \
         --com.quantdo.trade.consul.host=${CONSUL_HOST} \
         --com.quantdo.trade.consul.port=${CONSUL_PORT} \
-        --com.quantdo.trade.handle.manager.mode=database \
         --com.quantdo.trade.handle.manager.producer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.handle.manager.consumer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.handle.manager.snapshot-topic=${CLEAR_SNAPSHOT_TOPIC} \
@@ -107,7 +106,8 @@ docker run -d \
         --com.quantdo.trade.handle.manager.consumer.fetch.min.bytes=1024000 \
         --com.quantdo.trade.handle.manager.consumer.fetch.max.wait.ms=10 \
         --com.quantdo.trade.handle.manager.consumer.max.poll.records=10000 \
-        --com.quantdo.trade.handle.manager.consumer.heartbeat.interval.ms=100000 \
+        --com.quantdo.trade.handle.manager.consumer.heartbeat.interval.ms=10000 \
+        --com.quantdo.trade.handle.manager.consumer.session.timeout.ms=30000 \
         --com.quantdo.trade.handle.manager.transaction-batch-size=1000 \
         --com.quantdo.trade.handle.manager.producer.acks=all \
         --com.quantdo.trade.handle.manager.producer.max.in.flight.requests.per.connection=1 \
