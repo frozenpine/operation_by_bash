@@ -22,6 +22,14 @@ insert into `t_instrument` (`instrumentid`, `instrument_name`, `product_id`, `pr
 
 insert into `t_risk_mandatory_reduction_set` (`notice_status`,`product_id`, `instrument_id`, `reduction_price_ladder`, `max_market_fluctuate_tolerate`, `max_order_time_tolerate`, `amount`, `interval`, `compulsion_status`, `operate_time`, `operator_id`) values('0','XBT','XBTUSD','1','0.100000','5.000000','1000','1.0000000000','0','1551440015059','admin');
 
+/*Data for the table `t_price_band_detail` */
+
+LOCK TABLES `t_price_band_detail` WRITE;
+
+insert  into `t_price_band_detail`(`id`,`instrumentid`,`start_price_type`,`basis_price_type`,`ref_price_type`,`round_mode`,`value_mode`,`upper_value`,`lower_value`,`operator_id`,`operate_time`,`recheck_oper_id`,`recheck_oper_time`) values (1,'XBTUSD','4','4','4','2','1','1.0000000000','1.0000000000','admin',1551439903064,'admin',1551439903064);
+
+UNLOCK TABLES;
+
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;

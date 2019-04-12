@@ -72,24 +72,19 @@ insert into `t_currency` (`currency`, `currency_name`, `digits`, `min_withdraw_t
 
 UNLOCK TABLES;
 
-
-
 /*Data for the table `t_underlying` */
 
 LOCK TABLES `t_underlying` WRITE;
-TRUNCATE t_underlying;
 
-insert into `t_underlying` (`underlying_id`, `underlying_name`, `underlying_type`, `oper_id`, `oper_time`, `recheck_oper_id`, `recheck_oper_time`) values('XBT-USD','比特币','1','ADMIN','1545807237','ADMIN','1545807237');
-insert into `t_underlying` (`underlying_id`, `underlying_name`, `underlying_type`, `oper_id`, `oper_time`, `recheck_oper_id`, `recheck_oper_time`) values('LTC-USD','莱特币','1','ADMIN','1545807237','ADMIN','1545807237');
-insert into `t_underlying` (`underlying_id`, `underlying_name`, `underlying_type`, `oper_id`, `oper_time`, `recheck_oper_id`, `recheck_oper_time`) values('ETH-USD','以太币','1','ADMIN','1545807237','ADMIN','1545807237');
+insert  into `t_underlying`(`id`,`underlying_id`,`underlying_name`,`underlying_type`,`oper_id`,`oper_time`,`recheck_oper_id`,`recheck_oper_time`) values (1,'XBT-USD','比特币','1','ADMIN',1545807237,'ADMIN',1545807237);
 
 UNLOCK TABLES;
 
 /*Data for the table `t_underlying_detail` */
 
 LOCK TABLES `t_underlying_detail` WRITE;
-TRUNCATE t_underlying_detail;
-insert  into `t_underlying_detail`(`id`,`underlying_id`,`exch_id`,`product_id`,`weight`) values (1,'BTC-USD','KRAKEN','XXBTZUSD','0.3333'),(2,'LTC-USD','KRAKEN','XLTCZUSD','0.3333'),(3,'ETH-USD','KRAKEN','XETHZUSD','0.3333'),(4,'BTC-USD','COINBASE','BTC-USD','0.3333'),(5,'LTC-USD','COINBASE','LTC-USD','0.3333'),(6,'ETH-USD','COINBASE','ETH-USD','0.3333'),(7,'BTC-USD','BITSTAMP','btcusd','0.3333'),(8,'LTC-USD','BITSTAMP','ltcusd','0.3333'),(10,'ETH-USD','BITSTAMP','ethusd','0.3333'),(11,'ETH-USD','BITMEX','.BETH','0.3333'),(13,'BTC-USD','BITMEX','.BXBT','0.3333'),(16,'LTC-USD','BITMEX','.BLTCXBT','0.3333');
+
+insert  into `t_underlying_detail`(`id`,`underlying_id`,`exch_id`,`product_id`,`weight`) values (1,'XBT-USD','KRAKEN','XXBTZUSD','0.5000'),(2,'LTC-USD','KRAKEN','XLTCZUSD','0.3320'),(3,'ETH-USD','KRAKEN','XETHZUSD','0.3333'),(4,'XBT-USD','COINBASE','BTC-USD','0.2000'),(5,'LTC-USD','COINBASE','LTC-USD','0.3300'),(6,'ETH-USD','COINBASE','ETH-USD','0.3333'),(7,'XBT-USD','BITSTAMP','btcusd','0.4000'),(8,'LTC-USD','BITSTAMP','ltcusd','0.3300'),(10,'ETH-USD','BITSTAMP','ethusd','0.3333'),(11,'ETH-USD','BITMEX','.BETH','0.3333'),(13,'XBT-USD','BITMEX','.BXBT','0.3333'),(16,'LTC-USD','BITMEX','.BLTCXBT','0.3333');
 
 UNLOCK TABLES;
 

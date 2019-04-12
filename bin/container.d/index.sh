@@ -18,6 +18,12 @@ DB_NAME="digital"
 WALLET_URL="http://127.0.0.1:3000/api/BTC/testnet"
 
 SERVICE_LIST="registry zookeeper kafka mysql redis consul"
+for SERVICE in ${SERVICE_LIST}; do
+    source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
+        echo "service list file missing: ${SERVICE}.sh" >&2
+        exit 1
+    }
+done
 
 DB_USER=
 DB_PASS=
@@ -32,13 +38,6 @@ for CONF in `extract_ini_sec ${DB_NAME} "${CONF_BASE}/dbs.ini"`; do
         DB_PASS=${DB_PASS## }
         DB_PASS=${DB_PASS%% }
     fi
-done
-
-for SERVICE in ${SERVICE_LIST}; do
-    source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
-        echo "service list file missing: ${SERVICE}.sh" >&2
-        exit 1
-    }
 done
 
 MYSQL_HOST=

@@ -30,15 +30,19 @@ done
 shift $((OPTIND-1))
 
 ${BASE_DIR}/zk start
+sleep 1
 ${BASE_DIR}/zk check
-
+sleep 1
 ${BASE_DIR}/kfk create
+sleep 1
 ${BASE_DIR}/kfk check
-
-${BASE_DIR}/manage start
-${BASE_DIR}/trade start
-
+sleep 1
 ${BASE_DIR}/manage init
-
+sleep 1
+${BASE_DIR}/manage start
+sleep 1
+${BASE_DIR}/trade start
+slepp 1
 ${BASE_DIR}/trade status
+sleep 1
 ${BASE_DIR}/manage status
