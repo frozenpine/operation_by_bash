@@ -97,7 +97,7 @@ function _consumer() {
             --bootstrap-server ${KAFKA_SERVERS} \
             ${KEY_DESERIALIZER} \
             ${VALUE_DESERIALIZER} \
-            $*"  2> >(grep -v "SLF4J: " >&2)
+            $*"  2> >(grep -Ev "SLF4J: |No Log4j 2" >&2)
 }
 
 function _init() {

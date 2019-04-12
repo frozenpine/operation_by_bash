@@ -38,5 +38,7 @@ ${BASE_DIR}/kfk check
 ${BASE_DIR}/manage start
 ${BASE_DIR}/trade start
 
+${BASE_DIR}/manage init
+
 ${BASE_DIR}/trade status
 ${BASE_DIR}/manage status
