@@ -40,6 +40,8 @@ for SVR_NAME in ${!KAFKA_LIST[@]}; do
 done
 KAFKA_SERVERS=${KAFKA_SERVERS:1}
 
+make_dir -b "${DATA_BASE:=/opt}/${NAME}" log|| exit 1
+
 SELF_IP=`ip address show eth0 | grep inet | grep -v inet6 | awk '{print $2}' | cut -d'/' -f1`
 
 docker run -d \
@@ -48,10 +50,11 @@ docker run -d \
     --network host \
     -e SENTRY_DSN="${SENTRY_DSN}" \
     -e CLASSPATH=/docker-java-home/jre/lib \
+    -v "${DATA_BASE:=/opt}/${NAME}/log":/var/log/trade \
     registry:5000/trade$1/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
-        --logging.level.com.quantdo.trade=${LOG_LEVEL:=info} \
+        --logging.level.com.quantdo.trade=${LOG_LEVEL:=warning} \
         --server.address=${SELF_IP} \
         --server.port=${CLEAR_PORT} \
         --com.quantdo.trade.consul.host=${CONSUL_HOST} \

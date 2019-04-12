@@ -28,15 +28,18 @@ for SVR_NAME in ${!KAFKA_LIST[@]}; do
 done
 KAFKA_SERVERS=${KAFKA_SERVERS:1}
 
+make_dir -b "${DATA_BASE:=/opt}/${NAME}" log|| exit 1
+
 docker run -d \
     --name ${NAME} \
     --restart no \
     --network host \
     -e SENTRY_DSN="${SENTRY_DSN}" \
+    -v "${DATA_BASE:=/opt}/${NAME}/log":/var/log/trade \
     registry:5000/trade$1/${NAME}:${VERSION} ${JVM_OPTS} \
         -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
         --server.port=${MATCH_PORT} \
-        --logging.level.com.quantdo.trade=${LOG_LEVEL:=info} \
+        --logging.level.com.quantdo.trade=${LOG_LEVEL:=warning} \
         --com.quantdo.trade.match.consumer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.match.producer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.match.global.outputIndexTopic=${INDEX_TOPIC} \
