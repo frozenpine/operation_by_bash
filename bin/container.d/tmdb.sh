@@ -105,7 +105,7 @@ docker run -d \
         --com.quantdo.trade.handle.manager.consumer.fetch.max.bytes=10240000 \
         --com.quantdo.trade.handle.manager.consumer.fetch.min.bytes=1024000 \
         --com.quantdo.trade.handle.manager.consumer.fetch.max.wait.ms=10 \
-        --com.quantdo.trade.handle.manager.consumer.max.poll.records=10000 \
+        --com.quantdo.trade.handle.manager.consumer.max.poll.records=1000 \
         --com.quantdo.trade.handle.manager.consumer.heartbeat.interval.ms=10000 \
         --com.quantdo.trade.handle.manager.consumer.session.timeout.ms=30000 \
         --com.quantdo.trade.handle.manager.transaction-batch-size=1000 \
