@@ -80,16 +80,17 @@ ${CLEAR_CHECKPOINT_TOPIC}                # 30
 ${CLEAR_SNAPSHOT_TOPIC}           # 30
 
 NOTIFY
+NOTIFY-CLIENT
 ACCESS
 EOF
 }
 
 function _topic() {
-    eval "${DRY_RUN} ${TOPIC_SCRIPT} --zookeeper ${ZK_SERVERS} $*" 2> >(grep -v "SLF4J: " >&2)
+    eval "${DRY_RUN} ${TOPIC_SCRIPT} --zookeeper ${ZK_SERVERS} $*" 2> >(grep -Ev "SLF4J: |No Log4j 2" >&2)
 }
 
 function _group() {
-    eval "${DRY_RUN} ${GROUP_SCRIPT} --bootstrap-server ${KAFKA_SERVERS} $*" 2> >(grep -v "SLF4J: " >&2)
+    eval "${DRY_RUN} ${GROUP_SCRIPT} --bootstrap-server ${KAFKA_SERVERS} $*" 2> >(grep -Ev "SLF4J: |No Log4j 2" >&2)
 }
 
 function _consumer() {
