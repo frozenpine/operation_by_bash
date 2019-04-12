@@ -26,8 +26,6 @@ ${BASE_DIR}/zk check
 
 ${BASE_DIR}/kfk check
 
-${BASE_DIR}/trade start
-
 ${BASE_DIR}/trade status
 
 ${BASE_DIR}/manage status

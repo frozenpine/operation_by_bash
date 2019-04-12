@@ -40,14 +40,3 @@ ${BASE_DIR}/trade start
 
 ${BASE_DIR}/trade status
 ${BASE_DIR}/manage status
-
-${BASE_DIR}/manage init
-info "sleep 3 seconds..."
-sleep 3
-${BASE_DIR}/manage instrument
-sleep 1
-${BASE_DIR}/manage fee
-sleep 1
-if [[ ${CREATE_USER} -eq 1 ]]; then
-    ${BASE_DIR}/ngeuser init
-fi
