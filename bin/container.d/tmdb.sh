@@ -78,13 +78,25 @@ make_dir -b "${DATA_BASE:=/opt}/${NAME}" log|| exit 1
 
 SELF_IP=`ip address show eth0 | grep inet | grep -v inet6 | awk '{print $2}' | cut -d'/' -f1`
 
+CONTAINER_BASE="${DATA_BASE:=/opt}/${NAME}"
+find_user ${USER}
+if [[ $? -ne 0 ]]; then
+    ${SUDO} useradd --home-dir "${CONTAINER_BASE}" \
+            --create-home \
+            --shell /sbin/nologin \
+            ${USER} || exit 1
+fi
+make_dir -b "${CONTAINER_BASE}" log || exit 1
+${SUDO} chown -R ${USER}:${USER} "${CONTAINER_BASE}"
+
 docker run -d \
     --name ${NAME} \
     --restart no \
     --network host \
+    --user `grep ${USER} /etc/passwd | cut -d':' -f3` \
     -e SENTRY_DSN="${SENTRY_DSN}" \
     -e CLASSPATH=/docker-java-home/jre/lib \
-    -v "${DATA_BASE:=/opt}/${NAME}/log":/var/log/trade \
+    -v "${CONTAINER_BASE}/log":/var/log/trade \
     registry:5000/trade$1/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
