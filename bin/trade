@@ -20,7 +20,7 @@ done
 
 GROUP=
 
-MODULE_LIST=(order query clear tmdb match tradebase index sms scheduler)
+MODULE_LIST=(index clear tmdb match sms scheduler order query tradebase)
 
 HELP_ARGS["D"]="optional,Dry run command for test."
 
