@@ -91,9 +91,9 @@ docker run -d \
     registry:5000/digital/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/digital-${NAME}-${VERSION}.jar \
-        --log.level.console=${LOG_LEVEL:warning} \
-        --log.level.quantdo=${LOG_LEVEL:warning} \
-        --log.path=log \
+        -Dlog.level.console=${LOG_LEVEL:warning} \
+        -Dlog.level.quantdo=${LOG_LEVEL:warning} \
+        -Dlog.path=log \
         --server.port="${DIGITAL_PORT}" \
         --spring.redis.host="${REDIS_HOST}" \
         --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?characterEncoding=utf-8" \

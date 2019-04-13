@@ -176,8 +176,8 @@ case ${COMMAND} in
     start)
         if [[ $# -lt 1 ]]; then
             allssh -g${MANAGE_GROUP} container start serviceimpl
-            info "delay 10s to wait for service starting."
-            sleep 10
+            info "delay 5s to wait for service starting."
+            sleep 5
             allssh -g${MANAGE_GROUP} container start rest
         else
             allssh -g${MANAGE_GROUP} container start $*

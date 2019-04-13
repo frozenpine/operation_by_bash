@@ -253,7 +253,6 @@ case ${COMMAND} in
         allssh -gkafka container start kafka
         info "delay 3s for broker connections."
         sleep 3
-        _create_topic
         _init 
     ;;
     stop)
