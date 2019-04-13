@@ -14,7 +14,7 @@ NGINX_GROUP=front
 
 DRY_RUN=eval
 
-SERVICE_LIST="digital order tradebase query"
+SERVICE_LIST="digital order tradebase query websocket"
 
 for SERVICE in ${SERVICE_LIST}; do
     source "${BASE_DIR}/service.d/${SERVICE}.sh" || {

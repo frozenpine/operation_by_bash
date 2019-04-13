@@ -21,3 +21,4 @@ clear
 nginx
 registry
 query
+ws

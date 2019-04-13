@@ -54,3 +54,6 @@ ssh://sched
 
 [registry]
 ssh://registry
+
+[websocket]
+ssh://ws
