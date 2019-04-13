@@ -18,7 +18,7 @@ for SERVICE in ${SERVICE_LIST}; do
     }
 done
 
-MANAGE_HOST="http://management"
+MANAGE_HOST="http://management:8080"
 
 MANAGE_USER="admin"
 MANAGE_PASS="123456"
