@@ -40,8 +40,6 @@ for SVR_NAME in ${!KAFKA_LIST[@]}; do
 done
 KAFKA_SERVERS=${KAFKA_SERVERS:1}
 
-make_dir -b "${DATA_BASE:=/opt}/${NAME}" log|| exit 1
-
 SELF_IP=`ip address show eth0 | grep inet | grep -v inet6 | awk '{print $2}' | cut -d'/' -f1`
 
 CONTAINER_BASE="${DATA_BASE:=/opt}/${NAME}"

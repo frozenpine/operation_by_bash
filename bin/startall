@@ -7,42 +7,22 @@ popd >/dev/null
 
 source "${BASE_DIR}/module.d/common.sh" || exit 1
 
-CREATE_USER=0
-
-HELP_ARGS["u"]="optional,Wether to create users."
-
-while getopts :uh FLAG; do
-    case $FLAG in
-        u)
-            CREATE_USER=1
-        ;;
-        h)
-            _help >&2
-            exit
-        ;;
-        *)
-            error "invalid args: $*"
-            _help >&2
-            exit 1
-        ;;
-    esac
-done
-shift $((OPTIND-1))
-
 ${BASE_DIR}/zk start
 sleep 1
-${BASE_DIR}/zk check
+${BASE_DIR}/zk status
 sleep 1
 ${BASE_DIR}/kfk create
 sleep 1
-${BASE_DIR}/kfk check
+${BASE_DIR}/kfk status
+sleep 1
+${BASE_DIR}/kfk topic --list
 sleep 1
 ${BASE_DIR}/manage init
 sleep 1
 ${BASE_DIR}/manage start
 sleep 1
-${BASE_DIR}/trade start
-slepp 1
-${BASE_DIR}/trade status
-sleep 1
 ${BASE_DIR}/manage status
+sleep 1
+${BASE_DIR}/trade start
+sleep 1
+${BASE_DIR}/trade status

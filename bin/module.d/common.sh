@@ -233,7 +233,7 @@ function make_dir() {
     done
     shift $((OPTIND-1))
 
-    if [[ -z "${_BASE_DIR}" ]]; then
+    if [[ x"${_BASE_DIR}" == "x" ]]; then
         error "base dir missing."
         exit 1
     else

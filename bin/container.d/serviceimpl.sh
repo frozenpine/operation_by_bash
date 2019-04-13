@@ -87,7 +87,7 @@ if [[ $? -ne 0 ]]; then
             --shell /sbin/nologin \
             ${USER} || exit 1
 fi
-make_dir -b "${CONTAINER_BASE}" log || exit 1
+make_dir -b "${CONTAINER_BASE}" data log || exit 1
 ${SUDO} chown -R ${USER}:${USER} "${CONTAINER_BASE}"
 
 docker run -d \
@@ -96,13 +96,11 @@ docker run -d \
     --network host \
     --user `grep ${USER} /etc/passwd | cut -d':' -f3` \
     -e SENTRY_DSN="${SENTRY_DSN}" \
-    -v "${CONTAINER_BASE}/log":/log \
+    -v "${CONTAINER_BASE}/log":/${NAME}/log \
+    -v "${CONTAINER_BASE}/data":/${NAME}/data \
     registry:5000/digital/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/digital-${NAME}-${VERSION}.jar \
-        -Dlog.level.console=${LOG_LEVEL:warning} \
-        -Dlog.level.quantdo=${LOG_LEVEL:warning} \
-        -Dlog.path=log \
         --com.quantdo.trade.data-exchange.command.producer.bootstrap.servers="${KAFKA_SERVERS}" \
         --com.quantdo.trade.data-exchange.monitor.comsumer.bootstrap.servers="${KAFKA_SERVERS}" \
         --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?characterEncoding=utf-8" \
@@ -115,4 +113,5 @@ docker run -d \
         --spring.datasource.list[0].password="${PRIM_DB_PASS:=$DEFAULT_DB_PASS}" \
         --dubbo.registry.address="${ZK_SERVERS}" \
         --dubbo.provider.host="${SELF_IP}" \
+        --dubbo.registry.file="/${NAME}/data/dubbo/dubbo-registry.properties" \
         --dubbo.provider.timeout=180000
