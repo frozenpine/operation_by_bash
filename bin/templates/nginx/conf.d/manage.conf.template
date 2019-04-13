@@ -7,8 +7,8 @@ done
 }
 
 server {
-    listen      80;
-    server_name  management;
+    listen      8080;
+    server_name  management localhost;
 
     location / {
         root   /var/lib/nginx/quant-coinMS;
