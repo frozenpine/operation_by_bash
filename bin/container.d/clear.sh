@@ -54,6 +54,7 @@ docker run -d \
     registry:5000/trade$1/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
+        --logging.level.root=${LOG_LEVEL:=warning} \
         --logging.level.com.quantdo.trade=${LOG_LEVEL:=warning} \
         --server.address=${SELF_IP} \
         --server.port=${CLEAR_PORT} \
@@ -63,16 +64,16 @@ docker run -d \
         --com.quantdo.trade.handle.manager.consumer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.handle.manager.snapshot-topic=${CLEAR_SNAPSHOT_TOPIC} \
         --com.quantdo.trade.handle.manager.checkpoint-topic=${CLEAR_CHECKPOINT_TOPIC} \
-        --com.quantdo.trade.handle.manager.consumer.receive.buffer.bytes=10240000 \
-        --com.quantdo.trade.handle.manager.consumer.fetch.max.bytes=10240000 \
-        --com.quantdo.trade.handle.manager.consumer.fetch.min.bytes=1024000 \
-        --com.quantdo.trade.handle.manager.consumer.fetch.max.wait.ms=10 \
-        --com.quantdo.trade.handle.manager.consumer.max.poll.records=10000 \
-        --com.quantdo.trade.handle.manager.consumer.heartbeat.interval.ms=1000 \
-        --com.quantdo.trade.handle.manager.consumer.session.timeout.ms=30000 \
-        --com.quantdo.trade.handle.manager.transaction-batch-size=1000 \
-        --com.quantdo.trade.handle.manager.producer.acks=all \
-        --com.quantdo.trade.handle.manager.producer.max.in.flight.requests.per.connection=1 \
-        --com.quantdo.trade.handle.manager.producer.batch.size=1024000 \
-        --com.quantdo.trade.handle.manager.producer.linger.ms=100 \
-        --com.quantdo.trade.handle.manager.producer.receive.buffer.bytes=10240000
+        # --com.quantdo.trade.handle.manager.consumer.receive.buffer.bytes=10240000 \
+        # --com.quantdo.trade.handle.manager.consumer.fetch.max.bytes=10240000 \
+        # --com.quantdo.trade.handle.manager.consumer.fetch.min.bytes=1024000 \
+        # --com.quantdo.trade.handle.manager.consumer.fetch.max.wait.ms=10 \
+        # --com.quantdo.trade.handle.manager.consumer.max.poll.records=10000 \
+        # --com.quantdo.trade.handle.manager.consumer.heartbeat.interval.ms=1000 \
+        # --com.quantdo.trade.handle.manager.consumer.session.timeout.ms=30000 \
+        # --com.quantdo.trade.handle.manager.transaction-batch-size=1000 \
+        # --com.quantdo.trade.handle.manager.producer.acks=all \
+        # --com.quantdo.trade.handle.manager.producer.max.in.flight.requests.per.connection=1 \
+        # --com.quantdo.trade.handle.manager.producer.batch.size=1024000 \
+        # --com.quantdo.trade.handle.manager.producer.linger.ms=100 \
+        # --com.quantdo.trade.handle.manager.producer.receive.buffer.bytes=10240000

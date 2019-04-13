@@ -51,11 +51,12 @@ docker run -d \
     registry:5000/trade$1/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
+        --logging.level.root=${LOG_LEVEL:=warning} \
         --logging.level.com.quantdo.trade=${LOG_LEVEL:=warning} \
         --server.port=${ORDER_PORT} \
         --com.quantdo.trade.consul.host=${CONSUL_HOST} \
         --com.quantdo.trade.consul.port=${CONSUL_PORT} \
         --com.quantdo.trade.front.order.kafka.producer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.data-exchange.monitor.consumer.bootstrap.servers=${KAFKA_SERVERS} \
-        --com.quantdo.trade.handle.manager.producer.acks=all \
-        --com.quantdo.trade.handle.manager.producer.max.in.flight.requests.per.connection=1
+        # --com.quantdo.trade.handle.manager.producer.acks=all \
+        # --com.quantdo.trade.handle.manager.producer.max.in.flight.requests.per.connection=1

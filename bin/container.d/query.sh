@@ -85,15 +85,16 @@ docker run -d \
     registry:5000/trade$1/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
+        --logging.level.root=${LOG_LEVEL:=warning} \
         --logging.level.com.quantdo.trade=${LOG_LEVEL:=warning} \
         --server.port=${QUERY_PORT} \
         --com.quantdo.trade.data-exchange.command.producer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.data-exchange.monitor.consumer.bootstrap.servers=${KAFKA_SERVERS} \
-        --com.quantdo.trade.handle.manager.producer.acks=all \
-        --com.quantdo.trade.handle.manager.producer.max.in.flight.requests.per.connection=1 \
         --com.quantdo.trade.consul.host=${CONSUL_HOST} \
         --com.quantdo.trade.consul.port=${CONSUL_PORT} \
         --spring.elasticsearch.jest.uris=${ELASTIC_SERVERS} \
         --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?useUnicode=true&characterEncoding=utf-8&connectionCollation=utf8_general_ci&useSSL=false&serverTimezone=Asia/Shanghai" \
         --spring.datasource.username=${DB_USER:=$DEFAULT_DB_USER} \
-        --spring.datasource.password=${DB_PASS:=$DEFAULT_DB_PASS}
+        --spring.datasource.password=${DB_PASS:=$DEFAULT_DB_PASS} \
+        # --com.quantdo.trade.handle.manager.producer.acks=all \
+        # --com.quantdo.trade.handle.manager.producer.max.in.flight.requests.per.connection=1
