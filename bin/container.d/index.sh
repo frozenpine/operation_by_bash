@@ -88,14 +88,29 @@ for SVR_NAME in ${!ZOOKEEPER_LIST[@]}; do
 done
 ZK_SERVERS=${ZK_SERVERS:1}
 
+CONTAINER_BASE="${DATA_BASE:=/opt}/${NAME}"
+find_user ${USER}
+if [[ $? -ne 0 ]]; then
+    ${SUDO} useradd --home-dir "${CONTAINER_BASE}" \
+            --create-home \
+            --shell /sbin/nologin \
+            ${USER} || exit 1
+fi
+make_dir -b "${CONTAINER_BASE}" log || exit 1
+${SUDO} chown -R ${USER}:${USER} "${CONTAINER_BASE}"
+
 docker run -d \
     --name ${NAME} \
     --restart no \
     --network host \
+    --user `grep ${USER} /etc/passwd | cut -d':' -f3` \
     -e SENTRY_DSN="${SENTRY_DSN}" \
     registry:5000/service/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/service-${NAME}-${VERSION}.jar \
+        --logging.level.root=${LOG_LEVEL:=warning} \
+        --logging.level.com.quantdo.market.service.impl=${LOG_LEVEL:=warning} \
+        --logging.level.com.quantdo.market.service.ws=${LOG_LEVEL:=warning} \
         --spring.cloud.consul.host=${CONSUL_HOST} \
         --spring.cloud.consul.port=${CONSUL_PORT} \
         --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?characterEncoding=utf-8" \

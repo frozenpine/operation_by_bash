@@ -79,14 +79,30 @@ ZK_SERVERS=${ZK_SERVERS:1}
 
 SELF_IP=`ip address show ${BIND_INT:=eth0} | grep inet | grep -v inet6 | awk '{print $2}' | cut -d'/' -f1`
 
+CONTAINER_BASE="${DATA_BASE:=/opt}/${NAME}"
+find_user ${USER}
+if [[ $? -ne 0 ]]; then
+    ${SUDO} useradd --home-dir "${CONTAINER_BASE}" \
+            --create-home \
+            --shell /sbin/nologin \
+            ${USER} || exit 1
+fi
+make_dir -b "${CONTAINER_BASE}" log || exit 1
+${SUDO} chown -R ${USER}:${USER} "${CONTAINER_BASE}"
+
 docker run -d \
     --name ${NAME} \
     --restart no \
     --network host \
+    --user `grep ${USER} /etc/passwd | cut -d':' -f3` \
     -e SENTRY_DSN="${SENTRY_DSN}" \
+    -v "${CONTAINER_BASE}/log":/log \
     registry:5000/digital/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/digital-${NAME}-${VERSION}.jar \
+        --log.level.console=${LOG_LEVEL:warning} \
+        --log.level.quantdo=${LOG_LEVEL:warning} \
+        --log.path=log \
         --com.quantdo.trade.data-exchange.command.producer.bootstrap.servers="${KAFKA_SERVERS}" \
         --com.quantdo.trade.data-exchange.monitor.comsumer.bootstrap.servers="${KAFKA_SERVERS}" \
         --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?characterEncoding=utf-8" \
