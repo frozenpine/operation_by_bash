@@ -13,7 +13,7 @@ SENTRY_DSN=
 
 JVM_OPTS=""
 
-SERVICE_LIST="registry zookeeper kafka mysql redis tradebase sms"
+SERVICE_LIST="registry zookeeper kafka mysql redis consul tradebase sms"
 
 DB_NAME="digital"
 
@@ -77,6 +77,18 @@ for SVR_NAME in ${!SMS_LIST[@]}; do
     COUNT=$((COUNT+1))
 done
 
+CONSUL_HOST=
+IDX=$((RANDOM % ${#CONSUL_LIST[@]}))
+COUNT=0
+for SVR_NAME in ${!CONSUL_LIST[@]}; do
+    if [[ ${COUNT} -eq ${IDX} ]]; then
+        CONSUL_HOST=${CONSUL_LIST[$SVR_NAME]}
+        break
+    fi
+
+    COUNT=$((COUNT+1))
+done
+
 KAFKA_SERVERS=
 for SVR_NAME in ${!KAFKA_LIST[@]}; do
     KAFKA_SERVERS="${KAFKA_SERVERS},${SVR_NAME}:${KAFKA_PORT}"
@@ -92,6 +104,8 @@ docker run -d \
         ${JVM_OPTS} \
         -jar /${NAME}/service-${NAME}-${VERSION}.jar \
         --server.port=${TRADEBASE_PORT} \
+        --spring.cloud.consul.host=${CONSUL_HOST} \
+        --spring.cloud.consul.port=${CONSUL_PORT} \
         --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?characterEncoding=utf-8" \
         --spring.datasource.username="${DB_USER:=$DEFAULT_DB_USER}" \
         --spring.datasource.password="${DB_PASS:=$DEFAULT_DB_PASS}" \

@@ -61,7 +61,7 @@ docker run -d \
     registry:5000/trade$1/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
-        --logging.level.root=${LOG_LEVEL:=warning} \
+        --logging.level.root=info \
         --logging.level.com.quantdo.trade=${LOG_LEVEL:=warning} \
         --server.port=${ORDER_PORT} \
         --com.quantdo.trade.consul.host=${CONSUL_HOST} \

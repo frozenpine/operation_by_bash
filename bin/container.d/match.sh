@@ -49,17 +49,17 @@ docker run -d \
     registry:5000/trade$1/${NAME}:${VERSION} ${JVM_OPTS} \
         -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
         --server.port=${MATCH_PORT} \
-        --logging.level.root=${LOG_LEVEL:=warning} \
+        --logging.level.root=info \
         --logging.level.com.quantdo.trade=${LOG_LEVEL:=warning} \
         --com.quantdo.trade.match.consumer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.match.producer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.match.global.outputIndexTopic=${INDEX_TOPIC} \
+        --com.quantdo.trade.match.consumer.max.poll.records=10 \
         # --com.quantdo.trade.handle.manager.transaction-batch-size=1000 \
         # --com.quantdo.trade.match.consumer.receive.buffer.bytes=10240000 \
         # --com.quantdo.trade.match.consumer.fetch.max.bytes=10240000 \
         # --com.quantdo.trade.match.consumer.fetch.min.bytes=1024000 \
         # --com.quantdo.trade.match.consumer.fetch.max.wait.ms=10 \
-        # --com.quantdo.trade.match.consumer.max.poll.records=1000 \
         # --com.quantdo.trade.match.consumer.heartbeat.interval.ms=10000 \
         # --com.quantdo.trade.match.consumer.session.timeout.ms=30000 \
         # --com.quantdo.trade.match.producer.acks=all \
