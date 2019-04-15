@@ -1,26 +1,28 @@
 /*
-SQLyog Ultimate v11.24 (32 bit)
-MySQL - 5.7.25 : Database - clear
-*********************************************************************
+Navicat MySQL Data Transfer
+
+Source Server         : 192.168.1.22
+Source Server Version : 50725
+Source Host           : 192.168.1.22:3306
+Source Database       : clear
+
+Target Server Type    : MYSQL
+Target Server Version : 50725
+File Encoding         : 65001
+
+Date: 2019-04-15 15:32:05
 */
 
-
-/*!40101 SET NAMES utf8 */;
-
-/*!40101 SET SQL_MODE=''*/;
-
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 CREATE DATABASE /*!32312 IF NOT EXISTS*/`clear` /*!40100 DEFAULT CHARACTER SET utf8 */;
 
 USE `clear`;
 
-/*Table structure for table `t_account` */
+SET FOREIGN_KEY_CHECKS=0;
 
+-- ----------------------------
+-- Table structure for t_account
+-- ----------------------------
 DROP TABLE IF EXISTS `t_account`;
-
 CREATE TABLE `t_account` (
   `account_id` bigint(20) NOT NULL COMMENT '资金账号',
   `currency` varchar(10) NOT NULL COMMENT '币种',
@@ -55,10 +57,10 @@ CREATE TABLE `t_account` (
   PRIMARY KEY (`account_id`,`currency`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Table structure for table `t_order_history` */
-
+-- ----------------------------
+-- Table structure for t_order_history
+-- ----------------------------
 DROP TABLE IF EXISTS `t_order_history`;
-
 CREATE TABLE `t_order_history` (
   `order_id` bigint(20) NOT NULL COMMENT '订单编号',
   `order_local_id` varchar(50) DEFAULT NULL COMMENT '本地报单编号',
@@ -115,10 +117,10 @@ CREATE TABLE `t_order_history` (
   PRIMARY KEY (`order_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='已完成订单';
 
-/*Table structure for table `t_position` */
-
+-- ----------------------------
+-- Table structure for t_position
+-- ----------------------------
 DROP TABLE IF EXISTS `t_position`;
-
 CREATE TABLE `t_position` (
   `client_id` varchar(30) NOT NULL COMMENT '用户代码',
   `instrument_id` varchar(30) NOT NULL COMMENT '合约代码',
@@ -126,7 +128,7 @@ CREATE TABLE `t_position` (
   `position_margin_type` varchar(30) DEFAULT NULL,
   `currency` varchar(10) NOT NULL COMMENT '币种',
   `leverage_rate` decimal(30,10) DEFAULT NULL,
-  `underlying` varchar(5) DEFAULT NULL,
+  `underlying` varchar(30) DEFAULT NULL,
   `quote_currency` varchar(5) DEFAULT NULL,
   `commission` decimal(30,10) DEFAULT NULL COMMENT '费率',
   `position` bigint(20) NOT NULL COMMENT '持仓',
@@ -194,10 +196,10 @@ CREATE TABLE `t_position` (
   PRIMARY KEY (`client_id`,`instrument_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='持仓';
 
-/*Table structure for table `t_settlement` */
-
+-- ----------------------------
+-- Table structure for t_settlement
+-- ----------------------------
 DROP TABLE IF EXISTS `t_settlement`;
-
 CREATE TABLE `t_settlement` (
   `account_id` bigint(20) NOT NULL COMMENT '资金账号',
   `currency` varchar(10) NOT NULL COMMENT '币种',
@@ -228,10 +230,10 @@ CREATE TABLE `t_settlement` (
   PRIMARY KEY (`account_id`,`currency`,`client_id`,`settlement_day`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Table structure for table `t_statement` */
-
+-- ----------------------------
+-- Table structure for t_statement
+-- ----------------------------
 DROP TABLE IF EXISTS `t_statement`;
-
 CREATE TABLE `t_statement` (
   `statement_id` varchar(50) NOT NULL COMMENT '流水编号',
   `account_id` bigint(20) NOT NULL COMMENT '资金账号',
@@ -252,19 +254,25 @@ CREATE TABLE `t_statement` (
   PRIMARY KEY (`statement_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='资金流水';
 
-/*Table structure for table `t_trade` */
-
+-- ----------------------------
+-- Table structure for t_trade
+-- ----------------------------
 DROP TABLE IF EXISTS `t_trade`;
-
 CREATE TABLE `t_trade` (
-  `trade_id` char(32) NOT NULL COMMENT 'trade id',
+  `trade_id` char(36) NOT NULL COMMENT 'trade id',
   `client_id` varchar(30) NOT NULL COMMENT '客户代码',
   `instrument_id` varchar(30) NOT NULL COMMENT '合约代码',
   `order_id` bigint(20) NOT NULL COMMENT '报单编号',
   `other_order_id` bigint(20) NOT NULL COMMENT '对方委托id',
   `direction` varchar(4) NOT NULL COMMENT '买卖方向:buy,sell',
+  `order_status` varchar(20) DEFAULT '' COMMENT '成交状态',
+  `currency` varchar(10) NOT NULL COMMENT '币种',
   `price` decimal(30,10) NOT NULL COMMENT '价格',
+  `trade_amount` decimal(30,10) NOT NULL DEFAULT '0.0000000000' COMMENT '成交金额',
   `volume` bigint(20) NOT NULL COMMENT '数量',
+  `side` varchar(10) DEFAULT '' COMMENT 'Taker/Maker',
+  `order_kind` varchar(10) DEFAULT '' COMMENT '成交里的委托类型',
+  `match_id` varchar(36) DEFAULT '' COMMENT '撮合ID',
   `close_profit` decimal(30,10) DEFAULT NULL COMMENT '平仓盈亏',
   `exec_comm` decimal(30,10) DEFAULT NULL COMMENT '成交手续费',
   `trade_time` bigint(20) NOT NULL COMMENT '成交时间',
@@ -274,7 +282,9 @@ CREATE TABLE `t_trade` (
   `order_volume` bigint(20) NOT NULL COMMENT '委托数量',
   `home_notional` decimal(30,10) DEFAULT NULL COMMENT '本地货币价值',
   `foreign_notional` decimal(30,10) DEFAULT NULL COMMENT '外地货币价值',
+  `order_price` decimal(30,10) NOT NULL DEFAULT '0.0000000000' COMMENT '委托价格',
   `exec_cost` decimal(30,10) DEFAULT NULL COMMENT '成交价值',
+  `commission` decimal(30,10) DEFAULT '0.0000000000' COMMENT '佣金费率',
   `remark` varchar(50) DEFAULT NULL COMMENT '备注',
   `kafka_partition` bigint(20) NOT NULL,
   `kafka_offset` bigint(20) NOT NULL,
@@ -282,9 +292,3 @@ CREATE TABLE `t_trade` (
   `insert_time` bigint(20) NOT NULL,
   PRIMARY KEY (`order_id`,`trade_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='成交';
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
