@@ -113,9 +113,13 @@ function _stop() {
 }
 
 function _deploy() {
-    make_dir -b "${MARKET_BASE}" "module.d" conf libs qwsfront qmarket || exit 1
+    local _deploy_base
 
-    pushd "${MARKET_BASE}" > /dev/null
+    _deploy_base="${DATA_BASE:=/opt}/packages/market"
+
+    make_dir -b "${_deploy_base}" "module.d" conf libs qwsfront qmarket || exit 1
+
+    pushd "${_deploy_base}" > /dev/null
         cp "${TEMPLATE_BASE}/market/entrypoint.sh" ./
 
         pushd libs >/dev/null
@@ -185,7 +189,7 @@ function _deploy() {
         popd >/dev/null
     popd
 
-    allscp -r "${MARKET_BASE}/*" "${MARKET_BASE}/"
+    allscp -r "${_deploy_base}/*" "${MARKET_BASE}/"
 }
 
 while getopts :Dh FLAG; do
