@@ -1,0 +1,229 @@
+#!/bin/bash
+
+[[ -L $0 ]] && SCRIPT_FILE=`readlink -fn $0` || SCRIPT_FILE=$0
+pushd `dirname "${SCRIPT_FILE}"` >/dev/null
+BASE_DIR=`pwd`
+popd >/dev/null
+
+source "${BASE_DIR}/module.d/common.sh" || exit 1
+FUNC_FILE_CONFIG="${MODULE_BASE}/config.sh"
+FUNC_FILE_CONFIG="${MODULE_BASE}/template.sh"
+import_functions
+
+GROUP=
+
+MODULE_LIST=(qmarket qwsfront)
+
+ENTRYPOINT="${DATA_BASE:=/opt}/market/entrypoint.sh"
+MARKET_BASE="${DATA_BASE:=/opt}/market"
+
+SERVICE_LIST="kafka front qmarket websocket"
+for SERVICE in ${SERVICE_LIST}; do
+    source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
+        echo "service list file missing: ${SERVICE}.sh" >&2
+        exit 1
+    }
+done
+
+HELP_COMMANDS["start"]="Start market cluster/standalone."
+HELP_COMMANDS["stop"]="Stop market cluster/standalone."
+HELP_COMMANDS["status"]="Check market cluster/standalone status."
+HELP_COMMANDS["deploy"]="Deploy market cluster/standalone applications."
+
+function _find_group() {
+    MODULE_PATTERN=
+    for MODULE_NAME in ${MODULE_LIST[@]}; do
+        MODULE_PATTERN="${MODULE_PATTERN}|${MODULE_NAME}"
+    done
+    MODULE_PATTERN=${MODULE_PATTERN:1}
+
+    if [[ $1 == "qwsfront" ]]; then
+        GROUP="websocket"
+        return
+    fi
+    
+    if [[ $1 =~ ^(${MODULE_PATTERN})$ ]]; then
+        GROUP=$1
+        return
+    fi
+    
+    return 1
+}
+
+function _status() {
+    if [[ $# -gt 0 && ! "$*" =~ all ]]; then
+        MODULE_LIST=($*)
+    else
+        info "checking all."
+    fi
+
+    for MODULE in ${MODULE_LIST[@]}; do
+        info "checking ${MODULE}"
+
+        _find_group ${MODULE}
+        if [[ $? -ne 0 ]]; then
+            error "invalid module name: ${MODULE}"
+            continue
+        fi
+        
+        allssh -g${GROUP} "${ENTRYPOINT}" ${MODULE} status
+    done
+}
+
+function _start() {
+    local _ARG
+
+    if [[ $# -gt 0 && ! "$*" =~ all ]]; then
+        MODULE_LIST=($*)
+    else
+        info "starting all."
+    fi
+
+    for MODULE in ${MODULE_LIST[@]}; do
+        info "starting ${MODULE}"
+
+        _find_group ${MODULE}
+        if [[ $? -ne 0 ]]; then
+            error "invalid module name: ${MODULE}"
+            continue
+        fi
+        
+        allssh -g${GROUP} "${ENTRYPOINT}" -d ${MODULE} start
+    done
+}
+
+function _stop() {
+    if [[ $# -gt 0 && ! "$*" =~ all ]]; then
+        MODULE_LIST=($*)
+    else
+        info "stopping all"
+    fi
+
+    for MODULE in ${MODULE_LIST[@]}; do
+        info "stoping ${MODULE}"
+        
+        _find_group ${MODULE}
+        if [[ $? -ne 0 ]]; then
+            error "invalid module name: ${MODULE}"
+            continue
+        fi
+        
+        allssh -g${GROUP} "${ENTRYPOINT}" ${MODULE} stop
+    done
+}
+
+function _deploy() {
+    make_dir -b "${MARKET_BASE}" "module.d" conf libs qwsfront qmarket || exit 1
+
+    pushd "${MARKET_BASE}" > /dev/null
+        cp "${TEMPLATE_BASE}/market/entrypoint.sh" ./
+
+        pushd libs >/dev/null
+            source ./link &>/dev/null
+        popd >/dev/null
+
+        pushd "module.d" >/dev/null
+            cp "${MODULE_BASE}/common.sh" ./
+            cp "${MODULE_BASE}/template.sh" ./
+        popd >/dev/null
+
+        QMARKET_HOST=
+        IDX=$((RANDOM % ${#QMARKET_LIST[@]}))
+        COUNT=0
+        for SVR_NAME in ${!QMARKET_LIST[@]}; do
+            if [[ ${COUNT} -eq ${IDX} ]]; then
+                QMARKET_HOST=${QMARKET_LIST[$SVR_NAME]}
+                break
+            fi
+
+            COUNT=$((COUNT+1))
+        done
+
+        WEBSOCKET_HOST=
+        IDX=$((RANDOM % ${#WEBSOCKET_LIST[@]}))
+        COUNT=0
+        for SVR_NAME in ${!WEBSOCKET_LIST[@]}; do
+            if [[ ${COUNT} -eq ${IDX} ]]; then
+                WEBSOCKET_HOST=${WEBSOCKET_LIST[$SVR_NAME]}
+                break
+            fi
+
+            COUNT=$((COUNT+1))
+        done
+
+        FRONT_HOST=
+        IDX=$((RANDOM % ${#FRONT_LIST[@]}))
+        COUNT=0
+        for SVR_NAME in ${!FRONT_LIST[@]}; do
+            if [[ ${COUNT} -eq ${IDX} ]]; then
+                FRONT_HOST=${FRONT_LIST[$SVR_NAME]}
+                break
+            fi
+
+            COUNT=$((COUNT+1))
+        done
+
+        KAFKA_SERVERS=
+        for SVR_NAME in ${!KAFKA_LIST[@]}; do
+            KAFKA_SERVERS="${KAFKA_SERVERS},${SVR_NAME}:${KAFKA_PORT}"
+        done
+        KAFKA_SERVERS=${KAFKA_SERVERS:1}
+
+        pushd conf >/dev/null
+            template "${TEMPLATE_BASE}/market/common.env.template" ./common.env
+            openssl md5 common.env | cut -d' ' -f2 > common.env.md5
+        popd >/dev/null
+
+        pushd qmarket >/dev/null
+            openssl md5 qmarket | cut -d' ' -f2 > qmarket.md5
+            cp "${TEMPLATE_BASE}/market/qmarket.ini.template" ./
+        popd >/dev/null
+
+        pushd qwsfront >/dev/null
+            openssl md5 qwsfront | cut -d' ' -f2 > qwsfront.md5
+            cp "${TEMPLATE_BASE}/market/qwsfront.ini.template" ./
+        popd >/dev/null
+    popd
+
+    allscp -r "${MARKET_BASE}/*" "${MARKET_BASE}/"
+}
+
+while getopts :Dh FLAG; do
+    case $FLAG in
+        h)
+            _help >&2
+            exit
+        ;;
+        *)
+            error "invalid args: $*"
+        ;;
+    esac
+done
+shift $((OPTIND-1))
+
+if [[ $# -lt 1 ]]; then
+    error "`basename ${SCRIPT_FILE}` command missing: $*"
+    exit 1
+fi
+
+COMMAND=$1
+shift
+
+case ${COMMAND} in
+    start)
+        _start $*
+    ;;
+    stop)
+        _stop $*
+    ;;
+    status)
+        _status $*
+    ;;
+    deploy)
+        _deploy
+    ;;
+    *)
+        error "invalid command: ${COMMAND}"
+        exit 1
+    ;;
+esac

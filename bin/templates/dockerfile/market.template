@@ -1,0 +1,5 @@
+FROM marketbase:alpine-3.9
+COPY . /market
+WORKDIR /market
+ENTRYPOINT ["./entrypoint.sh"]
+CMD ["-h"]

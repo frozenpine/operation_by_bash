@@ -55,5 +55,8 @@ ssh://sched
 [registry]
 ssh://registry
 
+[qmarket]
+ssh://qmk
+
 [websocket]
 ssh://ws
