@@ -112,7 +112,7 @@ server {
         proxy_pass_header api-expires;
         proxy_pass_header api-signature;
         proxy_pass_header CLIENT-ID;
-        proxy_pass_header ACCOUNT_ID;
+        proxy_pass_header ACCOUNT-ID;
     }
     
     location ~ /api/v1/(accountx|positionx|instrumentx|signature|client|orderx) {
@@ -129,7 +129,7 @@ server {
         proxy_pass_header api-expires;
         proxy_pass_header api-signature;
         proxy_pass_header CLIENT-ID;
-        proxy_pass_header ACCOUNT_ID;
+        proxy_pass_header ACCOUNT-ID;
     }
 
     location ^~ /api/v1/order {
