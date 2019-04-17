@@ -546,3 +546,25 @@ function check_md5() {
         return 1
     fi
 }
+
+function check_env_true() {
+    if [[ $# -ne 1 ]]; then
+        error "env name missing in check_true."
+        exit 1
+    fi
+
+    typeset -u ENV_NAME
+    ENV_NAME=$1
+
+    local _env_value=$(eval echo "\$`echo ${ENV_NAME}`")
+
+    if [[ ${_env_value} -eq 1 ]]; then
+        return
+    fi
+
+    if [[ ${_env_value} =~ ([Tt]([Rr][Uu][Ee])?|[Yy]([Ee][Ss])?) ]]; then
+        return
+    fi
+
+    return 1
+}
