@@ -490,3 +490,61 @@ fi
 if [[ -n ${IDENTITY_FILE} ]]; then
     IDENTITY="-i ${IDENTITY_FILE}"
 fi
+
+function gen_md5() {
+    if [[ $# -lt 1 ]]; then
+        error "source file missing in gen md5: $*"
+        exit 1
+    fi
+
+    local _src_file
+    local _check_sum_file
+    local _print_tag
+
+    if [[ $1 == "-p" ]]; then
+        _print_tag=1
+        shift
+    fi
+
+    _src_file="$1"
+
+    if [[ ${_print_tag} -eq 1 ]]; then
+        _check_sum_file=/dev/null
+    else
+        if [[ $# -gt 1 ]]; then
+            _check_sum_file="$2"
+        else
+            _check_sum_file="${_src_file}.md5"
+        fi
+    fi
+
+    openssl md5 "${_src_file}" | cut -d' ' -f2 | tee "${_check_sum_file}"
+}
+
+function check_md5() {
+    if [[ $# -lt 1 ]]; then
+        error "invalid args in gen md5: $*"
+        exit 1
+    fi
+
+    local _src_file
+    local _check_sum_file
+    local _src_file_md5
+
+    _src_file="$1"
+    if [[ $# -gt 1 ]]; then
+        _check_sum_file="$2"
+    else
+        _check_sum_file="${_src_file}.md5"
+    fi
+
+    if [[ ! -f "${_check_sum_file}" ]]; then
+        error "check sum file missing."
+        exit 1
+    fi
+
+    _src_file_md5=$(gen_md5 -p "${_src_file}")
+    if [[ "${_src_file_md5}" != `cat "${_check_sum_file}"` ]]; then
+        return 1
+    fi
+}
