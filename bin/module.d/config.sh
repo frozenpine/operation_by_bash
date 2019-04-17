@@ -28,6 +28,26 @@ function extract_ini_sec() {
     sed 's/#.*//g' "${_INI_FILE}" | sed -n '/^\['"${_SEC_NAME}"'\]/,/^\[/ p' | sed '/^\[/d; /^[ '"\t"']*$/d'
 }
 
+_ini_item_pattern='([a-zA-Z0-9_-]+) *= *([a-zA-Z0-9@\#?:/_-]+)'
+
+function get_ini_key() {
+    if [[ ! $1 =~ $_ini_item_pattern ]]; then
+        error "invalid ini item: $1"
+        exit 1
+    fi
+
+    echo -n "${BASH_REMATCH[1]}"
+}
+
+function get_ini_value() {
+    if [[ ! $1 =~ $_ini_item_pattern ]]; then
+        error "invalid ini item: $1"
+        exit 1
+    fi
+
+    echo -n "${BASH_REMATCH[2]}"
+}
+
 function list_sections() {
     if [[ $# -gt 0 ]]; then
         SEC_FILE="$1"
