@@ -7,6 +7,13 @@ SQL_BASE="${BASE_DIR}/sql"
 
 COMMON_ENV="${CONF_BASE}/common.env"
 
+if [[ -f "${COMMON_ENV}" ]]; then
+    source "${COMMON_ENV}"
+else
+    echo "[error] common.env missing." >&2
+    exit 1
+fi
+
 # Bash Color start
 # to display color with enhanced echo command: "echo -e"
 # color only functioned properly under xterm terminal
@@ -44,9 +51,9 @@ function _rotate_log_file() {
 # if LOG_FILE is null, will create "Syslog.log" under directory specified by variable LOG_DIR
 # if both variable missing, nothing happen.
 function file_logger() {
-    _rotate_log_file
+    # _rotate_log_file
 
-    sed '1s/\(.*\)/'"`date "+%Y-%m-%d %H:%M:%S"`"' \1/' >> "${LOG_FILE:=/dev/null}"
+    sed '1s/\(.*\)/'"`date "+%Y-%m-%d %H:%M:%S"`"' \1/; s/'"${COLOR[@]}"'//g' >> "${LOG_FILE:=/dev/null}"
 }
 
 function _check_log() {
@@ -55,7 +62,7 @@ function _check_log() {
     fi
 
     if [[ -n ${LOG_FILE} ]]; then
-        if [[ ! -w "${LOG_FILE}" ]]; then
+        if [[ -f "${LOG_FILE}" && ! -w "${LOG_FILE}" ]]; then
             echo "[error] log file[${LOG_FILE}] exists, but not writable." >&2
             return 1
         fi
@@ -63,7 +70,9 @@ function _check_log() {
         pushd `dirname "${LOG_FILE}"` >/dev/null
         LOG_DIR=`pwd`
         popd >/dev/null
-    elif [[ -d "${LOG_DIR}" ]]; then
+    fi
+
+    if [[ -d "${LOG_DIR}" ]]; then
         if [[ ! -w "${LOG_DIR}" ]]; then
             echo "[error] log dir[${LOG_DIR}] exists, but not writable." >&2
             return 1
@@ -479,17 +488,6 @@ function _help() {
         _trim_line 1 ${_HEAD_LEN} 4 ${COLOR["light_blue"]} ${DESCRIPTION}
     done
 }
-
-if [[ -f "${COMMON_ENV}" ]]; then
-    source "${COMMON_ENV}"
-else
-    error "common.env missing."
-    exit 1
-fi
-
-if [[ -n ${IDENTITY_FILE} ]]; then
-    IDENTITY="-i ${IDENTITY_FILE}"
-fi
 
 function gen_md5() {
     if [[ $# -lt 1 ]]; then
