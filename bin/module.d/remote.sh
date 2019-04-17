@@ -7,6 +7,19 @@ function _normal_dry_run() {
     DRY_RUN="eval"
 }
 
+function _common_alias() {
+    alias egrep='egrep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias grep='grep --color=auto'
+    alias l.='ls -d .* --color=auto'
+    alias ll='ls -l --color=auto'
+    alias ls='ls --color=auto'
+    alias scp='scp -i ~/.ssh/Jisheng-func-test.pem'
+    alias ssh='ssh -i ~/.ssh/Jisheng-func-test.pem'
+    alias vi='vim'
+    alias which='alias | /usr/bin/which --tty-only --read-alias --show-dot --show-tilde'
+}
+
 function is_self() {
     if [[ $# -lt 1 ]]; then
         error "remote host missing in check self."
@@ -60,6 +73,7 @@ function remote_exec() {
     shift
     
     # extend alias command recursively
+    _common_alias &>/dev/null
     while true; do
         alias ${_COMMAND} &>/dev/null
         if [[ $? -eq 0 ]]; then

@@ -11,10 +11,6 @@ FUNC_FILE_CONFIG="${MODULE_BASE}/config.sh"
 FUNC_FILE_REMOTE="${MODULE_BASE}/remote.sh"
 import_functions
 
-# apply alias config
-[[ -f ~/.bashrc ]] && source ~/.bashrc
-[[ -f ~/.bash_profile ]] && source ~/.bash_profile
-
 HELP_ARGS["u:user_name"]="optional,Specify user name used in ssh connection, if not specified, local user will be used."
 HELP_ARGS["H:host_name"]="optional,Specify a ssh host to connect to."
 HELP_ARGS["p:host_port"]="optional,Specify a ssh port to connect to, if not specified, default[22] port will be used."
