@@ -10,8 +10,7 @@ USER=${NAME}
 
 JVM_OPTS=${TRADE_TMDB_JVM}
 
-# SENTRY_DSN="http://68634f3a3c434dd7904b9383ea9f47a4:f71cf64ccf1a4972a4c6b421f5a37769@monitor:9000/4"
-SENTRY_DSN=
+SENTRY_DSN=`get_sentry_dsn ${NAME}`
 
 DB_NAME="clear"
 

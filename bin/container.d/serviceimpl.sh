@@ -10,8 +10,7 @@ USER=${NAME}
 
 JVM_OPTS=""
 
-# SENTRY_DSN="http://032c281ab84f4c0798e6f3482a4d2e2e:d44ee127559b4d7e921d212a7b03fd81@monitor:9000/7"
-SENTRY_DSN=
+SENTRY_DSN=`get_sentry_dsn ${NAME}`
 
 DB_NAME="digital"
 PRIM_DB_NAME="clear"

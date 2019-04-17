@@ -10,8 +10,7 @@ USER=${NAME}
 
 JVM_OPTS=${TRADE_MATCH_JVM}
 
-# SENTRY_DSN="http://ebd586b285bc4fd08c7026c36007a182:f8fae917d105440ca9301e597d5ff179@monitor:9000/5"
-SENTRY_DSN=
+SENTRY_DSN=`get_sentry_dsn ${NAME}`
 
 SERVICE_LIST="registry zookeeper kafka match"
 

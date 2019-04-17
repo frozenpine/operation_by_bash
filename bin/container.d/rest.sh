@@ -10,8 +10,7 @@ USER=${NAME}
 
 JVM_OPTS=""
 
-# SENTRY_DSN="http://654e52faff5144798b88dff78fa283b5:73a9028558844a5d88c14c50a106b9cc@monitor:9000/8"
-SENTRY_DSN=
+SENTRY_DSN=`get_sentry_dsn ${NAME}`
 
 DB_NAME="sso"
 

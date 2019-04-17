@@ -8,8 +8,7 @@ fi
 NAME=tradebase
 USER=${NAME}
 
-# SENTRY_DSN="http://a18befa43f4d4d38983934e7cf7ed441:6103657ae0634a7299fc70670e295c73@monitor:9000/6"
-SENTRY_DSN=
+SENTRY_DSN=`get_sentry_dsn ${NAME}`
 
 JVM_OPTS=""
 

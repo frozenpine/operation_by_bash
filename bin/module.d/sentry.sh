@@ -1,17 +1,15 @@
-SENTRY_DSN=
-
 SENTRY_CONF="${CONF_BASE}/sentry.ini"
 
 function get_sentry_dsn() {
-    if [[ $# -ne 1 ]]; then
-        error "sentry project name missing."
-        exit 1
-    fi
-
     check_env_true sentry_enable
     if [[ $? -ne 0 ]]; then
         warning "sentry log disabled."
-        return
+        return 1
+    fi
+
+    if [[ $# -ne 1 ]]; then
+        error "sentry project name missing."
+        exit 1
     fi
 
     if [[ ! -f "${SENTRY_CONF}" ]]; then
@@ -59,5 +57,5 @@ function get_sentry_dsn() {
         fi
     done
 
-    SENTRY_DSN="${_sentry_scheme}://${_access_token}@${_sentry_host}:${_sentry_port}/${_project_id}"
+    echo -n "${_sentry_scheme}://${_access_token}@${_sentry_host}:${_sentry_port}/${_project_id}"
 }
