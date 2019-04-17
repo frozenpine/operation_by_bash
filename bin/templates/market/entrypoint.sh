@@ -73,37 +73,6 @@ function _check_env() {
     eval "_check_$1_env"
 }
 
-function _check_md5() {
-    if [[ $# -lt 1 ]]; then
-        error "module name missing in check md5."
-        exit 1
-    fi
-
-    local _module_name
-    local _module_base
-    local _module_md5
-    local _module_md5_file
-
-    _module_name=$1
-    if [[ x"$2" == "x" ]]; then
-        _module_base="${BASE_DIR}/${_module_name}"
-    else
-        _module_base="${BASE_DIR}/$2"
-    fi
-    _module_md5_file="${_module_base}/${_module_name}.md5"
-
-    if [[ ! -f "${_module_md5_file}" ]]; then
-        error "${_module_name} md5 checksum file[${_module_md5_file}] missing."
-        exit 1
-    fi
-
-    _module_md5=`openssl md5 ${_module_base}/${_module_name} | cut -d' ' -f2`
-    if [[ "${_module_md5}" != `cat "${_module_md5_file}"` ]]; then
-        error "${_module_name} md5 checksum mismatch."
-        exit 1
-    fi
-}
-
 function _status() {
     if [[ $# -lt 1 ]]; then
         error "module name missing in status."
@@ -170,13 +139,13 @@ function _start() {
             exit 1
         fi
         
-        _check_md5 "common.env" "conf"
+        check_md5 "../conf/common.env"
 
         WS_LISTEN_ADDR=`ip address show eth0 | grep inet | grep -v inet6 | awk '{print $2}' | cut -d'/' -f1`
 
         _check_env ${_module_name}
 
-        _check_md5 ${_module_name}
+        check_md5 ${_module_name}
 
         template "${_template_file}"
 

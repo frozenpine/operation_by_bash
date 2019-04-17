@@ -175,17 +175,17 @@ function _deploy() {
 
         pushd conf >/dev/null
             template "${TEMPLATE_BASE}/market/common.env.template" ./common.env
-            openssl md5 common.env | cut -d' ' -f2 > common.env.md5
+            gen_md5 common.env
         popd >/dev/null
 
         pushd qmarket >/dev/null
-            openssl md5 qmarket | cut -d' ' -f2 > qmarket.md5
             cp "${TEMPLATE_BASE}/market/qmarket.ini.template" ./
+            gen_md5 qmarket
         popd >/dev/null
 
         pushd qwsfront >/dev/null
-            openssl md5 qwsfront | cut -d' ' -f2 > qwsfront.md5
             cp "${TEMPLATE_BASE}/market/qwsfront.ini.template" ./
+            gen_md5 qwsfront
         popd >/dev/null
     popd
 
