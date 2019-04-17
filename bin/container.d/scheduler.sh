@@ -128,7 +128,7 @@ docker run -d \
         --spring.datasource.primary.max-wait=10000 \
         --spring.datasource.primary.min-idle=5 \
         --spring.datasource.primary.initial-size=5 \
-        --spring.datasource.primary.validation-query=SELECT 1 \
+        --spring.datasource.primary.validation-query="SELECT 1" \
         --spring.datasource.primary.test-on-borrow=false \
         --spring.datasource.primary.test-while-idle=true \
         --spring.datasource.primary.time-between-eviction-runs-millis=18800 \
@@ -136,7 +136,7 @@ docker run -d \
         --spring.datasource.secondary.max-wait=10000 \
         --spring.datasource.secondary.min-idle=5 \
         --spring.datasource.secondary.initial-size=5 \
-        --spring.datasource.secondary.validation-query=SELECT 1 \
+        --spring.datasource.secondary.validation-query="SELECT 1" \
         --spring.datasource.secondary.test-on-borrow=false \
         --spring.datasource.secondary.test-while-idle=true \
         --spring.datasource.secondary.time-between-eviction-runs-millis=18800 \
