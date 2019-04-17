@@ -97,7 +97,7 @@ function remote_exec() {
     
     _normal_dry_run
 
-    ssh "${_ssh_args[@]}" ${_USER}@${_HOST} "\
+    ${DRY_RUN} ssh ${_ssh_args[@]} ${_USER}@${_HOST} "\
         export PATH=/sbin:/bin:/usr/bin:/user/sbin:/usr/local/bin:~/bin; \
         [[ -f ~/.bashrc ]] && source ~/.bashrc; \
         [[ -f ~/.bash_profile ]] && source ~/.bash_profile; \
@@ -158,7 +158,7 @@ function remote_cp() {
     
     _normal_dry_run
 
-    scp "${_scp_args[@]}" ${_SRC} ${_USER}@${_HOST}:${_DST}
+    ${DRY_RUN} scp ${_scp_args[@]} ${_SRC} ${_USER}@${_HOST}:${_DST}
     echo >&2
 }
 
