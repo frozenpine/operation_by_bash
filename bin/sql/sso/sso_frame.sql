@@ -4,6 +4,7 @@ MySQL - 5.7.25 : Database - security
 *********************************************************************
 */
 
+
 /*!40101 SET NAMES utf8 */;
 
 /*!40101 SET SQL_MODE=''*/;
@@ -12,75 +13,21 @@ MySQL - 5.7.25 : Database - security
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`sso` /*!40100 DEFAULT CHARACTER SET utf8 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`security` /*!40100 DEFAULT CHARACTER SET utf8 */;
 
-USE `sso`;
-
-/*Table structure for table `sso_perm` */
-
-DROP TABLE IF EXISTS `sso_perm`;
-
-CREATE TABLE `sso_perm` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `user_id` bigint(20) DEFAULT NULL COMMENT '用户ID',
-  `perm` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '权限(也即资源地址,如菜单地址)',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='用户权限表';
-
-/*Table structure for table `sso_resource` */
-
-DROP TABLE IF EXISTS `sso_resource`;
-
-CREATE TABLE `sso_resource` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `res` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '资源标识(如：菜单Url、Rest服务地址等)',
-  `restype` varchar(10) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '资源类型(如:menu/rest/method/button)',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='系统资源表';
-
-/*Table structure for table `sso_resource_acl` */
-
-DROP TABLE IF EXISTS `sso_resource_acl`;
-
-CREATE TABLE `sso_resource_acl` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `res` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '资源标识(如：菜单Url、Rest服务地址等)',
-  `acl` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'shiro资源访问控制列表,如:roles[100002],perms[ADD]等',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='系统资源表';
-
-/*Table structure for table `sso_role` */
-
-DROP TABLE IF EXISTS `sso_role`;
-
-CREATE TABLE `sso_role` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `user_id` bigint(20) DEFAULT NULL COMMENT '用户ID',
-  `role` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
-/*Table structure for table `sso_user` */
-
-DROP TABLE IF EXISTS `sso_user`;
-
-CREATE TABLE `sso_user` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `loginname` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `username` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `password` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `pwd_salt` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `pwd_algorithm` varchar(10) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '密码签名算法',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+USE `security`;
 
 /*Table structure for table `t_group` */
 
 DROP TABLE IF EXISTS `t_group`;
 
 CREATE TABLE `t_group` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) NOT NULL COMMENT '名称',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '逻辑主键',
+  `name` varchar(50) NOT NULL COMMENT '群组名称',
+  `create_user` varchar(30) DEFAULT NULL COMMENT '创建人',
+  `create_time` timestamp NULL DEFAULT NULL COMMENT '创建时间',
+  `oper_user` varchar(30) DEFAULT NULL COMMENT '操作员',
+  `oper_time` timestamp NULL DEFAULT NULL COMMENT '操作时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -109,7 +56,7 @@ CREATE TABLE `t_log` (
   `description` varchar(400) DEFAULT NULL COMMENT '操作内容',
   `oper_time` timestamp NULL DEFAULT NULL COMMENT '操作时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=95 DEFAULT CHARSET=utf8 COMMENT='业务日志表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='业务日志表';
 
 /*Table structure for table `t_online_user` */
 
@@ -123,7 +70,7 @@ CREATE TABLE `t_online_user` (
   `session_id` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `IDX_T_ONLINE_USER_LOGINID_LOGINIP` (`login_id`,`login_ip`)
-) ENGINE=InnoDB AUTO_INCREMENT=799 DEFAULT CHARSET=utf8 COMMENT='在线用户统计表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='在线用户统计表';
 
 /*Table structure for table `t_org_admin` */
 
@@ -160,7 +107,7 @@ CREATE TABLE `t_org_unit` (
   `oper_time` timestamp NULL DEFAULT NULL COMMENT '操作时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `UX_T_ORG_UNIT_CODE` (`code`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COMMENT='组织单位表';
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='组织单位表';
 
 /*Table structure for table `t_org_unit_resource` */
 
@@ -242,7 +189,7 @@ CREATE TABLE `t_role` (
   `oper_time` timestamp NULL DEFAULT NULL COMMENT '操作时间',
   PRIMARY KEY (`id`),
   KEY `IDX_T_ROLE_SYSTEMID` (`system_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8 COMMENT='角色表';
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COMMENT='角色表';
 
 /*Table structure for table `t_role_group` */
 
@@ -309,7 +256,7 @@ CREATE TABLE `t_system` (
   `name` varchar(80) NOT NULL COMMENT '系统名称',
   `description` varchar(80) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COMMENT='系统';
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COMMENT='系统';
 
 /*Table structure for table `t_system_param_set` */
 
@@ -346,7 +293,7 @@ CREATE TABLE `t_user` (
   `oper_time` timestamp NULL DEFAULT NULL COMMENT '操作时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `UX_T_USER_LOGINNAME` (`login_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8 COMMENT='用户表';
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COMMENT='用户表';
 
 /*Table structure for table `t_user_hist_password` */
 
@@ -362,7 +309,7 @@ CREATE TABLE `t_user_hist_password` (
   `oper_time` timestamp NULL DEFAULT NULL COMMENT '操作时间',
   PRIMARY KEY (`id`),
   KEY `IDX_T_HIS_USER_PASSWORD_USERID` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户历史密码记录表.';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='用户历史密码记录表.';
 
 /*Table structure for table `t_userinfo` */
 
@@ -381,7 +328,7 @@ CREATE TABLE `t_userinfo` (
   `telephone` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UX_T_USERINFO_USERID` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
