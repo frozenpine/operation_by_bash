@@ -1,4 +1,14 @@
-SSH="ssh ${IDENTITY}"
+function _normal_dry_run() {
+    if [[ ${DRY_RUN} -eq 1 ]]; then
+        DRY_RUN="echo"
+        return
+    fi
+    
+    if [[ ${DRY_RUN} != "echo" || ${DRY_RUN} != "eval" ]]; then
+        DRY_RUN="eval"
+        return
+    fi
+}
 
 function remote_exec() {
     local _USER
@@ -9,14 +19,22 @@ function remote_exec() {
     local _CMD_LINE
     local _TMP_CMD
 
+    _ssh_args=("-n")
+
+    if [[ x"${IDENTITY_FILE}" != "x" ]]; then
+        _ssh_args=(${_ssh_args[@]} "-i" "${IDENTITY_FILE}")
+    fi
+
     [[ -n ${REMOTE_USER} ]] && _USER="${REMOTE_USER}" || _USER="${SSH_USER}"
     [[ -n ${REMOTE_HOST} ]] && _HOST="${REMOTE_HOST}" || _HOST="${SSH_HOST}"
     [[ -n ${REMOTE_PORT} ]] && _PORT="${REMOTE_PORT}" || _PORT="${SSH_PORT}"
 
     if [[ ${_PORT} -eq 22 ]]; then
         _CONN_STRING="${_USER}@${_HOST}"
+        _ssh_args=(${_ssh_args[@]} "${_USER}@${_HOST}")
     else
         _CONN_STRING="${_USER}@${_HOST}:${_PORT}"
+        _ssh_args=(${_ssh_args[@]} "-p" ${_PORT} "${_USER}@${_HOST}")
     fi
 
     _COMMAND=$1
@@ -45,10 +63,69 @@ function remote_exec() {
 
     echo -e "${COLOR[cyan]}Results${COLOR[nc]} from remote host[${COLOR[yellow]}${_CONN_STRING}${COLOR[nc]}]:" >&2
     
-    ${SSH} -n ${_USER}@${_HOST} -p${_PORT} "\
+    _normal_dry_run
+
+    ${DRY_RUN} ssh "${_ssh_args[@]}" "\
         export PATH=/sbin:/bin:/usr/bin:/user/sbin:/usr/local/bin:~/bin; \
         [[ -f ~/.bashrc ]] && source ~/.bashrc; \
         [[ -f ~/.bash_profile ]] && source ~/.bash_profile; \
         ${_CMD_LINE} $*"
+    echo >&2
+}
+
+function transfer_file() {
+    local _USER
+    local _HOST
+    local _PORT
+    local _CONN_STRING
+    local _HOST_IP
+    local _EXTRA_ARGS
+    local _SRC
+    local _DST
+
+    _scp_args=("-r")
+
+    if [[ x"${IDENTITY_FILE}" != "x" ]]; then
+        _scp_args=(${_scp_args[@]} "-i" "${IDENTITY_FILE}")
+    fi
+
+    [[ -n ${REMOTE_USER} ]] && _USER="${REMOTE_USER}" || _USER="${SSH_USER}"
+    [[ -n ${REMOTE_HOST} ]] && _HOST="${REMOTE_HOST}" || _HOST="${SSH_HOST}"
+    [[ -n ${REMOTE_PORT} ]] && _PORT="${REMOTE_PORT}" || _PORT="${SSH_PORT}"
+
+    _HOST_IP=`grep ${_HOST} /etc/hosts | awk '{print $1}'`
+
+    for IP in `ip address show | grep inet | grep -v inet6 | awk '{split($2, addr, "/"); print addr[1]}'`; do
+        if [[ ${IP} == ${_HOST_IP} ]]; then
+            warning "Destination is same as localhost[${_HOST_IP}], skip."
+            return 0
+        fi
+    done
+
+    if [[ ${_PORT} -eq 22 ]]; then
+        _CONN_STRING="${_USER}@${_HOST}"
+    else
+        _CONN_STRING="${_USER}@${_HOST}:${_PORT}"
+        _scp_args=(${_scp_args[@]} "-P" ${_PORT})
+    fi
+
+    echo -e "${COLOR[cyan]}Transfer${COLOR[nc]} file to remote host[${COLOR[yellow]}${_CONN_STRING}${COLOR[nc]}]:" >&2
+
+    if [[ $# -eq 1 ]]; then
+        if [[ -n ${RECURSIVE} ]]; then
+            error "must specify dest path in recursive mode."
+            exit 1
+        fi
+
+        _SRC="$1"
+        _DST="$1"
+    else
+        _DST="${!#}"
+        _SRC="${*%%${_DST}}"
+    fi
+    
+    _normal_dry_run
+
+    ${DRY_RUN} scp "${_scp_args[@]}" ${_SRC} ${_USER}@${_HOST}:${_DST}
     echo >&2
 }
