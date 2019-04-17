@@ -19,10 +19,11 @@ HELP_ARGS["u:user_name"]="optional,Specify user name used in ssh connection, if 
 HELP_ARGS["H:host_name"]="optional,Specify a ssh host to connect to."
 HELP_ARGS["p:host_port"]="optional,Specify a ssh port to connect to, if not specified, default[22] port will be used."
 HELP_ARGS["g:app_group"]="optional,Specify a ssh host group, if not specified, all hosts in \"/etc/hosts\" except localhost will be used."
+HELP_ARGS["D"]="optional,Dry run command for test."
 
 HELP_POSITION_ARGS[0]="COMMAND..."
 
-while getopts :u:H:p:g:h FLAG; do
+while getopts :u:H:p:g:Dh FLAG; do
     case $FLAG in
         g)
             GROUP_NAME=${OPTARG}
@@ -36,11 +37,15 @@ while getopts :u:H:p:g:h FLAG; do
         p)
             REMOTE_PORT=${OPTARG}
         ;;
+        D)
+            DRY_RUN="echo"
+        ;;
         h)
             _help >&2
             exit
         ;;
         *)
+            error "invalid args: $*"
             _help >&2
             exit 1
         ;;

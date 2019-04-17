@@ -8,14 +8,12 @@ popd >/dev/null
 source "${BASE_DIR}/module.d/common.sh" || exit 1
 
 FUNC_FILE_CONFIG="${MODULE_BASE}/config.sh"
+FUNC_FILE_REMOTE="${MODULE_BASE}/remote.sh"
 import_functions
 
 NGINX_GROUP=front
 
-DRY_RUN=eval
-
 SERVICE_LIST="digital order tradebase query websocket"
-
 for SERVICE in ${SERVICE_LIST}; do
     source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
         echo "service list file missing: ${SERVICE}.sh" >&2
@@ -29,16 +27,6 @@ HELP_ARGS["D"]="optional,Dry run command and show command line in console instea
 
 HELP_COMMANDS["data"]="Publish data files to all member in nginx cluster."
 HELP_COMMANDS["conf"]="Publish config files to all member in nginx cluster."
-
-RSYOPT=(-rlptzv --progress --delete --human-readable --chmod="D+rx,Fgo+r")
-
-if [[ -n "${IDENTITY_FILE}" ]]; then
-    RSYOPT=(${RSYOPT[@]} "--rsh='ssh -i ${IDENTITY_FILE}'")
-fi
-
-if [[ -n ${SUDO} ]]; then
-    RSYOPT=(${RSYOPT[@]} "--rsync-path='sudo rsync'")
-fi
 
 function _pub_conf() {
     info "pub config to nginx-conf cluster."
@@ -65,7 +53,7 @@ EOF
             continue
         fi
 
-        ${DRY_RUN} rsync "${RSYOPT[@]}" "${CONF_TEMP}/" ${SSH_USER}@${SSH_HOST}:${DATA_BASE:=/opt}/nginx/conf/
+        remote_sync "${CONF_TEMP}/" "${DATA_BASE:=/opt}/nginx/conf/"
     done
 
     rm -rf "${CONF_TEMP}"
@@ -86,7 +74,7 @@ function _pub_data() {
             continue
         fi
 
-        ${DRY_RUN} rsync "${RSYOPT[@]}" "${DATA_BASE:=/opt}/nginx/data/$1" ${SSH_USER}@${SSH_HOST}:${DATA_BASE:=/opt}/nginx/data/
+        remote_sync "${DATA_BASE:=/opt}/nginx/data/$1" "${DATA_BASE:=/opt}/nginx/data/"
     done
 }
 

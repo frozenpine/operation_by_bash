@@ -15,9 +15,12 @@ HELP_ARGS["u:user_name"]="optional,Specify user name used in ssh connection, if 
 HELP_ARGS["H:host_name"]="optional,Specify a ssh host to connect to."
 HELP_ARGS["P:host_port"]="optional,Specify a ssh port to connect to, if not specified, default[22] port will be used."
 HELP_ARGS["g:app_group"]="optional,Specify a application group name, if not specified, all hosts in \"/etc/hosts\" except localhost will be used."
+HELP_ARGS["D"]="optional,Dry run command for test."
 
 HELP_POSITION_ARGS[0]="PATH"
 HELP_POSITION_ARGS[1]="optional,PATH..."
+
+RECURSIVE=
 
 while getopts :u:H:p:g:Drh FLAG; do
     case $FLAG in
@@ -36,11 +39,15 @@ while getopts :u:H:p:g:Drh FLAG; do
         p)
             REMOTE_PORT=${OPTARG}
         ;;
+        r)
+            RECURSIVE="-r"
+        ;;
         h)
             _help >&2
             exit
         ;;
         *)
+            error "invalid args: $*"
             _help >&2
             exit 1
         ;;
@@ -59,5 +66,5 @@ host_list | while read HOST_CONF; do
         warning "Invalid config in group ${GROUP_NAME}: $HOST_CONF"
         continue
     fi
-    transfer_file $*
+    remote_cp ${RECURSIVE} $*
 done
