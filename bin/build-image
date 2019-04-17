@@ -53,7 +53,7 @@ function _build() {
             
             SIG_FILE="${BUILD_DIR}/${FILE_NAME}.md5"
 
-            NEW_SIG=`openssl md5 "${BUILD_DIR}/${FILE_NAME}"`
+            NEW_SIG=`gen_md5 -p "${BUILD_DIR}/${FILE_NAME}"`
             if [[ ${FORCE} -eq 0 && -f "${SIG_FILE}" && `cat "${SIG_FILE}"` == ${NEW_SIG} ]]; then
                 warning "module[${MODULE}] with version[${VERSION}] not modified, skip building."
                 continue
