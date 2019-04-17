@@ -155,7 +155,7 @@ server {
         if (\$http_api_key = '') {
             return 401 'no api-key header found.';
         } 
-        if (\$http_api_expire = '') {
+        if (\$http_api_expires = '') {
             return 401 'no api-expires header found.';
         }
         if (\$http_api_signature = '') {

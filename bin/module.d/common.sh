@@ -53,7 +53,7 @@ function _rotate_log_file() {
 function file_logger() {
     # _rotate_log_file
 
-    sed '1s/\(.*\)/'"`date "+%Y-%m-%d %H:%M:%S"`"' \1/; s/'"${COLOR[@]}"'//g' >> "${LOG_FILE:=/dev/null}"
+    sed '1s/\(.*\)/'"`date "+%Y-%m-%d %H:%M:%S"`"' \1/' >> "${LOG_FILE:=/dev/null}"
 }
 
 function _check_log() {

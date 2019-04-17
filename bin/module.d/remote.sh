@@ -4,7 +4,7 @@ function _normal_dry_run() {
         return
     fi
     
-    DRY_RUN="eval"
+    DRY_RUN=$1
 }
 
 function _common_alias() {
@@ -62,10 +62,10 @@ function remote_exec() {
 
     if [[ ${_PORT} -eq 22 ]]; then
         _CONN_STRING="${_USER}@${_HOST}"
-        _ssh_args=(${_ssh_args[@]} "${_USER}@${_HOST}")
+        _ssh_args=(${_ssh_args[@]})
     else
         _CONN_STRING="${_USER}@${_HOST}:${_PORT}"
-        _ssh_args=(${_ssh_args[@]} "-p" ${_PORT} "${_USER}@${_HOST}")
+        _ssh_args=(${_ssh_args[@]} "-p" ${_PORT})
     fi
 
     _COMMAND=$1
@@ -97,7 +97,7 @@ function remote_exec() {
     
     _normal_dry_run
 
-    ${DRY_RUN} ssh "${_ssh_args[@]}" "\
+    ssh "${_ssh_args[@]}" ${_USER}@${_HOST} "\
         export PATH=/sbin:/bin:/usr/bin:/user/sbin:/usr/local/bin:~/bin; \
         [[ -f ~/.bashrc ]] && source ~/.bashrc; \
         [[ -f ~/.bash_profile ]] && source ~/.bash_profile; \
@@ -158,7 +158,7 @@ function remote_cp() {
     
     _normal_dry_run
 
-    ${DRY_RUN} scp "${_scp_args[@]}" ${_SRC} ${_USER}@${_HOST}:${_DST}
+    scp "${_scp_args[@]}" ${_SRC} ${_USER}@${_HOST}:${_DST}
     echo >&2
 }
 
@@ -203,6 +203,6 @@ function remote_sync() {
 
     echo -e "${COLOR[cyan]}Sync${COLOR[nc]} file to remote host[${COLOR[yellow]}${_CONN_STRING}${COLOR[nc]}]:" >&2
 
-    _normal_dry_run
+    _normal_dry_run "eval"
     ${DRY_RUN} rsync "${_rsync_args[@]}" "${_SRC}" "${_USER}@${_HOST}:${_DST}"
 }

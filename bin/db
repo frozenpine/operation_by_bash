@@ -68,11 +68,14 @@ function _create() {
                 USER=`echo ${CONF} | cut -d'=' -f2`
                 USER=${USER## }
                 USER=${USER%% }
+                continue
             fi
+            
             if [[ $CONF =~ .*[Pp][Aa][Ss][Ss]([Ww][Oo][Rr][Dd])? ]]; then
                 PASS=`echo ${CONF} | cut -d'=' -f2`
                 PASS=${PASS## }
                 PASS=${PASS%% }
+                continue
             fi
         done
 
