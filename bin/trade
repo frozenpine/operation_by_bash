@@ -137,12 +137,22 @@ function _stop() {
 }
 
 function _logs() {
+    local _tail
+    if [[ $1 =~ -([0-9]+) ]]; then
+        _tail=${BASH_REMATCH[1]}
+        shift
+    fi
+
+    if [[ -z ${_tail} ]]; then
+        _tail=100
+    fi
+
     _find_group $1
     if [[ $? -ne 0 ]]; then
         error "invalid pub name: $1"
     fi
 
-    allssh -g${GROUP} container logs --tail 100 $1
+    allssh -g${GROUP} container logs --tail ${_tail} $1
 }
 
 function _pub() {
