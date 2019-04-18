@@ -1,0 +1,60 @@
+# 共有8个级别，按照从低到高为：ALL < TRACE < DEBUG < INFO < WARN < ERROR < FATAL < OFF。
+Configuration:
+  status: DEBUG
+  monitorInterval: 30
+  Properties: # 定义全局变量
+    Property: # 缺省配置（用于开发环境）。其他环境需要在VM参数中指定，如下：
+    #测试：-Dlog.level.console=warn -Dlog.level.quantdo=debug
+    #生产：-Dlog.level.console=warn -Dlog.level.quantdo=info
+    - name: log.level.quantdo
+      value: DEBUG
+    - name: log.level.console
+      value: info
+    - name: log.path
+      value: log
+    - name: project.name
+      value: digital-rest
+    - name: log.pattern
+      value: "%-d{yyyy-MM-dd HH:mm:ss,SSS}-[%l]-[%p] ${PID:-} %m%n"
+  Appenders:
+    #控制台
+    Console:
+      name: CONSOLE
+      target: SYSTEM_OUT
+#      ThresholdFilter:
+#        level: ${sys:log.level.console} # “sys:”表示：如果VM参数中没指定这个变量值，则使用本文件中定义的缺省全局变量值
+#        onMatch: ACCEPT
+#        onMismatch: DENY
+      PatternLayout:
+        pattern: ${log.pattern}
+    #日志文件
+    RollingFile:
+    - name: ROLLING_FILE
+      fileName: ${log.path}/${project.name}.log
+      filePattern: "${log.path}/$${date:yyyy-MM}/${project.name}-%d{yyyy-MM-dd}-%i.log.gz"
+      PatternLayout:
+        pattern: ${log.pattern}
+      Policies:
+        TimeBasedTriggeringPolicy:  # 按天分类
+          modulate: true
+          interval: 1
+        SizeBasedTriggeringPolicy:
+          size: "128 MB"
+      DefaultRolloverStrategy:     # 文件最多100个
+        max: 1000
+
+  Loggers:
+    Root:
+      level: info #root的级别为info，如果为debug的话，输出的内容太多
+      AppenderRef:
+      - ref: CONSOLE
+      - ref: ROLLING_FILE
+#    Logger:
+#    监听具体包下面的日志
+#    Logger: # 为com.quantdo包配置特殊的Log级别,方便调试
+#    - name: com.quantdo
+#      additivity: false
+#      #level: ${sys:log.level.quantdo}
+#      AppenderRef:
+#      - ref: CONSOLE
+#      - ref: ROLLING_FILE

@@ -1,0 +1,34 @@
+management:
+  #dubbo服务监听接口
+  port: 8888
+
+#指定当前服务/应用的名字（同样的服务名字相同，不要和别的服务同名）
+dubbo:
+  application:
+    id:  dubbo-digital-provider
+    name: dubbo-digital-consumer
+  provider:
+    #统一设置服务提供方的规则
+    timeout: 5000
+  consumer:
+    check: false
+  scan:
+    #Base packages to scan Dubbo Components (e.g., @Service, @Reference)
+    basePackages: com.quantdo.digital.user.service.impl
+  protocol:
+    id: dubbo
+    name: dubbo
+    port: 20880
+  #指定注册中心的位置
+  registry:
+    #指定注册中心的位置(RegistryConfig Bean)
+    id: zk-provider-registry
+    #dubbo.registry.address = N/A
+    protocol: zookeeper
+    address: zookeeper://172.16.10.216:2181
+    #压力测试环境
+    #address: 192.168.100.166:2181,192.168.100.167:2181,192.168.100.168:2181
+
+#业务服务接口版本号
+service:
+    version: 1.0.0

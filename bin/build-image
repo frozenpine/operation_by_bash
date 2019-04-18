@@ -153,6 +153,11 @@ fi
 
 $SUDO cp -f "${ORIGIN_TEMPLATE_FILE}" ./dockerfile.template
 
+TEMPLATE_CONF_DIR="${TEMPLATE_BASE}/${BUILD_NAME}"
+if [[ -d "${TEMPLATE_CONF_DIR}" ]]; then
+    ${SUDO} cp -r "${TEMPLATE_CONF_DIR}"/* ./
+fi
+
 ls ${PATTERN} &>/dev/null
 if [[ $? -ne 0 ]]; then
     error "invalid module name: $1"

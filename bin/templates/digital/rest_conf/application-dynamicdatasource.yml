@@ -1,0 +1,84 @@
+spring:
+  datasource:
+    #is-dynamic-datasource为接入动态数据源区分标识.
+    is-dynamic-datasource: true
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://172.16.10.215:3306/digital?characterEncoding=utf-8&amp;autoReconnect=true
+    username: trader
+    password: Jjs@2018
+    druid:
+      #连接池配置
+      #初始化时建立物理连接的个数
+      initialSize: 1
+      #最小连接池数量
+      minIdle: 0
+      #最大连接池数量
+      maxActive: 5
+      #获取连接时最大等待时间，单位毫秒。配置了maxWait之后，缺省启用公平锁，并发效率会有所下降，
+      #如果需要可以通过配置useUnfairLock属性为true使用非公平锁。
+      maxWait: 60000
+      #配置相隔多久进行一次检测(检测可以关闭的空闲连接),此处设置为1分钟检测一次。
+      timeBetweenEvictionRunsMillis: 60000
+      #一个连接在池中最小生存的时间(ms),此处设置为半小时。
+      minEvictableIdleTimeMillis: 1800000
+      #一个连接在池中最大生存的时间(ms),此处设置为7天。
+      maxEvictableIdleTimeMillis: 25200000
+      #用来检测连接是否有效的sql; 如果validationQuery为null，testOnBorrow、testOnReturn、testWhileIdle都不会启作用。
+      validationQuery: SELECT 1 FROM DUAL
+      #检测连接是否有效的超时时间,默认-1(单位:秒).
+      validationQueryTimeout: 5
+      #建议配置为true，不影响性能，并且保证安全性，申请连接的时候检测，如果空闲时间大于timeBetweenEvictionRunsMillis，
+      #执行validationQuery检测连接是否有效。
+      testWhileIdle: true
+      #申请连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能。
+      testOnBorrow: false
+      #归还连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能
+      testOnReturn: false
+      #是否缓存preparedStatement，也就是PSCache;PSCache对支持游标的数据库性能提升巨大，比如说oracle;
+      #在mysql5.5以下的版本中没有PSCache功能，建议关闭掉。
+      poolPreparedStatements: true
+      #打开PSCache，并且指定每个连接上PSCache的大小
+      maxPoolPreparedStatementPerConnectionSize: 20
+      sharePreparedStatements: false
+      # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+      #connectionProperties: druid.stat.mergeSql=true;druid.stat.logSlowSql=true;druid.stat.slowSqlMillis=5000
+      # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+      filters: stat,wall,log4j2
+      #要启用PSCache，必须配置大于0，当大于0时，poolPreparedStatements自动触发修改为true。
+      #在Druid中，不会存在Oracle下PSCache占用内存过多的问题，可以把这个数值配置大一些，比如说100
+      #此处默认为-1
+      maxOpenPreparedStatements: 10
+      #合并多个DruidDataSource的监控数据
+      useGlobalDataSourceStat: true
+    list:
+    - name: front
+      master-dataSource: true
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://172.16.10.215:3306/clear?characterEncoding=utf-8&amp;autoReconnect=true
+      username: trader
+      password: Jjs@2018
+    #    - name: demo-role
+    #      driver-class-name: com.mysql.jdbc.Driver
+    #      url: jdbc:mysql://localhost/demo-role?characterEncoding=utf-8
+    #      username: root
+    #      password: 111111
+    config:
+      routers: #必须设置,不同服务或方法的路由配置(只需要配置主库,无需配置从库)
+        front: com.quantdo.digital.clear.datasource.*.*(..)
+      #master-slaves: #master-slaves为非必须配置, 都是主库且不存在备库时则不需要配置。
+      #  master: db_slave1,db_slave2
+      #没有做主从数据源配置时,读写走的都是主库。读的处理逻辑是:先从从库读,如果从数据源不存在则从主数据源读;
+      #   写入的处理逻辑是：只要是不能识别为读的方法均视为写入,所有写入数据均路由到主数据源操作（即使使用了JAVA注解指定了写入从数据源结果也会最终写入到主数据源）;
+      #   识别读写的方式：默认采用read-methods与write-methods规则来做联合判断,当使用了注解时只会以注解为依据(不再参考默认配置),所有不能识别读写类型的(或未设置类型的)均会识别为写。
+      #以下为平台读取方法默认配置,可以自行谨慎调整
+      #read-methods: get.*,query.*,find.*,list.*,count.*
+      #以下为平台写入数据方法默认配置,可以自行谨慎调整。
+      #在read-methods、write-methods配置之外的方法均视为写入方法（如果视为读取的话容易造成写入数据路由到从数据源,读操作路由到主数据源则不会造成数据一致性问题）。
+      #write-methods: add.*,save.*,del.*,update.*,exec.*
+
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count==countSql;pageNum=pageNum;pageSize=pageSize;
