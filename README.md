@@ -1,4 +1,4 @@
-# 运维脚本使用说明
+# 运维脚本框架使用说明
 
 > [TOC]
 >
@@ -22,48 +22,72 @@ bin
 ├─module.d
 ├─service.d
 ├─sql
+│  ├─clear
+│  ├─digital
+│  ├─sms
+│  └─sso
 └─templates
     ├─dockerfile
+    ├─market
     └─nginx
         └─conf.d
 ```
 
-* ***conf***： 基础配置文件目录
+* ***conf***： 基础配置文件目录，如不存在该文件，可从同名的 ”*.example*“ 文件拷贝获得
 
-  > * *common.env*： 基本环境变量
+  > * *common.env*： 基本环境变量信息
   >
   >    > ```bash
   >    > $ cat bin/conf/common.env
+  >    > # quantdo 应用的默认日志级别
+  >    > LOG_LEVEL=debug
+  >    > 
   >    > # 数据基础目录
   >    > DATA_BASE=/data
-  >    >
+  >    > 
   >    > # 应用基础目录
   >    > APP_BASE=/opt
-  >    >
+  >    > 
   >    > # SSH 免密连接至应用节点使用的私钥，如为空，则使用管理用户的默认私钥
   >    > IDENTITY_FILE="~/.ssh/Jisheng-func-test.pem"
-  >    >
+  >    > 
   >    > # 管理用户需要sudo以提升权限，如为root用户，则留空
   >    > SUDO="sudo"
+  >    > 
+  >    > # 定义要使用的远程管理用户，如与管理节点当前用户同名，则无需配置
+  >    > REMOTE_USER=
+  >    > 
+  >    > # 定义应用中是否启用了sentry进行异常日志采集
+  >    > # 如开启了sentry，则还需同步配置sentry.ini文件
+  >    > SENTRY_ENABLE=false
+  >    > 
+  >    > # 连接数据库使用的默认账号密码
+  >    > # 另有dbs.ini文件详细定义数据库的登录信息
+  >    > # 如数据库的登录信息在dbs.ini中以定义，则覆盖此默认登录信息
+  >    > DEFAULT_DB_USER=trader
+  >    > DEFAULT_DB_PASS=js2018
   >    > ```
   >
-  > * *hosts.ini*： 应用组<sup>[2](#app-group)</sup>定义
+  > * *hosts.ini*： 应用组<sup>[[2](#app-group)]</sup>定义
   >
-  > * *alias.ini*：主机别名<sup>[1](#node-alias)</sup>定义
+  > * *alias.ini*：主机别名<sup>[[1](#node-alias)]</sup>定义
   >
   > * *ports.ini*：应用的默认端口号定义
   >
   > * *image.list*： 基础依赖镜像列表
   >
   > * *topic.list*： Kafka初始化 topic 列表
+  >
+  > * *sentry.ini*：Sentry应用的连接信息，及应用对应的登录授权
+  >
 
-* ***container.d***： 容器启动模块目录，一个模块文件对应一种容器启动逻辑，模块文件名（不含 “*.sh*” 后缀）即 **应用组<sup>[2](#app-group)</sup>** 名
+* ***container.d***： 容器启动模块目录，一个模块文件对应一种容器启动逻辑，模块文件名（不含 “*.sh*” 后缀）即 **应用组<sup>[[2](#app-group)]</sup>** 名
 
 * ***logger.d***： 自定义日志记录器模块目录，不同的日志模块对应不同的日志存储，目前暂无用，日志输出至 **stdout** & **stderr**
 
 * ***module.d***： 功能模块目录，提供命令行所需的各种功能函数
 
-* ***service.d***： 应用服务模块目录，解决 **应用组<sup>[2](#app-group)</sup>** 成员的 **主机别名<sup>[1](#node-alias)</sup>** 和 **IP** 地址在 */etc/hosts* 文件中的映射关系
+* ***service.d***： 应用服务模块目录，解决 **应用组<sup>[[2](#app-group)]</sup>** 成员的 **主机别名<sup>[[1](#node-alias)]</sup>** 和 **IP** 地址在 */etc/hosts* 文件中的映射关系
 
 * ***sql***： 数据库初始化脚本目录
 
@@ -71,63 +95,79 @@ bin
 
   > * ***dockerfiles***： 自定义 **docker** 镜像打包所使用的 **dockerfile** 模板文件目录
   > * ***nginx***：nginx配置模板
+  >
 
 ## 运维框架初始化
 
 1. 定义运维脚本需要管理的 [**主机列表**](documents/inventory.md/#主机信息)
 
-   > 将所有节点的 **IP** 和 **主机名** 添加至 **管理节点<sup>[3](#manage-node)</sup>** 的 */etc/hosts* 文件内
-   > ```bash
-   > $ cat /etc/hosts
-   > 127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4 node03
-   > ::1         localhost6 localhost6.localdomain6 node03
+   > 根据  [**主机列表**](documents/inventory.md/#主机信息) 的定义（或按实际环境）
    > 
-   > 172.31.24.111   node01
-   > 172.31.24.112   node02
-   > 172.31.24.114   node03
-   > 
-   > ```
-   >
 
-2. 规划 [**应用组<sup>[2]</sup>**](documents/inventory.md/#应用分组) 在主机上的分布
+2. 规划 [**应用组**](documents/inventory.md/#应用分组)<sup>[[2](#app-group)]</sup> 在主机上的分布
 
 3. 根据规划，编辑 ***conf*** 下的服务定义相关的配置文件，[*示例*](documents/commands/svc.md/#可自定义的配置项)
 
-4. 在 **管理节点<sup>[3](#manage-node)</sup>** 上执行 [`svc`](documents/commands/svc.md) 命令，完成 **IP - 主机名** 的初始化
-
-   > ```bash
-   > # 自动创建 service.d 下的服务定义模块
-   > $ svc create
-   > # 根据服务定义模块，完成主机 /etc/hosts 内的 IP-主机名 的映射
-   > $ svc sync
-   > ```
-
-5. **管理节点<sup>[3](#manage-node)</sup>** 与 [**应用节点<sup>[4]</sup>**](documents/inventory.md/#主机信息) 间建立 SSH 互信
+4. **管理节点<sup>[[3](#manage-node)]</sup>** 与 [**应用节点**](documents/inventory.md/#主机信息)<sup>[[4](#app-node)]</sup> 间建立 SSH 互信
 
    > **Note：**
    >
-   > * **管理节点<sup>[3](#namage-node)</sup>** 应该能免密登录到任意一台运行应用的节点服务器
-   > * **管理节点<sup>[3](#manage-node)</sup>** 免密登录 **应用节点<sup>[4](#app-node)</sup>** 的 **管理账号**，应具备 **root** 权限，或至少应能免密使用 **sudo** 以运行需要特权的管理命令
+   > * **管理节点<sup>[[3](#namage-node)]</sup>** 应该能免密登录到任意一台运行应用的节点服务器
+   > * **管理节点<sup>[[3](#manage-node)]</sup>** 免密登录 **应用节点<sup>[[4](#app-node)]</sup>** 的 **管理账号**，应具备 **root** 权限，或至少应能免密使用 **sudo** 以运行需要特权的管理命令
+   > * 操作过程中可能用到的命令：`ssh-keygen`，`ssh-copy-id`
+   >
 
-6. 将定义文件分发给所有节点
+5. 在 **管理节点<sup>[[3](#manage-node)]</sup>** 上执行 [`svc`](documents/commands/svc.md) 命令，完成 **IP - 主机名** 的初始化
 
    > ```bash
+   > # 根据配置定义，先初始化管理节点的 IP-主机名 的映射
+   > $ svc create
+   > $ svc sync
+   > # 查看并确认配置正确
+   > $ cat /etc/hosts
+   > 
+   > # 以上操作完成后，管理节点 应该具备基本的管理命令的功能
+   > $ allssh uname -n
+   > Results from remote host[ec2-user@172.31.24.111]:
+   > node01
+   > 
+   > Results from remote host[ec2-user@172.31.24.112]:
+   > node02
+   > 
+   > Results from remote host[ec2-user@172.31.24.114]:
+   > node03
+   > ```
+   >
+
+6. 将文件分发给所有节点
+
+   > ```bash
+   > # 在所有节点上创建 bin 目录
+   > $ allssh mkdir bin
+   > 
+   > # 将编辑后的配置文件分发至所有节点
+   > # 分发前请确认 管理用户可以 SSH免密登录所有的远程服务器
+   > # 且 common.env 中的 REMOTE_USER，IDENTITY_FILE 配置正确
+   > # 如远程服务器的管理用户需要使用 sudo 以提升管理权限，请正确配置 common.env 中的 SUDO
+   > # 请确认管理用户使用sudo时，无需输入密码
    > $ allscp bin/* bin/
    > ```
+   >
 
-以上操作完成后，**管理节点<sup>[3](#manage-node)</sup>** 应该具备基本的 [`allssh`](documents/commands/allssh.md) 管理命令的功能：
+7. 在所有节点上创建 service 模块，并进行 IP-HOST 映射
 
-```bash
-[ec2-user@node03 ~]$ allssh uname -n
-Results from remote host[ec2-user@172.31.24.111]:
-node01
-
-Results from remote host[ec2-user@172.31.24.112]:
-node02
-
-Results from remote host[ec2-user@172.31.24.114]:
-node03
-```
+   > ```bash
+   > # 为所有主机自动创建 service.d 下的服务定义模块
+   > $ allssh svc create
+   > # 查看自动创建的service模块
+   > $ allssh ll bin/service.d/
+   > 
+   > # 为所有主机添加 /etc/hosts 内的 IP-主机名 的映射
+   > $ allssh svc sync
+   > # 查看并确认映射关系正确
+   > $ allssh cat /etc/hosts
+   > ```
+   > 
 
 ## Docker运行环境部署
 
@@ -148,7 +188,7 @@ node03
    > ```
    >
 
-2. 将所有节点上 **本地镜像仓库<sup>[5](#registry)</sup>** 的连接方式设置为 **HTTP**
+2. 将所有节点上 **本地镜像仓库<sup>[[5](#registry)]</sup>** 的连接方式设置为 **HTTP**
 
    > 编辑 */etc/docker/daemon.json* 文件， 如不存在则新建即可
    > ```yaml
@@ -156,7 +196,7 @@ node03
    > "insecure-registries" : ["registry:5000"]
    > }
    > ```
-   > 可先在 **管理节点<sup>[3](#manage-node)</sup>** 上先创建完该文件，再使用 [`allscp`](documents/commands/allscp.md) 命令下发至所有服务器
+   > 可先在 **管理节点<sup>[[3](#manage-node)]</sup>** 上先创建完该文件，再使用 [`allscp`](documents/commands/allscp.md) 命令下发至所有服务器
    >
    > ```bash
    > # 创建 daemon.json 文件
@@ -192,7 +232,7 @@ node03
    > ```
    >
 
-4. 将 **应用节点<sup>[4](#app-node)</sup>** 及 **管理节点<sup>[3](#manage-node)</sup>** 上的 **管理账号<sup>[6](#admin-user)</sup>** 加入 **docker** 组，以具备 **docker** 命令执行权限
+4. 将 **应用节点<sup>[[4](#app-node)]</sup>** 及 **管理节点<sup>[[3](#manage-node)]</sup>** 上的 **管理账号<sup>[[6](#admin-user)]</sup>** 加入 **docker** 组，以具备 **docker** 命令执行权限
 
    > ```bash
    > # ec2-user 请修改为实际的用户账号
@@ -204,8 +244,9 @@ node03
    > ```
    >
    > **管理节点** 上配置完 **docker** 用户组后，需重新登录以使配置生效
+   >
 
-5. 在 **管理节点<sup>[3](#manage-node)</sup>** 上使用 [`container`](documents/commands/container.md) 命令启动 **本地镜像仓库<sup>[5](#registry)</sup>**，并配置 [`registry`](documents/images.md#镜像管理命令行) 命令的默认连接仓库
+5. 在 **管理节点<sup>[[3](#manage-node)]</sup>** 上使用 [`container`](documents/commands/container.md) 命令启动 **本地镜像仓库<sup>[[5](#registry)]</sup>**，并配置 [`registry`](documents/images.md#镜像管理命令行) 命令的默认连接仓库
 
    > ```bash 
    > # 启动容器
@@ -265,8 +306,9 @@ node03
 ## 应用容器镜像打包
 
 > **Note：** 该运维脚本不包括应用的编译功能，请用户自行编译目标应用
+> 
 
-1. 将编译完成的程序包存放至 **管理节点<sup>[3](#manage-node)</sup>** 的 ***${DATA_BASE}/docker-hub/{工程名}*** 目录下
+1. 将编译完成的程序包存放至 **管理节点<sup>[[3](#manage-node)]</sup>** 的 ***${DATA_BASE}/docker-hub/{工程名}*** 目录下
 
 2. 程序包名必须符合如下的命名规则：
 
@@ -282,10 +324,11 @@ node03
    > ```
    >
    > 不符合规则的程序包，请手工修改为符合规则的命名
+   >
 
-3. 使用 [`build-image`](documents/commands/build-image.md) 命令，将程序包打包为 **docker** 镜像，并上传至 **本地镜像仓库<sup>[5](#registry)</sup>**
+3. 使用 [`build-image`](documents/commands/build-image.md) 命令，将程序包打包为 **docker** 镜像，并上传至 **本地镜像仓库<sup>[[5](#registry)]</sup>**
 
-   > 打包过程中，将自动清理 **应用节点<sup>[4](#app-node)</sup>** 上同名的历史镜像，以确保容器启动时，使用的是最新的镜像
+   > 打包过程中，将自动清理 **应用节点<sup>[[4](#app-node)]</sup>** 上同名的历史镜像，以确保容器启动时，使用的是最新的镜像
    >
    > ```bash
    > # 此处 trade 为 ${DATA_BASE}/docker-hub/ 下存在的工程名
@@ -293,6 +336,7 @@ node03
    > $ build-image -cp -b trade all
    >
    > ```
+   >
 
 ------
 
@@ -300,8 +344,9 @@ node03
 
 > **Note：** 建立 **zookeeper** 集群前，请先确保以下操作完成：
 >
-> 1. **本地镜像仓库<sup>[5](#registry)</sup>** 中存在指定版本号的 **zookeeper** 镜像，该镜像应该在 [**Docker运行环境部署**](#Docker运行环境部署) 的 [同步](#sync-image) 操作中完成下载
+> 1. **本地镜像仓库<sup>[[5](#registry)]</sup>** 中存在指定版本号的 **zookeeper** 镜像，该镜像应该在 [**Docker运行环境部署**](#Docker运行环境部署) 的 [同步](#sync-image) 操作中完成下载
 > 2. ***service.d*** 下的 *zookeeper.sh* 服务模块有正确的 **IP - HOST** 映射，[*示例*](documents/commands/svc.md/#服务定义示例)
+> 
 
 1. 编辑 ***container.d*** 下的 *zookeeper.sh* 容器模块：
 
@@ -354,9 +399,10 @@ node03
 
 > **Note：** 建立 **kafka** 集群前请确保以下操作已完成：
 >
-> 1. **本地镜像仓库<sup>[5](#registry)</sup>** 中存在指定版本号的 **kafka** 镜像
+> 1. **本地镜像仓库<sup>[[5](#registry)]</sup>** 中存在指定版本号的 **kafka** 镜像
 > 2. ***service.d*** 下的 *zookeeper.sh* & *kafka.sh* 模块文件有正确的 **IP - HOST** 映射关系
 > 3. **zookeeper** 集群已正确启动完成
+> 
 
 1. 编辑 ***container.d*** 下的 *kafka.sh* 模块文件：
 
@@ -381,6 +427,7 @@ node03
    > ```bash
    > $ kfk pub
    > ```
+   >
 
 3. 编辑 *topic.list* 列表文件，指定 **kafka** 集群需要创建的 **topic** 列表
 
@@ -425,6 +472,7 @@ node03
 ## MySQL数据库
 
 > **Note：** 同上，请先确保基础镜像存在且 **IP - HOST** 映射关系正确
+>
 
 1. 编辑 ***container.d*** 下的 *mysql.sh* 模块文件
 
@@ -445,16 +493,18 @@ node03
    >
    > # 以下为容器的启动逻辑，无需修改
    > ```
+   >
 
 2. 将编辑过的模块文件分发给全部 **mysql** 节点
 
    > ```bash
    > $ db pub
    > ```
+   >
 
 3. 使用 [`db`](documents/commands/db.md) 集群管理命令启动 **mysql** 集群
 
-   > **Note：** 该管理命令仅实现了 **mysql** 容器的启动，未实现集群内成员间的 [**主从复制<sup>[7]</sup>**](documents/mysql-replication.md) 配置，需管理员手工完成 **主从复制<sup>[7](#replication)</sup>** 的配置工作
+   > **Note：** 该管理命令仅实现了 **mysql** 容器的启动，未实现集群内成员间的 [**主从复制**](documents/mysql-replication.md)<sup>[[7](#replication)]</sup> 配置，需管理员手工完成 **主从复制<sup>[[7](#replication)]</sup>** 的配置工作
    >
    > ```bash
    > # 启动 mysql 集群
@@ -462,63 +512,52 @@ node03
    > # 检查集群状态
    > $ db status
    > ```
+   >
 
-4. 如 **mysql** 为单节点，跳过此条配置，如存在多节点，则需手工完成 **主从复制<sup>[7](#replication)</sup>** 的配置工作
+4. 如 **mysql** 为单节点，跳过此条配置，如存在多节点，则需手工完成 **主从复制<sup>[[7](#replication)]</sup>** 的配置工作
 
 5. 创建 **mysql** 数据库及用户，并初始化基础数据
 
    > ```bash
-   > # 创建数据库
+   > # 修改数据库的连接信息
+   > # 配置节名为数据库名，配置内容为连接使用的用户名密码
+   > # 如配置节存在但无登录信息，将使用 common.env 中的 DEFAULT_DB_USER，DEFAULT_DB_PASS
+   > $ vim bin/conf/dbs.ini
+   > # database definitions
+   > # section name is database name
+   > # if no user or password specified, default config in common.env will be used.
+   > 
+   > [digital]
+   > user=digital
+   > pass=digital123456
+   > 
+   > [clear]
+   > user=clear
+   > pass=clear123456
+   > 
+   > [sso]
+   > user=sso
+   > pass=sso123456
+   > 
+   > [sms]
+   > user=sms
+   > pass=sms123456
+   > 
+   > # 创建数据库及用户
+   > # 该操作将读取 dbs.ini 配置文件获取数据库的登录信息
+   > # 并按此登录信息创建数据库及用户
+   > # 同时遍历 bin/sql/ 下的数据库初始化sql
+   > # 使用 *_frame.sql 初始化数据库表结构
+   > # 使用 *_init_*.sql 初始化基础数据
    > $ db create all
-   > # 连接至 mysql 服务器
-   > $ mysql -hmysql -uroot -pquantdo123456
-   > Welcome to the MySQL monitor.  Commands end with ; or \g.
-   > Your MySQL connection id is 2
-   > Server version: 5.7.25-log MySQL Community Server (GPL)
-   > 
-   > Copyright (c) 2000, 2018, Oracle and/or its affiliates. All rights reserved.
-   > 
-   > Oracle is a registered trademark of Oracle Corporation and/or its
-   > affiliates. Other names may be trademarks of their respective
-   > owners.
-   > 
-   > Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
-   > 
-   > mysql> create user trader identified by 'js2018';
-   > Query OK, 0 rows affected (0.00 sec)
-   > 
-   > mysql> grant all privileges on digital.* to trader@localhost identified by 'js2018';
-   > Query OK, 0 rows affected, 2 warnings (0.01 sec)
-   > 
-   > mysql> grant all privileges on digital.* to trader@'%' identified by 'js2018';
-   > Query OK, 0 rows affected, 1 warning (0.00 sec)
-   > 
-   > mysql> grant all privileges on sso.* to trader@localhost identified by 'js2018';
-   > Query OK, 0 rows affected, 2 warnings (0.00 sec)
-   > 
-   > mysql> grant all privileges on sso.* to trader@'%' identified by 'js2018';
-   > Query OK, 0 rows affected, 1 warning (0.00 sec)
-   > 
-   > mysql> grant all privileges on clear.* to trader@localhost identified by 'js2018';
-   > Query OK, 0 rows affected, 2 warnings (0.00 sec)
-   > 
-   > mysql> grant all privileges on clear.* to trader@'%' identified by 'js2018';
-   > Query OK, 0 rows affected, 1 warning (0.00 sec)
-   > 
-   > mysql> flush privileges;
-   > Query OK, 0 rows affected (0.00 sec)
-   > 
-   > mysql> exit
-   > Bye
-   > 
-   > # 初始化数据库
-   > $ db init all
    > ```
+   >
 
 
 ## Redis服务
 
 > **Note：** 同上，请先确保基础镜像存在且 **IP - HOST** 映射关系正确
+>
 
 1. 编辑 ***container.d*** 下的容器启动模块 *redis.sh*
 
@@ -534,6 +573,7 @@ node03
    > # redis 依赖的服务列表
    > SERVICE_LIST="registry"
    > ```
+   >
 
 2. 将容器启动模块发布给所有节点服务器
 
@@ -543,6 +583,7 @@ node03
    > # 需要注意发布文件时的路径参数
    > $ allscp -gredis bin/container.d/redis.sh
    > ```
+   >
 
 3. 使用 [`container`](documents/commands/container.md) 命令启动 **redis**
 
@@ -554,10 +595,12 @@ node03
    > # 检查 redis 状态
    > $ allssh -gredis contaienr status redis
    > ```
+   >
 
 ## Consul集群
 
 > **Note：** 同上，请先确保基础镜像存在且 **IP - HOST** 映射关系正确
+>
 
 1. 编辑 ***container.d*** 下的容器启动模块 *consul.sh*
 
@@ -576,6 +619,7 @@ node03
    > # consul 依赖的服务列表
    > SERVICE_LIST="registry consul"
    > ```
+   >
 
 2. 将容器启动模块发布至所有成员节点
 
@@ -585,6 +629,7 @@ node03
    > # 请注意发布路径的正确性
    > $ allscp -gconsul bin/container.d/consul.sh
    > ```
+   >
 
 3. 启动 **consul**
 
@@ -594,18 +639,20 @@ node03
    > # 查看 consul 状态
    > $ allssh -gconsul container status consul
    > ```
+   >
 
 ## 启动交易系统
 
 > **Note：**
 >
-> 1. 启动容器前，请先确保 **本地镜像仓库<sup>[5](#registry)</sup>** 内的应用镜像为最新版本，如非最新，请先编译、[打包](#应用容器镜像打包) 最新镜像
+> 1. 启动容器前，请先确保 **本地镜像仓库<sup>[[5](#registry)]</sup>** 内的应用镜像为最新版本，如非最新，请先编译、[打包](#应用容器镜像打包) 最新镜像
 >
->    > 测试阶段版本号为 **SNAPSHOT<sup>[8](#snapshot)</sup>** ，更新较快且每次更新不会改变版本号
+>    > 测试阶段版本号为 **SNAPSHOT<sup>[[8](#snapshot)]</sup>** ，更新较快且每次更新不会改变版本号
 >
 > 2. 确定 ***conf*** 下的 **IP - HOST** 映射关系文件（*hosts.ini*，*alias.ini*，*ports.ini*）配置正确，且已分发给所有 **应用节点**，并在所有应用节点上已执行了 `svc create`
 >
 > 3. 确定 **zookeeper** & **kafka** 集群工作正常
+>
 
 1. 编辑 ***bin/conf/*** 下的 *common.env* 配置文件，以指定交易系统各组件的版本号
 
@@ -624,13 +671,15 @@ node03
    > # 交易核心 撮合系统版本号
    > TRADE_MATCH_VERSION=1.0.1-SNAPSHOT
    > ```
+   >
 
-2. 将编辑完的 *common.env* 文件分发给所有 **应用节点<sup>[4](#app-node)</sup>**
+2. 将编辑完的 *common.env* 文件分发给所有 **应用节点<sup>[[4](#app-node)]</sup>**
 
    > ```bash
    > # 发布 common.env
    > $ allscp bin/conf/common.env
    > ```
+   >
 
 3. 使用集群管理命令：[`manage`](documents/commands/manage.md)， [`trade`](documents/commands/trade.md) 启动各子系统
 
@@ -683,3 +732,4 @@ node03
 > <a name="replication">7. 主从复制</a>：MySQL提供的一种数据备份机制。
 > 
 > <a name="snapshot">8. SNAPSHOT</a>：Java代码在开发阶段的一种特殊版本名，正式版本中没有SNAPSHOT；正式版本一旦发布后，不能修改包代码，而SNAPSHOT版本代表了开发状态，可覆盖历史同版本代码。
+>
