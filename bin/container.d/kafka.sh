@@ -13,7 +13,6 @@ done
 
 get_id `uname -n`
 BROKER_ID=${ID}
-CLIENT_PORT=9092
 
 for SVR_NAME in ${!ZOOKEEPER_LIST[@]}; do
     ZK_SERVERS="${ZK_SERVERS},${SVR_NAME}:${ZOOKEEPER_PORT}"
@@ -114,7 +113,20 @@ ${SUDO} chown -R ${USER}:${USER} "${CONTAINER_BASE}"
 
 SELF_IP=`ip address show eth0 | grep inet | grep -v inet6 | awk '{print $2}' | cut -d'/' -f1`
 
-LISTENERS="PLAINTEXT://${SELF_IP}:${CLIENT_PORT}"
+SELF_NAME=
+for SVR_NAME in ${!KAFKA_LIST[@]}; do
+    if [[ ${SELF_IP} == ${KAFKA_LIST[$SVR_NAME]} ]]; then
+        SELF_NAME=${SVR_NAME}
+        break
+    fi
+done
+
+if [[ x"${SELF_NAME}" == "x" ]]; then
+    error "kafka alias name not found."
+    exit 1
+fi
+ 
+LISTENERS="PLAINTEXT://${SELF_NAME}:${KAFKA_PORT}"
 
 if [[ ${#KAFKA_LIST[@]} -ge 3 ]]; then
     docker run -d \
@@ -126,7 +138,7 @@ if [[ ${#KAFKA_LIST[@]} -ge 3 ]]; then
         -v "${CONTAINER_BASE}/config:/opt/kafka/config" \
         -v "${CONTAINER_BASE}/log:/opt/kafka/logs" \
         -e JMX_PORT=1199 \
-        -e KAFKA_HOST_NAME="kfk0${ID}" \
+        -e KAFKA_HOST_NAME="${SELF_NAME}" \
         -e KAFKA_ZOOKEEPER_CONNECT=${ZK_SERVERS} \
         -e KAFKA_ADVERTISED_LISTENERS=${LISTENERS} \
         -e KAFKA_LISTENERS=${LISTENERS} \
@@ -154,7 +166,7 @@ else
         -v "${CONTAINER_BASE}/config:/opt/kafka/config" \
         -v "${CONTAINER_BASE}/log:/opt/kafka/logs" \
         -e JMX_PORT=1199 \
-        -e KAFKA_HOST_NAME=kfk \
+        -e KAFKA_HOST_NAME=${SELF_NAME} \
         -e KAFKA_ZOOKEEPER_CONNECT=${ZK_SERVERS} \
         -e KAFKA_ADVERTISED_LISTENERS=${LISTENERS} \
         -e KAFKA_LISTENERS=${LISTENERS} \
