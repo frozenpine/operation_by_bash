@@ -144,7 +144,8 @@ function alias_address() {
         if [[ -z ${IP} || ${IP} != "${HOST_IP}" ]]; then
             ${SUDO} sed -i 's/'"${HOST_NAME}"' //'  /etc/hosts
 
-            grep "${HOST_IP}" /etc/hosts >/dev/null
+            # can not delete space after HOST_IP
+            grep "${HOST_IP}[[:space:]]" /etc/hosts >/dev/null
             if [[ $? -eq 0 ]]; then
                 ${SUDO} sed -i '/'${HOST_IP}'/ s/\(.*\)/\1 '"${HOST_NAME}"'/' /etc/hosts
             else
