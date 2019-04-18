@@ -1,7 +1,7 @@
 VERSION=${SERVICE_SMS_VERSION}
 
 if [[ -z ${VERSION} ]]; then
-    error "index version missing."
+    error "sms version missing."
     exit 1
 fi
 
@@ -20,7 +20,7 @@ MAIL_USER=
 MAIL_PASS=
 MAIL_FROM=
 
-SERVICE_LIST="registry mysql consul"
+SERVICE_LIST="registry mysql consul sms"
 for SERVICE in ${SERVICE_LIST}; do
     source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
         echo "service list file missing: ${SERVICE}.sh" >&2
@@ -90,7 +90,6 @@ docker run -d \
         -jar /${NAME}/service-${NAME}-${VERSION}.jar \
         --logging.level.root=info \
         --server.port=${SMS_PORT} \
-        --server.port=${SCHEDULER_PORT} \
         --spring.cloud.consul.host=${CONSUL_HOST} \
         --spring.cloud.consul.port=${CONSUL_PORT} \
         --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?characterEncoding=utf-8" \
