@@ -1,5 +1,5 @@
 FROM registry:5000/openjdk:8u201-jre-alpine
 COPY . /${MODULE}
 WORKDIR /${MODULE}
-ENTRYPOINT ["java"]
+ENTRYPOINT ["java", "-XX:+UseG1GC", "-XX:MaxGCPauseMillis=100", "-Dfile.encoding=UTF-8"]
 CMD ["-jar", "/${MODULE}/service-${MODULE}-${VERSION}.jar"]
