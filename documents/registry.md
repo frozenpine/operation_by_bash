@@ -1,4 +1,4 @@
-# 容器镜像设置
+# 镜像本地仓库设置
 
 ## 依赖的外部镜像
 
@@ -7,7 +7,7 @@
 * **nginx:** nginx:1.14.2
 * **elasticsearch:** elasticsearch:6.6.0
 * **kafaka:** wurstmeister/kafka:2.12-2.1.0
-* **openjdk:** openjdk:8u181-jre
+* **openjdk:** openjdk:8u201-jre
 * **zookeeper:** zookeeper:3.4.13
 * **mysql:** mysql:5.7.25
 * **consul:** consul:1.4.3

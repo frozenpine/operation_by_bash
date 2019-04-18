@@ -238,15 +238,12 @@ bin
    > # ec2-user 请修改为实际的用户账号
    > # 设置 应用节点 的管理账号
    > $ allssh sudo useradd -Gdocker -a ec2-user
-   >
-   > # 设置 应用节点 的管理账号
-   > $ sudo useradd -Gdocker -a ec2-user
    > ```
    >
    > **管理节点** 上配置完 **docker** 用户组后，需重新登录以使配置生效
    >
 
-5. 在 **管理节点<sup>[[3](#manage-node)]</sup>** 上使用 [`container`](documents/commands/container.md) 命令启动 **本地镜像仓库<sup>[[5](#registry)]</sup>**，并配置 [`registry`](documents/images.md#镜像管理命令行) 命令的默认连接仓库
+5. 在 **管理节点<sup>[[3](#manage-node)]</sup>** 上使用 [`container`](documents/commands/container.md) 命令启动 **本地镜像仓库<sup>[[5](#registry)]</sup>**，并配置 [`registry`](documents/registry.md#镜像管理命令行) 命令的默认连接仓库
 
    > ```bash 
    > # 启动容器
@@ -261,7 +258,7 @@ bin
    > ```
    >
 
-6. 编辑 [**基础镜像列表**](documents/images.md/#依赖的外部镜像 "topic.list") 并使用 [`registry`](documents/images.md#镜像管理命令行) 命令从 ***${DATA_BASE}/docker-hub/*** <a name="sync-image">同步</a> 这些基础镜像
+6. 编辑 [**基础镜像列表**](documents/registry.md/#依赖的外部镜像 "topic.list") 并使用 [`registry`](documents/registry.md#镜像管理命令行) 命令从 ***${DATA_BASE}/docker-hub/*** <a name="sync-image">同步</a> 这些基础镜像
 
    > 列表文件位于 *bin/config/image.list*
    >
