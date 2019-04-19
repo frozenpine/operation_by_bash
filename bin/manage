@@ -9,8 +9,7 @@ source "${BASE_DIR}/module.d/common.sh" || exit 1
 FUNC_FILE_CONFIG="${MODULE_BASE}/config.sh"
 import_functions
 
-SERVICE_LIST=""
-
+SERVICE_LIST="front"
 for SERVICE in ${SERVICE_LIST}; do
     source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
         echo "service list file missing: ${SERVICE}.sh" >&2
@@ -18,7 +17,19 @@ for SERVICE in ${SERVICE_LIST}; do
     }
 done
 
-MANAGE_HOST="http://management:8080"
+FRONT_HOST=
+IDX=$((RANDOM % ${#FRONT_LIST[@]}))
+COUNT=0
+for SVR_NAME in ${!FRONT_LIST[@]}; do
+    if [[ ${COUNT} -eq ${IDX} ]]; then
+        FRONT_HOST=${FRONT_LIST[$SVR_NAME]}
+        break
+    fi
+
+    COUNT=$((COUNT+1))
+done
+
+MANAGE_HOST="http://${MANAGE_EXPORT_NAME:=$FRONT_HOST}:${MANAGE_EXPORT_PORT}"
 
 MANAGE_USER=${MANAGE_USER:=admin}
 MANAGE_PASS=${MANAGE_PASS:=123456}
