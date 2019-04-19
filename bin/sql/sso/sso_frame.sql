@@ -13,9 +13,9 @@ MySQL - 5.7.25 : Database - security
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`security` /*!40100 DEFAULT CHARACTER SET utf8 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`sso` /*!40100 DEFAULT CHARACTER SET utf8 */;
 
-USE `security`;
+USE `sso`;
 
 /*Table structure for table `t_group` */
 
@@ -70,7 +70,7 @@ CREATE TABLE `t_online_user` (
   `session_id` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `IDX_T_ONLINE_USER_LOGINID_LOGINIP` (`login_id`,`login_ip`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='在线用户统计表';
+) ENGINE=InnoDB AUTO_INCREMENT=83 DEFAULT CHARSET=utf8 COMMENT='在线用户统计表';
 
 /*Table structure for table `t_org_admin` */
 
