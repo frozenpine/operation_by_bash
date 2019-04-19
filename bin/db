@@ -162,7 +162,7 @@ shift
 if [[ ${COMMAND} =~ truncate|init|create|shell ]]; then
     [[ -z ${DB_HOST} ]] && _shuffle_host
 
-    if [[ $# -lt 1 ]]; then
+    if [[ ${COMMAND} != "shell" && $# -lt 1 ]]; then
         error "missing db name."
         exit 1
     fi
