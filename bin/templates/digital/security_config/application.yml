@@ -1,0 +1,58 @@
+#debug: true
+server:
+  servlet:
+    context-path: /authority
+  port:
+    10000
+
+spring:
+  application:
+    name: quantdo-security
+  profiles:
+    #导入属性配置文件列表
+    #也可以配置为dubbo,datasource,cache,sso
+    include: datasource,cache,sso
+    #建议配置项为dev/test/prod
+    #active: dev
+  #devtools热部署支持.
+  devtools:
+    restart:
+      #添加那个目录的文件需要restart
+      additional-paths: src/main/java
+      #排除那个目录的文件不需要restart
+      exclude: static/**,public/**
+  servlet:
+    multipart:
+      #文件上传配置说明。最大文件大小,值可以使用后缀“MB”或“KB”,指示兆字节或千字节大小。
+      max-file-size: 10MB
+      # 最大请求大小可以是mb也可以是kb
+      max-request-size: 10MB
+
+#Actuator健康诊断
+#management:
+#  server:
+#    #Actuator健康诊断端口
+#    port: 9001
+#  endpoints:
+#    web:
+#      #修改访问路径  2.0之前默认是/   2.0默认是 /actuator  可以通过这个属性值修改
+#      base-path: /monitor
+#      exposure:
+#        #开放所有页面节点,默认只开启了health、info两个节点
+#        include: "*"
+#  endpoint:
+#    health:
+#      #显示健康具体信息  默认不会显示详细信息
+#      show-details: always
+
+quantdo:
+  #暂不要使用(待最终实现)
+  filemanager:
+    #文件系统支持协议类型为:local、fastdfs、nfs、hdfs
+    protocol: local
+    serveraddress: d:/quantdo-test/upload/
+
+orgunit:
+  code:
+    length: 3
+

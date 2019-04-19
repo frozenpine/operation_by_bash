@@ -178,35 +178,35 @@ case ${COMMAND} in
             allssh -g${MANAGE_GROUP} container start serviceimpl
             info "delay 5s to wait for service starting."
             sleep 5
-            allssh -g${MANAGE_GROUP} container start rest
+            allssh -g${MANAGE_GROUP} container start rest security
         else
             allssh -g${MANAGE_GROUP} container start $*
         fi
     ;;
     stop)
         if [[ $# -lt 1 ]]; then
-            allssh -g${MANAGE_GROUP} container stop rest serviceimpl
+            allssh -g${MANAGE_GROUP} container stop rest security serviceimpl
         else
             allssh -g${MANAGE_GROUP} container stop $*
         fi
     ;;
     kill)
         if [[ $# -lt 1 ]]; then
-            allssh -g${MANAGE_GROUP} container stop -f rest serviceimpl
+            allssh -g${MANAGE_GROUP} container stop -f rest security serviceimpl
         else
             allssh -g${MANAGE_GROUP} container stop -f $*
         fi
     ;;
     status|check)
         if [[ $# -lt 1 ]]; then
-            allssh -g${MANAGE_GROUP} container status rest serviceimpl
+            allssh -g${MANAGE_GROUP} container status rest security serviceimpl
         else
             allssh -g${MANAGE_GROUP} container status $*
         fi
     ;;
     destory)
         if [[ $# -lt 1 ]]; then
-            allssh -g${MANAGE_GROUP} container stop -crf rest serviceimpl
+            allssh -g${MANAGE_GROUP} container stop -crf rest security serviceimpl
             db truncate all
         else
             allssh -g${MANAGE_GROUP} container stop -crf $*
@@ -222,6 +222,7 @@ case ${COMMAND} in
     ;;
     pub)
         allscp -g${MANAGE_GROUP} "${BASE_DIR}/container.d/rest.sh"
+        allscp -g${MANAGE_GROUP} "${BASE_DIR}/container.d/security.sh"
         allscp -g${MANAGE_GROUP} "${BASE_DIR}/container.d/serviceimpl.sh"
     ;;
     truncate)
