@@ -38,3 +38,12 @@ GRANT ALL PRIVILEGES ON ${_DB_NAME}.* TO ${_DB_USER}@'%' IDENTIFIED BY '${_DB_PA
 FLUSH PRIVILEGES;
 EOF
 }
+
+function mysql_shell() {
+    LANG=utf-8
+    mysql -h${DB_HOST} \
+          -P${DB_PORT:=3306} \
+          -u${DB_USER:=root} \
+          -p${DB_PASS:=quantdo123456} \
+          --default-character-set=utf8mb4 ${DB_NAME} $*
+}

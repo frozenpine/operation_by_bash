@@ -159,7 +159,7 @@ fi
 COMMAND=$1
 shift
 
-if [[ ${COMMAND} =~ truncate|init|create ]]; then
+if [[ ${COMMAND} =~ truncate|init|create|shell ]]; then
     [[ -z ${DB_HOST} ]] && _shuffle_host
 
     if [[ $# -lt 1 ]]; then
@@ -183,6 +183,9 @@ case ${COMMAND} in
     ;;
     init)
         _init
+    ;;
+    shell)
+        mysql_shell $*
     ;;
     start)
         allssh -g${GROUP_NAME} container start mysql
