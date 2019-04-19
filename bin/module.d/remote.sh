@@ -195,7 +195,9 @@ function remote_sync() {
         _remote_shell="${_remote_shell} -P ${_PORT}"
     fi
 
-    _rsync_args=(${_rsync_args[@]} "--rsh='${_remote_shell}'")
+    if [[ x"${_remote_shell}" != "x" ]]; then
+        _rsync_args=(${_rsync_args[@]} "--rsh='${_remote_shell}'")
+    fi
 
     if [[ -n ${SUDO} ]]; then
         _rsync_args=(${_rsync_args[@]} "--rsync-path='sudo rsync'")
