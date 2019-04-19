@@ -98,7 +98,7 @@ function remote_exec() {
     _normal_dry_run
 
     ${DRY_RUN} ssh ${_ssh_args[@]} ${_USER}@${_HOST} "\
-        export PATH=/sbin:/bin:/usr/bin:/user/sbin:/usr/local/bin:~/bin; \
+        export PATH=/sbin:/bin:/usr/bin:/usr/sbin:/user/sbin:/usr/local/bin:~/bin; \
         [[ -f ~/.bashrc ]] && source ~/.bashrc; \
         [[ -f ~/.bash_profile ]] && source ~/.bash_profile; \
         ${_CMD_LINE} $*"
