@@ -1,0 +1,26 @@
+upstream security-front {
+`
+for SVR_NAME in ${!DIGITAL_LIST[@]}; do
+    echo "    server ${DIGITAL_LIST[$SVR_NAME]}:$((DIGITAL_PORT-1));"
+done
+`
+}
+
+server {
+    listen      8081;
+    server_name  management localhost;
+
+    location / {
+        root   /var/lib/nginx/quant-security;
+        index  index.html index.htm;
+    }
+
+    location ^~  /sso {
+        proxy_pass http://security-front;
+    }
+
+    location ^~  /authority {
+        proxy_pass http://security-front;
+    }
+}
+

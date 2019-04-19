@@ -80,16 +80,13 @@ docker run -d \
     --network host \
     --user `grep ${USER} /etc/passwd | cut -d':' -f3` \
     -e SENTRY_DSN="${SENTRY_DSN}" \
+    -v "${CONTAINER_BASE}/log":/${NAME}/logs \
     registry:5000/digital/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/digital-${NAME}-${VERSION}.jar \
-        --server.port=$((DIGITAL_PORT+1)) \
+        --server.port=$((DIGITAL_PORT-1)) \
         --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?characterEncoding=utf-8" \
         --spring.datasource.username="${DB_USER:=$DEFAULT_DB_USER}" \
         --spring.datasource.password="${DB_PASS:=$DEFAULT_DB_PASS}" \
         --spring.redis.host=${REDIS_HOST} \
         --spring.redis.port=${REDIS_PORT} \
-        --dubbo.registry.address="${ZK_SERVERS}" \
-        --dubbo.provider.host="${SELF_IP}" \
-        --dubbo.registry.file="/${NAME}/data/dubbo/dubbo-registry.properties" \
-        --dubbo.provider.timeout=180000
