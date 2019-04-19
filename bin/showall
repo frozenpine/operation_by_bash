@@ -28,4 +28,6 @@ ${BASE_DIR}/kfk check
 
 ${BASE_DIR}/trade status
 
+${BASE_DIR}/market status
+
 ${BASE_DIR}/manage status
