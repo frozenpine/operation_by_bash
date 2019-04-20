@@ -67,9 +67,19 @@ function stop_container() {
     esac
 
     if [[ ${CLEAN} -eq 1 ]]; then
-        local _DATA_DIR
-        
-        _DATA_DIR="${DATA_BASE:=/opt}/$1"
+        local _DATA_DIR="${DATA_BASE:=/opt}/$1"
+        local _BACK_BASE="${DATA_BASE:=/opt}/backup"
+        local _BACK_FILE="$1_`date '+%Y%m%d%H%M%S'`.tar.gz"
+
+        info "backing up container[$1] data dir: ${_DATA_DIR}"
+        if [[ ! -d "${_BACK_BASE}" ]]; then
+            ${SUDO} mkdir -p "${_BACK_BASE}"
+        fi
+        pushd "${_BACK_BASE}" >/dev/null
+            ${SUDO} tar -czvf "${_BACK_FILE}" "${_DATA_DIR}"
+            ${SUDO} ls -l "${_BACK_FILE}"
+        popd >/dev/null
+
         info "cleaning container[$1] data dir: ${_DATA_DIR}"
         ${SUDO} rm -rf "${_DATA_DIR}"
     fi
