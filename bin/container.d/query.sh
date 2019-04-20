@@ -94,6 +94,7 @@ docker run -d \
     registry:5000/trade$1/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
+        --log.level.console=${LOG_LEVEL:=info} \
         --logging.level.root=info \
         --logging.level.com.quantdo.trade=${LOG_LEVEL:=warning} \
         --server.port=${QUERY_PORT} \

@@ -88,6 +88,7 @@ docker run -d \
     registry:5000/service/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/service-${NAME}-${VERSION}.jar \
+        --log.level.console=${LOG_LEVEL:=info} \
         --logging.level.root=info \
         --server.port=${SMS_PORT} \
         --spring.cloud.consul.host=${CONSUL_HOST} \

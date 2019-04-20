@@ -108,6 +108,7 @@ docker run -d \
     registry:5000/service/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/service-${NAME}-${VERSION}.jar \
+        --log.level.console=${LOG_LEVEL:=info} \
         --logging.level.root=info \
         --logging.level.com.quantdo.market.service.impl=${LOG_LEVEL:=warning} \
         --logging.level.com.quantdo.market.service.ws=${LOG_LEVEL:=warning} \
