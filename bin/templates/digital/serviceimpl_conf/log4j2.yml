@@ -44,6 +44,8 @@ Configuration:
           size: "128 MB"
       DefaultRolloverStrategy:     # 文件最多100个
         max: 1000
+    Sentry:
+      name: SENTRY
 
   Loggers:
     Root:
@@ -51,6 +53,8 @@ Configuration:
       AppenderRef:
       - ref: CONSOLE
       - ref: ROLLING_FILE
+      - ref: SENTRY
+        level: warn
 #    Logger:
 #    监听具体包下面的日志
 #    Logger: # 为com.quantdo包配置特殊的Log级别,方便调试
