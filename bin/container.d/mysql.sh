@@ -48,4 +48,5 @@ docker run -d \
         --auto-increment-increment=2 \
         --auto-increment-offset=${SERVER_ID} \
         --relay-log=mysql-relay-bin \
-        --sync-binlog=1
+        --sync-binlog=1 \
+        --sql-modes='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' \
