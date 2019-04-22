@@ -69,7 +69,7 @@ else
     MODE=slave
     SELECT_ID=$((IDX % ${#FRONT_LIST[@]}))
     NGINX_ID=$((SELECT_ID+1))
-    SVR_NAME="nginx0${NGINX_ID}"
+    SVR_NAME="ngx0${NGINX_ID}"
 
     TOTAL_USERS=$((`wc -l "${TOTAL_USER_FILE}" | cut -d' ' -f1` - 1))
     USER_SIZE=$((TOTAL_USERS / COUNT))
