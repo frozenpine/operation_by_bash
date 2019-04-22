@@ -55,14 +55,14 @@ done
 ${APP_GROUP_NAME}_PORT=${PORTS[$1]}
 
 for SVR_NAME in \${!${APP_GROUP_NAME}_LIST[@]}; do
-    IP=\`grep "\${SVR_NAME}" /etc/hosts | awk '{print \$1}'\`
+    IP=\`grep -E "[[:space:]]\${SVR_NAME}([[:space:]]+)?" /etc/hosts | awk '{print \$1}'\`
     
     if [[ -z \${IP} || \${IP} != "\${${APP_GROUP_NAME}_LIST[\$SVR_NAME]}" ]]; then
-        \${SUDO} sed -i 's/'"\${SVR_NAME}"' //'  /etc/hosts
+        \${SUDO} sed -i 's/'"[[:space:]]\${SVR_NAME}"'//' /etc/hosts
 
-        grep "\${${APP_GROUP_NAME}_LIST[\$SVR_NAME]}[[:space:]]" /etc/hosts >/dev/null
+        grep -E "\${${APP_GROUP_NAME}_LIST[\$SVR_NAME]}[[:space:]]+" /etc/hosts >/dev/null
         if [[ \$? -eq 0 ]]; then
-            \${SUDO} sed -i '/'\${${APP_GROUP_NAME}_LIST[\${SVR_NAME}]}'/ s/\(.*\)/\1 '"\${SVR_NAME}"'/' /etc/hosts
+            \${SUDO} sed -i '/'"\${${APP_GROUP_NAME}_LIST[\${SVR_NAME}]}"'/ s/\(.*\)/\1 '"\${SVR_NAME}"'/' /etc/hosts
         else
             \${SUDO} sed -i '\$a'"\${${APP_GROUP_NAME}_LIST[\$SVR_NAME]} \${SVR_NAME}" /etc/hosts
         fi
