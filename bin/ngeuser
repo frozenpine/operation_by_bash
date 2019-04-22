@@ -118,6 +118,37 @@ function _pub_users() {
     info "publishing finished."
 }
 
+function _show_me_the_money() {
+    if [[ ! -f "${ORIGN_USER_FILE}" ]]; then
+        error "origin user file missing."
+        exit 1
+    fi
+
+    MYSQL_HOST=
+    IDX=$((RANDOM % ${#MYSQL_LIST[@]}))
+    COUNT=0
+    for SVR_NAME in ${!MYSQL_LIST[@]}; do
+        if [[ ${COUNT} -eq ${IDX} ]]; then
+            MYSQL_HOST=${MYSQL_LIST[$SVR_NAME]}
+            break
+        fi
+
+        COUNT=$((COUNT+1))
+    done
+
+    mysql -h${MYSQL_HOST} -u${DB_USER} -p${DB_PASS} ${DB_NAME} -N -e 'select user_id from t_trade_user;' | \
+        while read USER_ID; do
+            _RESULT=`curl -XPOST "${TRADE_HOST}/api/v1/user/depositNotice1" -H'Content-type: application/json' -d"{\"userId\":\"${USER_ID}\",\"address\":\"2NBMEXVRa4RXoYaeokm7U2Cc6w5dSA4cXSk\",\"amount\":180000000000,\"withdrawFee\":1000,\"transactionId\":\"102101\",\"transactionType\":\"1\",\"transactionStatus\":\"2\",\"currency\":\"XBT\"}"`
+            if [[ $? -ne 0 ]]; then
+                cat<<EOF | error
+deposit failed with user: ${USER_ID}"
+${_RESULT}
+EOF
+                break
+            fi
+        done
+}
+
 while getopts :u:p:d:g:h FLAG; do
     case $FLAG in
         u)
