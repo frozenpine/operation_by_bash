@@ -80,14 +80,20 @@ function stop_container() {
             if [[ ! -d "${_BACK_BASE}" ]]; then
                 ${SUDO} mkdir -p "${_BACK_BASE}"
             fi
-            pushd "${_DATA_DIR}" >/dev/null
-                ${SUDO} tar -czvf "${_BACK_FILE}" ./
-                ${SUDO} ls -l "${_BACK_FILE}"
-            popd >/dev/null
+            if [[ ! -d "${_DATA_DIR}" ]]; then
+                warning "data dir not exist for container[$1]."
+            else
+                pushd "${_DATA_DIR}" >/dev/null
+                    ${SUDO} tar -czvf "${_BACK_FILE}" ./
+                    ${SUDO} ls -l "${_BACK_FILE}"
+                popd >/dev/null
+            fi
         fi
 
-        info "cleaning container[$1] data dir: ${_DATA_DIR}"
-        ${SUDO} rm -rf "${_DATA_DIR}"
+        if [[ -d "${_DATA_DIR}" ]]; then
+            info "cleaning container[$1] data dir: ${_DATA_DIR}"
+            ${SUDO} rm -rf "${_DATA_DIR}"
+        fi
     fi
 }
 
