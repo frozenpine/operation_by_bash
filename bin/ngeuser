@@ -10,8 +10,7 @@ FUNC_FILE_CONFIG="${MODULE_BASE}/config.sh"
 FUNC_FILE_REMOTE="${MODULE_BASE}/remote.sh"
 import_functions
 
-SERVICE_LIST="mysql"
-
+SERVICE_LIST="front mysql"
 for SERVICE in ${SERVICE_LIST}; do
     source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
         echo "service list file missing: ${SERVICE}.sh" >&2
@@ -19,9 +18,39 @@ for SERVICE in ${SERVICE_LIST}; do
     }
 done
 
-DB_USER=root
-DB_PASS=quantdo123456
+FRONT_HOST=
+IDX=$((RANDOM % ${#FRONT_LIST[@]}))
+COUNT=0
+for SVR_NAME in ${!FRONT_LIST[@]}; do
+    if [[ ${COUNT} -eq ${IDX} ]]; then
+        FRONT_HOST=${FRONT_LIST[$SVR_NAME]}
+        break
+    fi
+
+    COUNT=$((COUNT+1))
+done
+
+TRADE_HOST="http://${TRADE_EXPORT_NAME:=$FRONT_HOST}"
+if [[ ${TRADE_EXPORT_PORT:=80} -ne 80 ]]; then
+    TRADE_HOST="${TRADE_HOST}:${TRADE_EXPORT_PORT}"
+fi
+
 DB_NAME=digital
+
+DB_USER=
+DB_PASS=
+for CONF in `extract_ini_sec ${DB_NAME} "${CONF_BASE}/dbs.ini"`; do
+    if [[ $CONF =~ .*[Uu][Ss][Ee][Rr] ]]; then
+        DB_USER=`echo ${CONF} | cut -d'=' -f2`
+        DB_USER=${DB_USER## }
+        DB_USER=${DB_USER%% }
+    fi
+    if [[ $CONF =~ .*[Pp][Aa][Ss][Ss]([Ww][Oo][Rr][Dd])? ]]; then
+        DB_PASS=`echo ${CONF} | cut -d'=' -f2`
+        DB_PASS=${DB_PASS## }
+        DB_PASS=${DB_PASS%% }
+    fi
+done
 
 USER_BASE_DIR="${DATA_BASE:=/opt}/pyload/CSV"
 ORIGN_USER_FILE="${USER_BASE_DIR}/Users.csv"
@@ -42,7 +71,7 @@ HELP_COMMANDS["deploy"]="Combine of \`get\` & \`pub\` command."
 function _init_users() {
     local _RESULT
     
-    _RESULT=`curl -XPOST http://trade/api/v1/user/register1`
+    _RESULT=`curl -XPOST "${TRADE_HOST}/api/v1/user/register1"`
     if [[ $? -ne 0 ]]; then
         error "Init trading user failed."
         exit 1
