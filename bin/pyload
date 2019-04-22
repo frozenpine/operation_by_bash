@@ -21,7 +21,7 @@ HELP_ARGS["H:trade_host"]="optional,Trade host for pyload testing, default: \"tr
 HELP_ARGS["C:cpu_count"]="optional,CPU cores per pyload process, default: 1."
 HELP_ARGS["m:master_ip"]="optional,Master ip address, default: \"172.31.11.0\"."
 
-SERVICE_LIST="registry nginx"
+SERVICE_LIST="registry front"
 
 for SERVICE in ${SERVICE_LIST}; do
     source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
@@ -67,9 +67,9 @@ if [[ $IDX -eq 0 ]]; then
     USER_FILE="${TOTAL_USER_FILE}"
 else
     MODE=slave
-    SELECT_ID=$((IDX % ${#NGINX_LIST[@]}))
+    SELECT_ID=$((IDX % ${#FRONT_LIST[@]}))
     NGINX_ID=$((SELECT_ID+1))
-    SVR_NAME="front00${NGINX_ID}"
+    SVR_NAME="nginx0${NGINX_ID}"
 
     TOTAL_USERS=$((`wc -l "${TOTAL_USER_FILE}" | cut -d' ' -f1` - 1))
     USER_SIZE=$((TOTAL_USERS / COUNT))
@@ -85,7 +85,7 @@ else
     info "User file splitted."
 
     # load balance between all nginx
-    NETWORK_ARGS="--add-host `echo -n ${HOST} | cut -d':' -f1`:${NGINX_LIST[${SVR_NAME}]}"
+    NETWORK_ARGS="--add-host `echo -n ${HOST} | cut -d':' -f1`:${FRONT_LIST[${SVR_NAME}]}"
     NETWORK_ARGS="${NETWORK_ARGS} --add-host monitor:${MASTER_IP}"
 
     LOCUST_FILE="${DATA_BASE:=/opt}/pyload/locustfile.py"
