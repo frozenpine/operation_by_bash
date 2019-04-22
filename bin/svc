@@ -62,7 +62,7 @@ for SVR_NAME in \${!${APP_GROUP_NAME}_LIST[@]}; do
 
         grep -E "\${${APP_GROUP_NAME}_LIST[\$SVR_NAME]}[[:space:]]+" /etc/hosts >/dev/null
         if [[ \$? -eq 0 ]]; then
-            \${SUDO} sed -i '/'"\${${APP_GROUP_NAME}_LIST[\${SVR_NAME}]}"'/ s/\(.*\)/\1 '"\${SVR_NAME}"'/' /etc/hosts
+            \${SUDO} sed -i '/'"\${${APP_GROUP_NAME}_LIST[\${SVR_NAME}]}[[:space:]]"'/ s/\(.*\)/\1 '"\${SVR_NAME}"'/' /etc/hosts
         else
             \${SUDO} sed -i '\$a'"\${${APP_GROUP_NAME}_LIST[\$SVR_NAME]} \${SVR_NAME}" /etc/hosts
         fi
