@@ -276,7 +276,7 @@ case ${COMMAND} in
         sleep 1
         _topic --list
         info "checking finished."
-        allssh -gkafka container stop -crf kafka
+        allssh -gkafka container stop -crfs kafka
     ;;
     pub)
         allscp -gkafka "${CONTAINER_BASE}/kafka.sh"

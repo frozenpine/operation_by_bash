@@ -7,8 +7,9 @@ fi
 
 REMOVE=0
 FORCE=0
+SKIP_BACK=0
 
-while getopts :frc FLAG; do
+while getopts :frcs FLAG; do
     case $FLAG in
         r)
             REMOVE=1
@@ -18,6 +19,9 @@ while getopts :frc FLAG; do
         ;;
         c)
             CLEAN=1
+        ;;
+        s)
+            SKIP_BACK=1
         ;;
         *)
         ;;
@@ -71,14 +75,16 @@ function stop_container() {
         local _BACK_BASE="${DATA_BASE:=/opt}/backup"
         local _BACK_FILE="${_BACK_BASE}/$1_`date '+%Y%m%d%H%M%S'`.tar.gz"
 
-        info "backing up container[$1] data dir: ${_DATA_DIR}"
-        if [[ ! -d "${_BACK_BASE}" ]]; then
-            ${SUDO} mkdir -p "${_BACK_BASE}"
+        if [[ ${SKIP_BACK} -ne 1 ]]; then
+            info "backing up container[$1] data dir: ${_DATA_DIR}"
+            if [[ ! -d "${_BACK_BASE}" ]]; then
+                ${SUDO} mkdir -p "${_BACK_BASE}"
+            fi
+            pushd "${_DATA_DIR}" >/dev/null
+                ${SUDO} tar -czvf "${_BACK_FILE}" ./
+                ${SUDO} ls -l "${_BACK_FILE}"
+            popd >/dev/null
         fi
-        pushd "${_DATA_DIR}" >/dev/null
-            ${SUDO} tar -czvf "${_BACK_FILE}" ./
-            ${SUDO} ls -l "${_BACK_FILE}"
-        popd >/dev/null
 
         info "cleaning container[$1] data dir: ${_DATA_DIR}"
         ${SUDO} rm -rf "${_DATA_DIR}"

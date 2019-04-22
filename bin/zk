@@ -76,7 +76,7 @@ case ${COMMAND} in
         allssh -gzookeeper container exec zookeeper bin/zkServer.sh status
     ;;
     destory)
-        allssh -gzookeeper container stop -crf zookeeper
+        allssh -gzookeeper container stop -scrf zookeeper
     ;;
     pub)
         allscp -gzookeeper "${CONTAINER_BASE}/zookeeper.sh"
