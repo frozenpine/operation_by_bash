@@ -53,7 +53,7 @@ docker run -d \
         --logging.level.com.quantdo.trade=${LOG_LEVEL:=warning} \
         --com.quantdo.trade.match.consumer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.match.producer.bootstrap.servers=${KAFKA_SERVERS} \
-        --com.quantdo.trade.match.consumer.max.poll.records=10 \
+        # --com.quantdo.trade.match.consumer.max.poll.records=10 \
         # --com.quantdo.trade.handle.manager.transaction-batch-size=1000 \
         # --com.quantdo.trade.match.consumer.receive.buffer.bytes=10240000 \
         # --com.quantdo.trade.match.consumer.fetch.max.bytes=10240000 \
