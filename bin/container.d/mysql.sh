@@ -49,4 +49,11 @@ docker run -d \
         --auto-increment-offset=${SERVER_ID} \
         --relay-log=mysql-relay-bin \
         --sync-binlog=1 \
-        --sql-modes='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' \
+        --sql-mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'
+
+docker run -d \
+    --name ${NAME}-exporter \
+    --restart always \
+    --network host \
+    -e DATA_SOURCE_NAME="root:${ADMIN_PASSWD}@(localhost:3306)/" \
+    registry:5000/mysqld-exporter:v0.11.0

@@ -1,0 +1,68 @@
+global:
+  scrape_interval:     15s
+  evaluation_interval: 15s
+ 
+scrape_configs:
+  - job_name: prometheus
+    scheme: http
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          instance: prometheus
+ 
+  - job_name: node-exporter
+    scheme: http
+    static_configs:
+      - targets: ["172.31.11.0:9100"]
+        labels:
+          group: monitor
+      - targets: ["172.31.11.15:9100", "172.31.11.14:9100", "172.31.11.16:9100"]
+        labels:
+          group: elasticsearch
+      - targets: ["172.31.11.12:9100", "172.31.11.13:9100"]
+        labels:
+          group: manage
+      - targets: ["172.31.11.9:9100"]
+        labels:
+          group: redis
+      - targets: ["172.31.11.10:9100", "172.31.11.11:9100", "172.31.11.17:9100"]
+        labels:
+          group: kafka
+      - targets: ["172.31.11.8:9100", "172.31.11.6:9100", "172.31.11.3:9100"]
+        labels:
+          group: clear
+      - targets: ["172.31.11.1:9100", "172.31.11.7:9100", "172.31.11.2:9100"]
+        labels:
+          group: front
+      - targets: ["172.31.11.5:9100", "172.31.11.4:9100"]
+        labels:
+          group: dbms
+      - targets: ["172.16.10.216:9100", "172.16.10.215:9100"]
+        labels:
+          group: risk
+
+  - job_name: kafka-exporter
+    scheme: http
+    static_configs:
+      - targets: ["localhost:9308"]
+
+  - job_name: nginx-exporter
+    scheme: http
+    static_configs:
+      - targets: ["front001:9113", "front002:9113", "front003:9113"]
+
+  - job_name: order
+    scheme: http
+    metrics_path: /monitor/prometheus
+    static_configs:
+      - targets: ["front001:9191", "front002:9191", "front003:9191"]
+  - job_name: clear
+    scheme: http
+    metrics_path: /monitor/prometheus
+    static_configs:
+      - targets: ["clear001:8080", "clear002:8080", "clear003:8080"]
+  - job_name: match
+    scheme: http
+    metrics_path: /monitor/prometheus
+    static_configs:
+      - targets: ["match001:8081", "match002:8081", "match003:8081"]
