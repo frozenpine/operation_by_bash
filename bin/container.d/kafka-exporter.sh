@@ -12,7 +12,7 @@ for SERVICE in ${SERVICE_LIST}; do
 done
 
 for SVR_NAME in ${!KAFKA_LIST[@]}; do
-    KAFKA_SERVERS=" --kafka.server=${SVR_NAME}:${KAFKA_PORT}"
+    KAFKA_SERVERS="${KAFKA_SERVERS} --kafka.server=${SVR_NAME}:${KAFKA_PORT}"
 done
 
 docker run -d \
