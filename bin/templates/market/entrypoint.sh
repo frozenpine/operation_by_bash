@@ -158,11 +158,18 @@ function _start() {
         export LD_LIBRARY_PATH="${BASE_DIR}/libs":${LD_LIBRARY_PATH}
         ulimit -c unlimited
 
-        nohup ./${_module_name} $* &
-        _pid=$!
-        echo -n "${_pid}" > "${_pid_file}"
+        if [[ ${DEAMON} -eq 1 ]]; then
+            ./${_module_name} -d
 
-        sleep 1
+            sleep 3
+        else
+            nohup ./${_module_name} ${_deamon_arg} $* </dev/null &
+            _pid=$!
+            echo -n "${_pid}" > "${_pid_file}"
+
+            sleep 1
+        fi
+
         _status ${_module_name} &>/dev/null
         if [[ $? -ne 0 ]]; then
             error "starting ${_module_name} failed."
