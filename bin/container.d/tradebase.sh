@@ -94,12 +94,24 @@ for SVR_NAME in ${!KAFKA_LIST[@]}; do
 done
 KAFKA_SERVERS=${KAFKA_SERVERS:1}
 
+CONTAINER_BASE="${DATA_BASE:=/opt}/${NAME}"
+find_user ${USER}
+if [[ $? -ne 0 ]]; then
+    ${SUDO} useradd --home-dir "${CONTAINER_BASE}" \
+            --create-home \
+            --shell /sbin/nologin \
+            ${USER} || exit 1
+fi
+make_dir -b "${CONTAINER_BASE}" log || exit 1
+${SUDO} chown -R ${USER}:${USER} "${CONTAINER_BASE}"
+
 docker run -d \
     --name ${NAME} \
     --restart no \
     --network host \
     -e SENTRY_DSN="${SENTRY_DSN}" \
     -e LOG_LEVEL_ROOT="${LOG_LEVEL:=warning}" \
+    -v "${CONTAINER_BASE}/log":/${NAME}/logs \
     registry:5000/service/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/service-${NAME}-${VERSION}.jar \
