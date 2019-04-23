@@ -4,6 +4,7 @@ MySQL - 5.7.25 : Database - digital
 *********************************************************************
 */
 
+
 /*!40101 SET NAMES utf8 */;
 
 /*!40101 SET SQL_MODE=''*/;
@@ -78,7 +79,7 @@ CREATE TABLE `t_account_capital` (
   `update_time` bigint(20) DEFAULT NULL COMMENT '更新时间戳',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_t_account_capital` (`account_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10579 DEFAULT CHARSET=utf8 COMMENT='账户资金';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='账户资金';
 
 /*Table structure for table `t_api_key` */
 
@@ -97,7 +98,7 @@ CREATE TABLE `t_api_key` (
   `operate_time` bigint(20) DEFAULT NULL COMMENT '操作时间',
   `operator_id` varchar(20) DEFAULT NULL COMMENT '操作员',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10606 DEFAULT CHARSET=utf8 COMMENT='API秘钥';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='API秘钥';
 
 /*Table structure for table `t_black_list` */
 
@@ -113,7 +114,7 @@ CREATE TABLE `t_black_list` (
   `operate_time` bigint(13) DEFAULT NULL COMMENT '操作时间',
   `operator_id` varchar(20) DEFAULT NULL COMMENT '操作员',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COMMENT='开户黑名单';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='开户黑名单';
 
 /*Table structure for table `t_clear_fund_rate` */
 
@@ -125,13 +126,14 @@ CREATE TABLE `t_clear_fund_rate` (
   `fund_rate` decimal(30,10) DEFAULT NULL COMMENT '资金费率',
   `fund_rate_limit` decimal(30,10) DEFAULT NULL COMMENT '资金费率上限',
   `rate_avg` decimal(30,10) DEFAULT NULL COMMENT '加权利率',
+  `is_indicative` varchar(1) DEFAULT NULL COMMENT '1：资金费率 2：预测资金费率',
   `premium_price_avg` decimal(30,10) DEFAULT NULL COMMENT '加权溢价指数',
   `oper_id` varchar(20) DEFAULT NULL COMMENT '操作员',
   `oper_time` bigint(20) DEFAULT NULL COMMENT '操作时间',
   `recheck_oper_id` varchar(20) DEFAULT NULL COMMENT '复核员',
   `recheck_oper_time` bigint(20) DEFAULT NULL COMMENT '复核时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COMMENT='资金费率';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='资金费率';
 
 /*Table structure for table `t_clear_premium_price` */
 
@@ -174,7 +176,7 @@ CREATE TABLE `t_currency` (
   `recheck_oper_time` bigint(20) DEFAULT NULL COMMENT '复核时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `pk_t_currency` (`currency`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='币种';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='币种';
 
 /*Table structure for table `t_deliv_fee_set` */
 
@@ -193,7 +195,7 @@ CREATE TABLE `t_deliv_fee_set` (
   `old_id` bigint(20) DEFAULT NULL COMMENT '原有id',
   `notice_status` varchar(3) DEFAULT NULL COMMENT '通知交易状态 0 指令已生效 1 新增指令发送中 2 修改指令发送中 3删除指令发送中 4 交易返回失败回退原始值',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COMMENT='交割手续费';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='交割手续费';
 
 /*Table structure for table `t_deliv_series` */
 
@@ -219,7 +221,7 @@ CREATE TABLE `t_dict` (
   `dict_name_cn` varchar(50) DEFAULT NULL COMMENT '中文描述',
   `dict_name_en` varchar(50) DEFAULT NULL COMMENT '英文描述',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=985 DEFAULT CHARSET=utf8 COMMENT='数据字典';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='数据字典';
 
 /*Table structure for table `t_garbage_user` */
 
@@ -232,9 +234,8 @@ CREATE TABLE `t_garbage_user` (
   `user_id` varchar(20) DEFAULT NULL COMMENT '用户代码',
   `old_id` bigint(20) DEFAULT NULL COMMENT '原Id',
   `notice_status` varchar(3) DEFAULT NULL COMMENT '通知交易状态 0 指令已生效 1 新增指令发送中 2 修改指令发送中 3 删除指令发送中 4 交易返回失败回退原始值',
-
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='垃圾用户';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='垃圾用户';
 
 /*Table structure for table `t_identification_type` */
 
@@ -247,7 +248,7 @@ CREATE TABLE `t_identification_type` (
   `operate_time` bigint(20) DEFAULT NULL COMMENT '操作时间',
   `operator_id` varchar(20) DEFAULT NULL COMMENT '操作员',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='证件类型管理';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='证件类型管理';
 
 /*Table structure for table `t_index_price` */
 
@@ -256,13 +257,13 @@ DROP TABLE IF EXISTS `t_index_price`;
 CREATE TABLE `t_index_price` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id自增长序列',
   `underlying_id` varchar(30) DEFAULT NULL COMMENT '标的物代码',
-  `fair_price` decimal(30,1) DEFAULT NULL COMMENT '合理标的价格',
+  `fair_price` decimal(30,10) DEFAULT NULL COMMENT '合理标的价格',
   `index_price` decimal(30,10) unsigned DEFAULT NULL COMMENT '指数价格',
   `price_time` bigint(20) unsigned DEFAULT NULL COMMENT '价格时间',
   `crash_times` int(10) unsigned DEFAULT NULL COMMENT '中断次数',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_t_index_price` (`underlying_id`,`price_time`)
-) ENGINE=InnoDB AUTO_INCREMENT=40365 DEFAULT CHARSET=utf8 COMMENT='标的指数价格';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='标的指数价格';
 
 /*Table structure for table `t_instrument` */
 
@@ -289,8 +290,6 @@ CREATE TABLE `t_instrument` (
   `open_date` varchar(8) NOT NULL COMMENT '上市日',
   `open_date_expr` varchar(100) DEFAULT NULL COMMENT '上市日表达式',
   `volume_multiple` int(13) NOT NULL COMMENT '合约乘数',
-  `min_order_volume` int(13) NOT NULL COMMENT '最小下单量',
-  `max_order_volume` int(13) NOT NULL COMMENT '最大下单量',
   `end_trading_day` varchar(8) DEFAULT NULL COMMENT '最后交易日',
   `instrument_status` varchar(1) NOT NULL COMMENT '合约状态:(t_dict-0039) 0,未上市 1,上市 2,停牌 3,下市 4,终止',
   `end_trading_day_expr` varchar(100) DEFAULT NULL COMMENT '最后交易日表达式',
@@ -322,9 +321,11 @@ CREATE TABLE `t_instrument` (
   `oper_time` bigint(20) DEFAULT NULL COMMENT '操作时间',
   `recheck_oper_id` varchar(20) DEFAULT NULL COMMENT '复核员',
   `recheck_oper_time` bigint(20) DEFAULT NULL COMMENT '复核时间',
+  `min_order_volume` int(13) NOT NULL COMMENT '最小下单量',
+  `max_order_volume` int(13) NOT NULL COMMENT '最大下单量',
   PRIMARY KEY (`id`),
   UNIQUE KEY `ak_uk_t_instrument` (`instrumentid`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='合约';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='合约';
 
 /*Table structure for table `t_invitation_detail` */
 
@@ -337,7 +338,7 @@ CREATE TABLE `t_invitation_detail` (
   `invitation_level` varchar(3) DEFAULT NULL COMMENT '邀请人级别 1 一级 2 二级 3三级 4四级',
   `reward_date` bigint(20) DEFAULT NULL COMMENT '邀请日期',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=173 DEFAULT CHARSET=utf8 COMMENT='邀请明细';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='邀请明细';
 
 /*Table structure for table `t_invitation_rake_back_action` */
 
@@ -355,7 +356,7 @@ CREATE TABLE `t_invitation_rake_back_action` (
   `transaction_time` bigint(20) NOT NULL COMMENT '流水时间',
   `currency` varchar(10) NOT NULL COMMENT '币种',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=211 DEFAULT CHARSET=utf8 COMMENT='返佣明细';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='返佣明细';
 
 /*Table structure for table `t_invitation_set` */
 
@@ -370,7 +371,7 @@ CREATE TABLE `t_invitation_set` (
   `operator_id` varchar(20) DEFAULT NULL COMMENT '操作员',
   `currency` varchar(10) NOT NULL COMMENT '币种',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COMMENT='返佣参数设置';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='返佣参数设置';
 
 /*Table structure for table `t_invitation_trade_set` */
 
@@ -388,7 +389,7 @@ CREATE TABLE `t_invitation_trade_set` (
   `operate_time` bigint(20) DEFAULT NULL COMMENT '操作时间',
   `operator_id` varchar(20) DEFAULT NULL COMMENT '操作员',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COMMENT='返佣参数设置';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='返佣参数设置';
 
 /*Table structure for table `t_key_right_relation` */
 
@@ -402,7 +403,20 @@ CREATE TABLE `t_key_right_relation` (
   `operate_time` bigint(20) DEFAULT NULL COMMENT '操作时间',
   `operator_id` varchar(20) DEFAULT NULL COMMENT '操作员',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COMMENT='权限请求关系';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='权限请求关系';
+
+/*Table structure for table `t_kyc_identify` */
+
+DROP TABLE IF EXISTS `t_kyc_identify`;
+
+CREATE TABLE `t_kyc_identify` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID自增长序列',
+  `currency` varchar(10) NOT NULL COMMENT '币种',
+  `value` decimal(13,10) DEFAULT NULL COMMENT '数量',
+  `operate_time` bigint(20) DEFAULT NULL COMMENT '操作时间',
+  `operator_id` varchar(20) DEFAULT NULL COMMENT '操作员',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='kyc认证设置';
 
 /*Table structure for table `t_level_type` */
 
@@ -416,7 +430,7 @@ CREATE TABLE `t_level_type` (
   `operate_time` bigint(20) DEFAULT NULL COMMENT '操作时间',
   `operator_id` varchar(20) DEFAULT NULL COMMENT '操作员',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='客户分类';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='客户分类';
 
 /*Table structure for table `t_operation_log` */
 
@@ -434,7 +448,44 @@ CREATE TABLE `t_operation_log` (
   `operator_id` varchar(20) DEFAULT NULL COMMENT '操作人',
   `operator_ip` varchar(20) DEFAULT NULL COMMENT '操作人ip地址',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=656 DEFAULT CHARSET=utf8 COMMENT='系统操作日志';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='系统操作日志';
+
+/*Table structure for table `t_order_prompt` */
+
+DROP TABLE IF EXISTS `t_order_prompt`;
+
+CREATE TABLE `t_order_prompt` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID自增长序列',
+  `direction` varchar(4) NOT NULL COMMENT '买卖方向:buy,sell',
+  `prompt_flag` varchar(1) DEFAULT NULL COMMENT '提示类型1 预估强平价格与标记价格 2最佳竞价 3 委托价格与标记价格 ',
+  `prompt_value` decimal(4,3) DEFAULT NULL COMMENT '提示阈值',
+  `operator_id` varchar(20) DEFAULT NULL COMMENT '操作人',
+  `operate_time` bigint(20) DEFAULT NULL COMMENT '操作时间',
+  `notice_status` varchar(3) DEFAULT NULL COMMENT 'tongz',
+  `old_id` bigint(20) DEFAULT NULL COMMENT 'yuanid',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='委托事前风控参数设置';
+
+/*Table structure for table `t_price_band_detail` */
+
+DROP TABLE IF EXISTS `t_price_band_detail`;
+
+CREATE TABLE `t_price_band_detail` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id自增长序列',
+  `instrumentid` varchar(30) NOT NULL COMMENT '合约代码',
+  `start_price_type` varchar(3) DEFAULT NULL COMMENT '价格区间基准价类型:(t_dict-5048) 1,昨结算价 2,昨收盘价 3,最新价4理论价',
+  `basis_price_type` varchar(3) NOT NULL COMMENT '基准价类型:(t_dict-5045) 1昨结算价;2昨收盘价3最新价4理论价',
+  `ref_price_type` varchar(3) DEFAULT NULL COMMENT '参考价类型:(t_dict-5046) 1昨结算价;2昨收盘价3最新价4理论价5昨现货收盘价',
+  `round_mode` varchar(3) NOT NULL COMMENT '舍入方式:(t_dict-5012) 1舍出;2四舍五入;3舍入;4截断',
+  `value_mode` varchar(3) NOT NULL COMMENT '取值方式:(t_dict-5011) 1,百分比 2,绝对值',
+  `upper_value` decimal(30,10) NOT NULL COMMENT '向上波幅值',
+  `lower_value` decimal(30,10) NOT NULL COMMENT '向下波幅值',
+  `operator_id` varchar(20) DEFAULT NULL COMMENT '操作员',
+  `operate_time` bigint(20) DEFAULT NULL COMMENT '操作时间',
+  `recheck_oper_id` varchar(20) DEFAULT NULL COMMENT '复核人',
+  `recheck_oper_time` bigint(20) DEFAULT NULL COMMENT '复核时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='合约价格波动带详细内容';
 
 /*Table structure for table `t_product` */
 
@@ -462,7 +513,7 @@ CREATE TABLE `t_product` (
   `price_mode` varchar(1) DEFAULT NULL COMMENT '报价方式:(t_dict-5002)  0,价格 1,收益率 2,波动率',
   `market_id` varchar(30) DEFAULT NULL COMMENT '市场代码',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='产品信息';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='产品信息';
 
 /*Table structure for table `t_risk_exchange_limit` */
 
@@ -476,7 +527,7 @@ CREATE TABLE `t_risk_exchange_limit` (
   `old_id` bigint(20) DEFAULT NULL COMMENT '原Id',
   `notice_status` varchar(3) DEFAULT NULL COMMENT '通知交易状态 0 指令已生效 1 新增指令发送中 2 修改指令发送中 3 删除指令发送中 4 交易返回失败回退原始值',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='交易所状态管理';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='交易所状态管理';
 
 /*Table structure for table `t_risk_index` */
 
@@ -492,7 +543,7 @@ CREATE TABLE `t_risk_index` (
   `accounts` varchar(1000) DEFAULT NULL COMMENT '警报信息接收人',
   `interval_time` bigint(20) DEFAULT NULL COMMENT '报警间隔时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COMMENT='报警记录';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='报警记录';
 
 /*Table structure for table `t_risk_leverage_point_detail` */
 
@@ -504,7 +555,7 @@ CREATE TABLE `t_risk_leverage_point_detail` (
   `risk_limit` decimal(30,10) NOT NULL COMMENT '风险限额',
   `leverage` decimal(10,2) NOT NULL COMMENT '杠杆',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COMMENT='杠杆点分布明细\n初始化配置';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='杠杆点分布明细\n初始化配置';
 
 /*Table structure for table `t_risk_limit` */
 
@@ -515,7 +566,7 @@ CREATE TABLE `t_risk_limit` (
   `product_id` varchar(30) NOT NULL COMMENT '品种代码',
   `instrument_id` varchar(30) DEFAULT NULL COMMENT '合约代码',
   `level` varchar(10) DEFAULT NULL COMMENT '客户分类代码',
-  `base_risk_limit` decimal(30,10) DEFAULT NULL COMMENT '最低风险限额',
+  `base_risk_limit` decimal(30,10) DEFAULT NULL COMMENT '最低风险限额(BTC)',
   `step_risk_limit` decimal(30,10) DEFAULT NULL COMMENT '风险限额递增量',
   `step_times` tinyint(3) DEFAULT NULL COMMENT '递增次数',
   `base_maint_margin` decimal(10,4) DEFAULT NULL COMMENT '基础维持保证金率',
@@ -525,7 +576,7 @@ CREATE TABLE `t_risk_limit` (
   `old_id` bigint(20) DEFAULT NULL COMMENT '原id',
   `notice_status` varchar(3) DEFAULT NULL COMMENT '通知交易状态 0 指令已生效 1 新增指令发送中 2 修改指令发送中 3 删除指令发送中 4 交易返回失败回退原始值',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8 COMMENT='风险限额';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='风险限额';
 
 /*Table structure for table `t_risk_mandatory_reduction_set` */
 
@@ -543,10 +594,10 @@ CREATE TABLE `t_risk_mandatory_reduction_set` (
   `compulsion_status` varchar(1) NOT NULL COMMENT '自动减仓状态:0,关闭 1 开启',
   `operate_time` bigint(20) DEFAULT NULL COMMENT '操作时间',
   `operator_id` varchar(20) DEFAULT NULL COMMENT '操作员',
- `old_id` BIGINT(20) DEFAULT NULL COMMENT '原Id',
-  `notice_status` VARCHAR(3) DEFAULT NULL COMMENT '通知交易状态 0 指令已生效 1 新增指令发送中 2 修改指令发送中 3 删除指令发送中 4 交易返回失败回退原始值',
+  `old_id` bigint(20) DEFAULT NULL COMMENT '原Id',
+  `notice_status` varchar(3) DEFAULT NULL COMMENT '通知交易状态 0 指令已生效 1 新增指令发送中 2 修改指令发送中 3 删除指令发送中 4 交易返回失败回退原始值',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='强平参数设置';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='强平参数设置';
 
 /*Table structure for table `t_risk_trade_right_limit` */
 
@@ -560,10 +611,10 @@ CREATE TABLE `t_risk_trade_right_limit` (
   `forbid_type` varchar(1) DEFAULT NULL COMMENT ' 交易权限限制类型 0 禁止开仓 1 禁止交易 ',
   `operate_time` bigint(20) DEFAULT NULL COMMENT '操作时间',
   `operator_id` varchar(20) DEFAULT NULL COMMENT '操作员',
-  `old_id` BIGINT(20) DEFAULT NULL COMMENT '原Id',
-  `notice_status` VARCHAR(3) DEFAULT NULL COMMENT '通知交易状态 0 指令已生效 1 新增指令发送中 2 修改指令发送中 3 删除指令发送中 4 交易返回失败回退原始值',
+  `old_id` bigint(20) DEFAULT NULL COMMENT '原Id',
+  `notice_status` varchar(3) DEFAULT NULL COMMENT '通知交易状态 0 指令已生效 1 新增指令发送中 2 修改指令发送中 3 删除指令发送中 4 交易返回失败回退原始值',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8 COMMENT='交易权限设置';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='交易权限设置';
 
 /*Table structure for table `t_risk_withdraw_limit` */
 
@@ -575,7 +626,7 @@ CREATE TABLE `t_risk_withdraw_limit` (
   `operate_time` bigint(20) DEFAULT NULL COMMENT '操作时间',
   `operator_id` varchar(20) DEFAULT NULL COMMENT '操作员',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='出金权限开关';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='出金权限开关';
 
 /*Table structure for table `t_risk_withdraw_right_set` */
 
@@ -589,7 +640,7 @@ CREATE TABLE `t_risk_withdraw_right_set` (
   `operate_time` bigint(20) DEFAULT NULL COMMENT '操作时间',
   `operator_id` varchar(20) DEFAULT NULL COMMENT '操作员',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='出金权限设置';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='出金权限设置';
 
 /*Table structure for table `t_system_config` */
 
@@ -600,7 +651,7 @@ CREATE TABLE `t_system_config` (
   `config_key` varchar(30) DEFAULT NULL COMMENT '系统设置项',
   `config_value` varchar(30) DEFAULT NULL COMMENT '系统设置值',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='系统设置';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='系统设置';
 
 /*Table structure for table `t_tpl_instrument_create` */
 
@@ -616,7 +667,7 @@ CREATE TABLE `t_tpl_instrument_create` (
   `end_trading_day_expr` varchar(100) NOT NULL COMMENT '最后交易日表达式',
   `expire_date_expr` varchar(100) NOT NULL COMMENT '到期日表达式',
   `contract_size` decimal(30,10) DEFAULT NULL COMMENT '合约面值',
-  `volume_multiple` int(13) DEFAULT NULL COMMENT '合约乘数',
+  `volume_multiple` int(13) NOT NULL COMMENT '合约乘数',
   `tick` decimal(30,10) DEFAULT NULL COMMENT 'Tick值',
   `basis_price_type` varchar(1) NOT NULL COMMENT '挂牌基准价定义方式:(t_dict-5024) 1上一合约结算价;2上一合约收盘价;3理论价',
   `position_type` varchar(1) NOT NULL COMMENT '持仓类型:(t_dict-5056) 1净持仓,2综合持仓',
@@ -626,7 +677,7 @@ CREATE TABLE `t_tpl_instrument_create` (
   `operate_time` bigint(13) DEFAULT NULL COMMENT '操作时间',
   `recheck_operator_id` varchar(20) DEFAULT NULL COMMENT '复核员',
   `recheck_operate_time` bigint(20) DEFAULT NULL COMMENT '复核时间',
-  `start_deliv_date_expr` varchar(100) DEFAULT NULL COMMENT '开始交割日表达式',
+  `start_deliv_date_expr` varchar(1) DEFAULT NULL COMMENT '开始交割日表达式',
   `end_deliv_date_expr` varchar(100) DEFAULT NULL COMMENT '最后交割日表达式',
   `option_series_id_expr` varchar(50) DEFAULT NULL COMMENT '期权系列代码规则',
   `option_series_name_expr` varchar(50) DEFAULT NULL COMMENT '期权系列名称规则',
@@ -636,7 +687,14 @@ CREATE TABLE `t_tpl_instrument_create` (
   `no_fluctuated_days` int(13) DEFAULT NULL COMMENT '终止波动生成天数',
   `deliv_not_allowed_pro_id` varchar(30) DEFAULT NULL COMMENT '不允许同时交割的月产品代码',
   `qty_unit` int(13) DEFAULT NULL COMMENT '报价数量单位(与合约乘数配合使用)',
-  PRIMARY KEY (`id`)
+  `min_order_volume` int(13) DEFAULT NULL COMMENT '最小委托量',
+  `max_order_volume` int(13) DEFAULT NULL COMMENT '最大委托量',
+  `basis_rate` decimal(30,10) DEFAULT NULL COMMENT '基础利率',
+  `quote_rate` decimal(30,10) DEFAULT NULL COMMENT '计价利率',
+  `trade_mode` varchar(1) DEFAULT NULL COMMENT '交易模式:1,永续 2,定期反向',
+  `cycle_type` varchar(1) DEFAULT NULL COMMENT '周期类型:1,周 2,月 3,永续',
+  `instrument_count` int(20) DEFAULT NULL COMMENT '合约数量',
+  PRIMARY KEY (`id`,`volume_multiple`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='合约创建参数模板';
 
 /*Table structure for table `t_trade` */
@@ -699,7 +757,7 @@ CREATE TABLE `t_trade_fee_set` (
   `old_id` bigint(20) DEFAULT NULL COMMENT '原Id',
   `notice_status` varchar(3) DEFAULT NULL COMMENT '通知交易状态 0 指令已生效 1 新增指令发送中 2 修改指令发送中 3 删除指令发送中 4 交易返回失败回退原始值',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COMMENT='交易手续费';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='交易手续费';
 
 /*Table structure for table `t_trade_user` */
 
@@ -722,7 +780,8 @@ CREATE TABLE `t_trade_user` (
   `level` varchar(20) DEFAULT NULL COMMENT '客户分类等级',
   `google_status` varchar(1) DEFAULT NULL COMMENT 'google验证状态(0:关闭，1：打开)',
   `secret` varchar(50) DEFAULT NULL COMMENT 'google验证码',
-  `is_active` varchar(3) DEFAULT '1' COMMENT '账号状态  0:冻结；1:解冻',
+  `message_switch` varchar(1) DEFAULT '1' COMMENT 'ttt',
+  `is_active` varchar(1) DEFAULT '1' COMMENT '账号状态  0:冻结；1:正常',
   `telephone` varchar(30) DEFAULT NULL COMMENT '联系电话',
   `id_back_photo` varchar(500) DEFAULT NULL COMMENT '证件反面照片',
   `id_front_photo` varchar(500) DEFAULT NULL COMMENT '证件正面照片',
@@ -737,7 +796,19 @@ CREATE TABLE `t_trade_user` (
   `old_id` bigint(20) DEFAULT NULL COMMENT '原Id',
   `notice_status` varchar(3) DEFAULT NULL COMMENT '通知交易状态 0 指令已生效 1 新增指令发送中 2 修改指令发送中 3 删除指令发送中 4 交易返回失败回退原始值',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10582 DEFAULT CHARSET=utf8 COMMENT='用户信息';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户信息';
+
+/*Table structure for table `t_trade_user_oper_log` */
+
+DROP TABLE IF EXISTS `t_trade_user_oper_log`;
+
+CREATE TABLE `t_trade_user_oper_log` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID自增长序列',
+  `operation_type` varchar(3) DEFAULT NULL COMMENT '日志类型 1注册 2 登录 3 丛植密码 4 邮箱验证 5 修改邮箱 6 身份认证 7 设置手机绑定 8 修改手机绑定  9 google 绑定 10 google 解除绑定 11 设置资金密码',
+  `operate_time` bigint(20) DEFAULT NULL COMMENT '操作时间',
+  `user_id` varchar(20) DEFAULT NULL COMMENT '操作人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户操作日志';
 
 /*Table structure for table `t_transaction_history` */
 
@@ -772,7 +843,7 @@ CREATE TABLE `t_underlying` (
   `recheck_oper_time` bigint(20) DEFAULT NULL COMMENT '复核时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_t_underlying` (`underlying_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='标的';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='标的';
 
 /*Table structure for table `t_underlying_detail` */
 
@@ -786,7 +857,7 @@ CREATE TABLE `t_underlying_detail` (
   `weight` decimal(5,4) DEFAULT NULL COMMENT '权重',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_t_underlying_detail` (`underlying_id`,`exch_id`,`product_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8 COMMENT='标的物指数';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='标的物指数';
 
 /*Table structure for table `t_underlying_prices` */
 
@@ -804,7 +875,7 @@ CREATE TABLE `t_underlying_prices` (
   `crash_times` int(10) unsigned DEFAULT '0' COMMENT '中断次数',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_t_underlying_prices` (`underlying_id`,`exch_id`,`product_id`,`price_time`)
-) ENGINE=InnoDB AUTO_INCREMENT=120438 DEFAULT CHARSET=utf8 COMMENT='标的依赖价格';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='标的依赖价格';
 
 /*Table structure for table `t_wallet_transaction_history` */
 
@@ -824,7 +895,7 @@ CREATE TABLE `t_wallet_transaction_history` (
   `old_id` bigint(20) DEFAULT NULL COMMENT '原Id',
   `notice_status` varchar(3) DEFAULT NULL COMMENT '通知交易状态 0 指令已生效 1 新增指令发送中 2 修改指令发送中 3 删除指令发送中 4 交易返回失败回退原始值',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=136 DEFAULT CHARSET=utf8 COMMENT='充提流水（对接钱包）';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='充提流水（对接钱包）';
 
 /*Table structure for table `t_wallet_user_address` */
 
@@ -835,7 +906,7 @@ CREATE TABLE `t_wallet_user_address` (
   `user_id` varchar(20) DEFAULT NULL COMMENT '用户代码',
   `address` varchar(100) DEFAULT NULL COMMENT '用户充值地址',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8 COMMENT='用户充值地址';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户充值地址';
 
 /*Table structure for table `t_warn_garbage_user_set` */
 
@@ -851,49 +922,7 @@ CREATE TABLE `t_warn_garbage_user_set` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='垃圾委托用户参数设置';
 
-/*Table structure for table `t_warn_index_set` */
-
-DROP TABLE IF EXISTS `t_warn_index_set`;
-
-CREATE TABLE `t_warn_index_set` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID自增长序列',
-  `index_type` varchar(3) NOT NULL COMMENT '指数参数类别  1 交易所价格偏离中位数 2 一家交易所价格获取不到 3 仅剩两家交易所 4 仅剩一家交易所可获取价格 5仅剩一家交易所价格偏离 6所有交易所价格都获取不到 7 交易所及BitMax都获取不到 8 无人工干预 ',
-  `deviation_value` decimal(30,10) DEFAULT NULL COMMENT '偏离值',
-  `warn_level` varchar(1) DEFAULT NULL COMMENT '报警等级 1 一级 2 二级 3 三级 4四级 5五级',
-  `interval_time` decimal(30,10) DEFAULT NULL COMMENT '发送时间间隔',
-  `warn_type` varchar(3) NOT NULL COMMENT '报警类型  1 发送短信 2发送邮件',
-  `accounts` varchar(1000) NOT NULL COMMENT '警报信息接收人',
-  `operate_time` bigint(20) DEFAULT NULL COMMENT '操作时间',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COMMENT='指数参数设置';
-
-/*Table structure for table `t_warn_result` */
-
-DROP TABLE IF EXISTS `t_warn_result`;
-
-CREATE TABLE `t_warn_result` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID自增长序列',
-  `risk_id` varchar(20) NOT NULL COMMENT '预警ID',
-  `warn_level` varchar(1) DEFAULT NULL COMMENT '报警等级',
-  `warn_type` varchar(1) NOT NULL COMMENT '报警类型  1 发送短信 2发送邮件',
-  `warn_content` varchar(1000) DEFAULT NULL COMMENT '报警内容',
-  `accounts` varchar(1000) NOT NULL COMMENT '警报信息接收人',
-  `operate_time` bigint(20) NOT NULL COMMENT '操作时间',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8 COMMENT='报警记录';
-
-
-/*Table structure for table `t_trade_user_oper_log` */
-
-DROP TABLE IF EXISTS `t_trade_user_oper_log`;
-
-CREATE TABLE `t_trade_user_oper_log` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID自增长序列',
-  `operation_type` varchar(3) DEFAULT NULL COMMENT '日志类型 1注册 2 登录 3 重置密码 4 邮箱验证 5 修改邮箱 6 身份认证 7 设置手机绑定 8 修改手机绑定  9 google 绑定 10 google 解除绑定 11 设置资金密码',
-  `operate_time` bigint(20) DEFAULT NULL COMMENT '操作时间',
-  `user_id` varchar(20) DEFAULT NULL COMMENT '操作人',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=829 DEFAULT CHARSET=utf8 COMMENT='用户操作日志';
+/*Table structure for table `t_warn_insurance_fund` */
 
 DROP TABLE IF EXISTS `t_warn_insurance_fund`;
 
@@ -908,62 +937,25 @@ CREATE TABLE `t_warn_insurance_fund` (
   `accounts` varchar(1000) DEFAULT NULL COMMENT '警报信息接收人',
   `operator_id` varchar(20) DEFAULT NULL COMMENT '操作人',
   `operate_time` bigint(20) DEFAULT NULL COMMENT '操作时间',
+  `notice_status` varchar(3) DEFAULT NULL COMMENT 'tongzzhi',
+  `old_id` bigint(20) DEFAULT NULL COMMENT 'yuanid',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COMMENT='保险基金参数设置';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='保险基金参数设置';
 
+/*Table structure for table `t_warn_result` */
 
-/*Table structure for table `t_price_band_detail` */
+DROP TABLE IF EXISTS `t_warn_result`;
 
-DROP TABLE IF EXISTS `t_price_band_detail`;
-
-CREATE TABLE `t_price_band_detail` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id自增长序列',
-  `instrumentid` varchar(30) NOT NULL COMMENT '合约代码',
-  `start_price_type` varchar(3) DEFAULT NULL COMMENT '价格区间基准价类型:(t_dict-5048) 1,昨结算价 2,昨收盘价 3,最新价4理论价',
-  `basis_price_type` varchar(3) NOT NULL COMMENT '基准价类型:(t_dict-5045) 1昨结算价;2昨收盘价3最新价4理论价',
-  `ref_price_type` varchar(3) DEFAULT NULL COMMENT '参考价类型:(t_dict-5046) 1昨结算价;2昨收盘价3最新价4理论价5昨现货收盘价',
-  `round_mode` varchar(3) NOT NULL COMMENT '舍入方式:(t_dict-5012) 1舍出;2四舍五入;3舍入;4截断',
-  `value_mode` varchar(3) NOT NULL COMMENT '取值方式:(t_dict-5011) 1,百分比 2,绝对值',
-  `upper_value` decimal(30,10) NOT NULL COMMENT '向上波幅值',
-  `lower_value` decimal(30,10) NOT NULL COMMENT '向下波幅值',
-  `operator_id` varchar(20) DEFAULT NULL COMMENT '操作员',
-  `operate_time` bigint(20) DEFAULT NULL COMMENT '操作时间',
-  `recheck_oper_id` varchar(20) DEFAULT NULL COMMENT '复核人',
-  `recheck_oper_time` bigint(20) DEFAULT NULL COMMENT '复核时间',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='合约价格波动带详细内容';
-
-
-/*Table structure for table `t_order_prompt` */
-
-DROP TABLE IF EXISTS `t_order_prompt`;
-
-CREATE TABLE `t_order_prompt` (
+CREATE TABLE `t_warn_result` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID自增长序列',
-  `direction` varchar(4) NOT NULL COMMENT '买卖方向:buy,sell',
-  `prompt_flag` varchar(1) DEFAULT NULL COMMENT '提示类型1 预估强平价格与标记价格 2最佳竞价 3 委托价格与标记价格 ',
-  `prompt_value` decimal(4,3) DEFAULT NULL COMMENT '提示阈值',
-  `operator_id` varchar(20) DEFAULT NULL COMMENT '操作人',
-  `operate_time` bigint(20) DEFAULT NULL COMMENT '操作时间',
-  `old_id` bigint(20) DEFAULT NULL COMMENT '原Id',
-  `notice_status` varchar(3) DEFAULT NULL COMMENT '通知交易状态 0 指令已生效 1 新增指令发送中 2 修改指令发送中 3 删除指令发送中 4 交易返回失败回退原始值',
-
+  `risk_id` varchar(20) NOT NULL COMMENT '预警ID',
+  `warn_level` varchar(1) DEFAULT NULL COMMENT '报警等级',
+  `warn_type` varchar(1) NOT NULL COMMENT '报警类型  1 发送短信 2发送邮件',
+  `warn_content` varchar(1000) DEFAULT NULL COMMENT '报警内容',
+  `accounts` varchar(1000) NOT NULL COMMENT '警报信息接收人',
+  `operate_time` bigint(20) NOT NULL COMMENT '操作时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COMMENT='委托事前风控参数设置';
-
-
-DROP TABLE IF EXISTS `t_kyc_identify`;
-
-CREATE TABLE `t_kyc_identify` (
-  `id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT 'ID自增长序列',
-  `currency` VARCHAR(10) NOT NULL COMMENT '币种',
-  `value` DECIMAL(13,10) DEFAULT NULL COMMENT '数量',
-  `operate_time` BIGINT(20) DEFAULT NULL COMMENT '操作时间',
-  `operator_id` VARCHAR(20) DEFAULT NULL COMMENT '操作员',
-  PRIMARY KEY (`id`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='kyc认证设置';
-
-
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='报警记录';
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

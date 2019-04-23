@@ -70,7 +70,7 @@ CREATE TABLE `t_online_user` (
   `session_id` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `IDX_T_ONLINE_USER_LOGINID_LOGINIP` (`login_id`,`login_ip`)
-) ENGINE=InnoDB AUTO_INCREMENT=83 DEFAULT CHARSET=utf8 COMMENT='在线用户统计表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='在线用户统计表';
 
 /*Table structure for table `t_org_admin` */
 
@@ -107,7 +107,7 @@ CREATE TABLE `t_org_unit` (
   `oper_time` timestamp NULL DEFAULT NULL COMMENT '操作时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `UX_T_ORG_UNIT_CODE` (`code`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='组织单位表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='组织单位表';
 
 /*Table structure for table `t_org_unit_resource` */
 
@@ -129,7 +129,7 @@ CREATE TABLE `t_org_unit_type` (
   `code` varchar(30) NOT NULL COMMENT '类型代码',
   `name` varchar(80) NOT NULL COMMENT '类型名称',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='组织类型表字典';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='组织类型表字典';
 
 /*Table structure for table `t_org_user` */
 
@@ -189,7 +189,7 @@ CREATE TABLE `t_role` (
   `oper_time` timestamp NULL DEFAULT NULL COMMENT '操作时间',
   PRIMARY KEY (`id`),
   KEY `IDX_T_ROLE_SYSTEMID` (`system_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COMMENT='角色表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='角色表';
 
 /*Table structure for table `t_role_group` */
 
@@ -256,7 +256,7 @@ CREATE TABLE `t_system` (
   `name` varchar(80) NOT NULL COMMENT '系统名称',
   `description` varchar(80) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COMMENT='系统';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='系统';
 
 /*Table structure for table `t_system_param_set` */
 
@@ -293,7 +293,7 @@ CREATE TABLE `t_user` (
   `oper_time` timestamp NULL DEFAULT NULL COMMENT '操作时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `UX_T_USER_LOGINNAME` (`login_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COMMENT='用户表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户表';
 
 /*Table structure for table `t_user_hist_password` */
 
@@ -309,7 +309,7 @@ CREATE TABLE `t_user_hist_password` (
   `oper_time` timestamp NULL DEFAULT NULL COMMENT '操作时间',
   PRIMARY KEY (`id`),
   KEY `IDX_T_HIS_USER_PASSWORD_USERID` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='用户历史密码记录表.';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户历史密码记录表.';
 
 /*Table structure for table `t_userinfo` */
 
@@ -328,7 +328,7 @@ CREATE TABLE `t_userinfo` (
   `telephone` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UX_T_USERINFO_USERID` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

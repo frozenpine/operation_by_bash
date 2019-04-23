@@ -45,7 +45,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `t_key_right_relation` WRITE;
 TRUNCATE t_key_right_relation;
-insert  into `t_key_right_relation`(`id`,`key_right`,`request_path`,`request_type`,`operate_time`,`operator_id`) values (2,'0','/api/v1/order','PUT',1546827823414,'admin'),(3,'0','/api/v1/order','POST',1546827823414,'admin'),(4,'0','/api/v1/order','GET',1546827823414,'admin'),(5,'0','/api/v1/order','DELETE',1546827823414,'admin');
+insert  into `t_key_right_relation`(`id`,`key_right`,`request_path`,`request_type`,`operate_time`,`operator_id`) values (2,'1','/api/v1/order','PUT',1546827823414,'admin'),(3,'1','/api/v1/order','POST',1546827823414,'admin'),(4,'1','/api/v1/order','GET',1546827823414,'admin'),(5,'1','/api/v1/order','DELETE',1546827823414,'admin');
 
 UNLOCK TABLES;
 
@@ -64,7 +64,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `t_warn_insurance_fund` WRITE;
 TRUNCATE t_warn_insurance_fund;
-insert  into `t_warn_insurance_fund`(`id`,`risk_flag`,`time_value`,`peek_value`,`warn_level`,`warn_type`,`interval_time`,`accounts`,`operator_id`,`operate_time`) values (4,'261024',NULL,NULL,'1','2',5,'sub@quantdo.com.cn','admin',1545896347124),(5,'261025','2','10.0000000000','1','2',5,'sub@quantdo.com.cn','admin',1545896347124),(6,'261026',NULL,'10.0000000000','1','2',5,'sub@quantdo.com.cn','admin',1545896347124),(7,'261027',NULL,'5.0000000000','1','2',5,'sub@quantdo.com.cn','admin',1545896347124);
+insert  into `t_warn_insurance_fund`(`id`,`risk_flag`,`time_value`,`peek_value`,`warn_level`,`warn_type`,`interval_time`,`accounts`,`operator_id`,`operate_time`,`notice_status`,`old_id`) values (4,'261024',NULL,NULL,'1','2',5,'sub@quantdo.com.cn','admin',1545896347124,'0',NULL),(5,'261025','2','10.0000000000','1','2',5,'sub@quantdo.com.cn','admin',1545896347124,'0',NULL),(6,'261026',NULL,'10.0000000000','1','2',5,'sub@quantdo.com.cn','admin',1545896347124,'0',NULL),(7,'261027',NULL,'5.0000000000','1','2',5,'sub@quantdo.com.cn','admin',1545896347124,'0',NULL);
 
 UNLOCK TABLES;
 
@@ -102,19 +102,16 @@ UNLOCK TABLES;
 /*Data for the table `t_underlying` */
 
 LOCK TABLES `t_underlying` WRITE;
-TRUNCATE t_underlying;
 
-insert into `t_underlying` (`underlying_id`, `underlying_name`, `underlying_type`, `oper_id`, `oper_time`, `recheck_oper_id`, `recheck_oper_time`) values('XBT-USD','比特币','1','ADMIN','1545807237','ADMIN','1545807237');
-insert into `t_underlying` (`underlying_id`, `underlying_name`, `underlying_type`, `oper_id`, `oper_time`, `recheck_oper_id`, `recheck_oper_time`) values('LTC-USD','莱特币','1','ADMIN','1545807237','ADMIN','1545807237');
-insert into `t_underlying` (`underlying_id`, `underlying_name`, `underlying_type`, `oper_id`, `oper_time`, `recheck_oper_id`, `recheck_oper_time`) values('ETH-USD','以太币','1','ADMIN','1545807237','ADMIN','1545807237');
+insert  into `t_underlying`(`id`,`underlying_id`,`underlying_name`,`underlying_type`,`oper_id`,`oper_time`,`recheck_oper_id`,`recheck_oper_time`) values (1,'XBT-USD','比特币','1','ADMIN',1545807237,'ADMIN',1545807237);
 
 UNLOCK TABLES;
 
 /*Data for the table `t_underlying_detail` */
 
 LOCK TABLES `t_underlying_detail` WRITE;
-TRUNCATE t_underlying_detail;
-insert  into `t_underlying_detail`(`id`,`underlying_id`,`exch_id`,`product_id`,`weight`) values (1,'XBT-USD','KRAKEN','XXBTZUSD','0.3333'),(2,'LTC-USD','KRAKEN','XLTCZUSD','0.3333'),(3,'ETH-USD','KRAKEN','XETHZUSD','0.3333'),(4,'XBT-USD','COINBASE','BTC-USD','0.3333'),(5,'LTC-USD','COINBASE','LTC-USD','0.3333'),(6,'ETH-USD','COINBASE','ETH-USD','0.3333'),(7,'XBT-USD','BITSTAMP','btcusd','0.3333'),(8,'LTC-USD','BITSTAMP','ltcusd','0.3333'),(10,'ETH-USD','BITSTAMP','ethusd','0.3333'),(11,'ETH-USD','BITMEX','.BETH','0.3333'),(13,'XBT-USD','BITMEX','.BXBT','0.3333'),(16,'LTC-USD','BITMEX','.BLTCXBT','0.3333');
+
+insert  into `t_underlying_detail`(`id`,`underlying_id`,`exch_id`,`product_id`,`weight`) values (1,'XBT-USD','KRAKEN','XBT-USD','0.3333'),(4,'XBT-USD','COINBASE','BTC-USD','0.3333'),(7,'XBT-USD','BITSTAMP','btcusd','0.3333'),(13,'XBT-USD','BITMEX','.BXBT','0.3333');
 
 UNLOCK TABLES;
 
@@ -148,7 +145,7 @@ insert into `t_api_key` (`user_id`, `key_id`, `key_type`, `key_name`, `cidr`, `k
 
 LOCK TABLES `t_order_prompt` WRITE;
 TRUNCATE t_order_prompt;
-insert  into `t_order_prompt`(`id`,`direction`,`prompt_flag`,`prompt_value`,`operator_id`,`operate_time`,`notice_status`) values (1,'buy','1','0.005','admin',1545896347124,NULL),(2,'buy','2','0.030','admin',1545896347124,NULL),(3,'buy','3','0.030','admin',1545896347124,NULL),(4,'sell','1','0.005','admin',1545896347124,NULL),(5,'sell','2','0.030','admin',1545896347124,NULL),(6,'sell','3','0.030',NULL,1545896347124,NULL);
+insert  into `t_order_prompt`(`id`,`direction`,`prompt_flag`,`prompt_value`,`operator_id`,`operate_time`,`notice_status`) values (1,'buy','1','0.005','admin',1545896347124,'0'),(2,'buy','2','0.030','admin',1545896347124,'0'),(3,'buy','3','0.030','admin',1545896347124,'0'),(4,'sell','1','0.005','admin',1545896347124,'0'),(5,'sell','2','0.030','admin',1545896347124,'0'),(6,'sell','3','0.030',NULL,1545896347124,'0');
 
 UNLOCK TABLES;
 --  垃圾委托用户参数设置
@@ -176,7 +173,7 @@ insert  into `t_risk_leverage_point_detail`(`id`,`product_id`,`risk_limit`,`leve
 
 -- 合约及相关刷库
 
-insert  into `t_instrument`(`instrumentid`,`instrument_name`,`product_id`,`product_type`,`underlying_id`,`cycle_type`,`contract_size`,`tick`,`trade_mode`,`reverse`,`quote_currency`,`clear_currency`,`price_source`,`max_order_price`,`funding_times`,`create_date`,`open_date`,`open_date_expr`,`volume_multiple`,`end_trading_day`,`instrument_status`,`end_trading_day_expr`,`expire_date`,`expire_date_expr`,`start_deliv_date`,`start_deliv_date_expr`,`end_deliv_date`,`end_deliv_date_expr`,`open_year_month`,`deliv_year_month`,`option_series_id`,`option_type`,`strike_price`,`is_auto`,`is_confirm_needed`,`no_trade_days`,`qty_unit`,`basis_rate`,`quote_rate`,`basis_price_type`,`basis_price`,`position_type`,`deliv_mode`,`deliv_type`,`exec_type`,`trading_day_type`,`oper_id`,`oper_time`,`recheck_oper_id`,`recheck_oper_time`,`min_order_volume`,`max_order_volume`)
+insert  into `t_instrument`(instrumentid`,`instrument_name`,`product_id`,`product_type`,`underlying_id`,`cycle_type`,`contract_size`,`tick`,`trade_mode`,`reverse`,`quote_currency`,`clear_currency`,`price_source`,`max_order_price`,`funding_times`,`create_date`,`open_date`,`open_date_expr`,`volume_multiple`,`end_trading_day`,`instrument_status`,`end_trading_day_expr`,`expire_date`,`expire_date_expr`,`start_deliv_date`,`start_deliv_date_expr`,`end_deliv_date`,`end_deliv_date_expr`,`open_year_month`,`deliv_year_month`,`option_series_id`,`option_type`,`strike_price`,`is_auto`,`is_confirm_needed`,`no_trade_days`,`qty_unit`,`basis_rate`,`quote_rate`,`basis_price_type`,`basis_price`,`position_type`,`deliv_mode`,`deliv_type`,`exec_type`,`trading_day_type`,`oper_id`,`oper_time`,`recheck_oper_id`,`recheck_oper_time`,`min_order_volume`,`max_order_volume`)
  values ('XBTUSD','比特币永续','XBT','1','XBT-USD','3','1.0000000000','0.0010000000','1','1','USD','XBT','1','10000.0000000000',3,'20190227','20190227','20991227',-100000000,'20991227','0','20991227','20991227','20991227','20991227','20991227','20991227','20991227','1902','12','XBTUSDP','1','3500.0000000000','0','1',1,1,'0.0600000000','0.0200000000','1','3500.0000000000','1','1','1','1','2','admin',1550645616397,'admin',1550645616397,1,10000000);
 
 
