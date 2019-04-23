@@ -196,6 +196,9 @@ case ${COMMAND} in
         _get_users
         _pub_users
     ;;
+    money)
+        _show_me_the_money
+    ;;
     *)
         error "invalid command: $*"
         exit 1
