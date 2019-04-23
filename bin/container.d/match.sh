@@ -44,11 +44,11 @@ docker run -d \
     --network host \
     --user `grep ${USER} /etc/passwd | cut -d':' -f3` \
     -e SENTRY_DSN="${SENTRY_DSN}" \
+    -e LOG_LEVEL_ROOT="${LOG_LEVEL:=warning}" \
     -v "${CONTAINER_BASE}/log":/${NAME}/logs \
     registry:5000/trade$1/${NAME}:${VERSION} ${JVM_OPTS} \
         -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
         --server.port=${MATCH_PORT} \
-        --log.level.console=${LOG_LEVEL:=info} \
         --logging.level.root=info \
         --logging.level.com.quantdo.trade=${LOG_LEVEL:=warning} \
         --com.quantdo.trade.match.consumer.bootstrap.servers=${KAFKA_SERVERS} \

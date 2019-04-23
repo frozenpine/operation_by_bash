@@ -92,12 +92,11 @@ docker run -d \
     --network host \
     --user `grep ${USER} /etc/passwd | cut -d':' -f3` \
     -e SENTRY_DSN="${SENTRY_DSN}" \
-    -e CLASSPATH=/docker-java-home/jre/lib \
+    -e LOG_LEVEL_ROOT="${LOG_LEVEL:=warning}" \
     -v "${CONTAINER_BASE}/log":/${NAME}/logs \
     registry:5000/trade$1/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
-        --log.level.console=${LOG_LEVEL:=info} \
         --logging.level.root=${LOG_LEVEL:=warning} \
         --logging.level.com.quantdo.trade=${LOG_LEVEL:=warning} \
         --server.address=${SELF_IP} \
