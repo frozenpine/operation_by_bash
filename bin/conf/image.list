@@ -6,3 +6,4 @@ openjdk:8u201-jre-alpine
 zookeeper:3.4.13
 mysql:5.7.25
 consul:1.4.3
+sonatype/nexus3:3.16.1

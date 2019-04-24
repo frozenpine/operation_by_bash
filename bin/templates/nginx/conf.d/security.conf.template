@@ -7,7 +7,7 @@ done
 }
 
 server {
-    listen      8081;
+    listen      8079;
     server_name  management localhost;
 
     location / {
