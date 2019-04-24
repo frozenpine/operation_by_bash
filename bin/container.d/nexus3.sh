@@ -1,4 +1,4 @@
-VERSION="latest"
+VERSION="3.16.1"
 NAME=nexus3
 USER=200
 
@@ -20,5 +20,6 @@ docker run -d \
     --name ${NAME} \
     --restart always \
     --network host \
+    --ulimit nofile=65536:65536 \
     -v "${CONTAINER_BASE}/oss":/nexus-data \
-    registry:5000/${NAME}
+    registry:5000/${NAME}:${VERSION}
