@@ -331,26 +331,6 @@ function _trim_line() {
                         _BREAK=
                     fi
                 ;;
-                # "(")
-                #     if [[ -z ${_BREAK} ]]; then
-                #         _BREAK="("
-                #     fi
-                # ;;
-                # ")")
-                #     if [[ ${_BREAK} == "(" ]]; then
-                #         _BREAK=
-                #     fi
-                # ;;
-                # "{")
-                #     if [[ -z ${_BREAK} ]]; then
-                #         _BREAK="{"
-                #     fi
-                # ;;
-                # "}")
-                #     if [[ ${_BREAK} == "{" ]]; then
-                #         _BREAK=
-                #     fi
-                # ;;
             esac
 
             if [[ -z ${_BREAK} && ${_LINE:$_END:1} =~ ( |,|/|\\|\.|;) ]]; then

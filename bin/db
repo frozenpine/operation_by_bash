@@ -159,10 +159,10 @@ fi
 COMMAND=$1
 shift
 
-if [[ ${COMMAND} =~ truncate|init|create|shell ]]; then
+if [[ ${COMMAND} =~ truncate|init|create|shell|exec ]]; then
     [[ -z ${DB_HOST} ]] && _shuffle_host
 
-    if [[ ${COMMAND} != "shell" && $# -lt 1 ]]; then
+    if [[ ! ${COMMAND} =~ shell|exec && $# -lt 1 ]]; then
         error "missing db name."
         exit 1
     fi
@@ -186,6 +186,26 @@ case ${COMMAND} in
     ;;
     shell)
         mysql_shell $*
+    ;;
+    exec)
+        while getopts :D: FLAG; do
+            case $FLAG in
+                D)
+                    DB_OPT="-D ${OPTARG}"
+                ;;
+                *)
+                    error "invalid exec args: $*"
+                    exit 1
+                ;;
+            esac
+        done
+        shift $((OPTIND-1))
+
+        if [[ $# -gt 1 ]]; then
+            echo $* | mysql_exec ${DB_OPT}
+        else
+            mysql_exec ${DB_OPT}
+        fi
     ;;
     start)
         allssh -g${GROUP_NAME} container start mysql
