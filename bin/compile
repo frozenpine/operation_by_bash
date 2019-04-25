@@ -139,7 +139,7 @@ function _mvn_compile() {
     local _project_base_name
     local _env_arg
 
-    netstat -tnl | grep :${MAVEN_MIRROR_PORT} | grep LISTEN
+    netstat -tnl | grep :${MAVEN_MIRROR_PORT} | grep LISTEN &>/dev/null
     if [[ $? -ne 0 ]]; then
         warning "maven mirror port for js local repository not open."
         confirm -t 10 || exit 1
@@ -181,10 +181,18 @@ EOF
                 exit 1
             fi
 
-            ${SUDO} sed -i '/<dependencies>/ a \        <dependency>\n            <groupId>io.sentry</groupId>\n            <artifactId>sentry-log4j2</artifactId>\n            <version>1.7.16</version>\n        </dependency>' "${_pom_file}"
+            grep "<groupId>io.sentry</groupId>" "${_pom_file}" &>/dev/null
+            if [[ $? -ne 0 ]]; then
+                ${SUDO} sed -i '/<dependencies>/ a \        <dependency>\n            <groupId>io.sentry</groupId>\n            <artifactId>sentry-log4j2</artifactId>\n            <version>1.7.16</version>\n        </dependency>' "${_pom_file}"
+            fi
 
-            local _log4j2_origin=`ls ${module}/src/main/resources/log4j2*`
-            local _log4j2_ext=`echo ${_log4j2_origin} | cut -d'.' -f2`
+            local _log4j2_ext
+            local _log4j2_origin=`ls ${module}/src/main/resources/log4j2* 2>/dev/null`
+            if [[ $? -eq 0 ]]; then
+                _log4j2_ext=`echo ${_log4j2_origin} | cut -d'.' -f2`
+            else
+                _log4j2_ext=xml
+            fi
             local _log4j2_file="${module}/src/main/resources/log4j2.${_log4j2_ext}"
 
             case ${_log4j2_ext} in
