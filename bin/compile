@@ -111,6 +111,8 @@ function _git_update() {
         return
     fi
 
+    info "getting ${_project_base_name} latest version from git."
+
     git pull && _get_commit
 }
 
