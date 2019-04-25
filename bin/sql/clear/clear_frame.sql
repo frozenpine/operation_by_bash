@@ -31,9 +31,9 @@ CREATE TABLE `t_account` (
   `wallet_balance` decimal(30,10) NOT NULL COMMENT '钱包余额',
   `availilable` decimal(30,10) NOT NULL COMMENT '可用余额',
   `margin_balance` decimal(30,10) NOT NULL COMMENT '保证金余额',
-  `frozen_margin` decimal(30,10) NOT NULL COMMENT '冻结保证金',
+  `frozen_margin` decimal(30,10) NOT NULL COMMENT '委托冻结保证金',
   `frozen_available` decimal(30,10) NOT NULL DEFAULT '0.0000000000',
-  `current_margin` decimal(30,10) DEFAULT NULL COMMENT '占用保证金',
+  `current_margin` decimal(30,10) DEFAULT NULL COMMENT '占用保证金(持仓保证金)',
   `affiliate_payout` decimal(30,10) DEFAULT NULL,
   `withdraw` decimal(30,10) DEFAULT NULL COMMENT '出金',
   `deposit` decimal(30,10) DEFAULT NULL COMMENT '入金',
@@ -56,6 +56,18 @@ CREATE TABLE `t_account` (
   `insert_time` bigint(30) DEFAULT NULL COMMENT '插入时间',
   PRIMARY KEY (`account_id`,`currency`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for t_checkpoint
+-- ----------------------------
+DROP TABLE IF EXISTS `t_checkpoint`;
+CREATE TABLE `t_checkpoint` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `partition` int(11) DEFAULT NULL,
+  `checkpoint` bigint(20) DEFAULT NULL,
+  `offset` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8 COMMENT='快照表';
 
 -- ----------------------------
 -- Table structure for t_order_history
@@ -127,7 +139,6 @@ CREATE TABLE `t_position` (
   `direction` varchar(4) NOT NULL COMMENT '持仓多空方向',
   `position_margin_type` varchar(30) DEFAULT NULL,
   `currency` varchar(10) NOT NULL COMMENT '币种',
-  `leverage_rate` decimal(30,10) DEFAULT NULL,
   `underlying` varchar(30) DEFAULT NULL,
   `quote_currency` varchar(5) DEFAULT NULL,
   `commission` decimal(30,10) DEFAULT NULL COMMENT '费率',
@@ -210,9 +221,9 @@ CREATE TABLE `t_settlement` (
   `wallet_balance` decimal(30,10) NOT NULL COMMENT '钱包余额',
   `availilable` decimal(30,10) NOT NULL COMMENT '可用余额',
   `margin_balance` decimal(30,10) NOT NULL COMMENT '保证金余额',
-  `frozen_margin` decimal(30,10) NOT NULL COMMENT '冻结保证金',
+  `frozen_margin` decimal(30,10) NOT NULL COMMENT '委托冻结保证金',
   `frozen_available` decimal(30,10) NOT NULL DEFAULT '0.0000000000' COMMENT '冻结可用(出金)',
-  `current_margin` decimal(30,10) DEFAULT NULL COMMENT '占用保证金',
+  `current_margin` decimal(30,10) DEFAULT NULL COMMENT '占用保证金(持仓保证金)',
   `affiliate_payout` decimal(30,10) DEFAULT NULL COMMENT '推荐人返佣',
   `withdraw` decimal(30,10) DEFAULT NULL COMMENT '出金',
   `deposit` decimal(30,10) DEFAULT NULL COMMENT '入金',
@@ -250,6 +261,7 @@ CREATE TABLE `t_statement` (
   `kafka_offset` bigint(20) NOT NULL,
   `kafka_checkpoint` bigint(20) NOT NULL,
   `trading_day` varchar(8) DEFAULT NULL COMMENT '交易日',
+  `is_show` int(2) NOT NULL DEFAULT '0' COMMENT '是否显示  0：显示  1：不显示',
   `insert_time` bigint(20) NOT NULL COMMENT '创建时间',
   PRIMARY KEY (`statement_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='资金流水';
