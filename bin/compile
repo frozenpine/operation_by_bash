@@ -18,6 +18,10 @@ JAVA_MODULE_DEFINE["trade-system"]="trade-clear-database trade-clear-memory trad
 JAVA_MODULE_DEFINE["service-management"]="exchange-index-server scheduler-server sms-mail-server trade-base"
 
 MAVEN_MIRROR_PORT=8181
+UPDATE_GIT=0
+COMMIT_ID=
+
+HELP_ARGS["-u"]="optional,Pull lastest update from github@master."
 
 HELP_POSITION_ARGS[0]="{all | project_name}..."
 
@@ -65,6 +69,20 @@ function _decide_compiler() {
     return 1
 }
 
+function _get_commit() {
+    local _commit=`git show | grep commit | awk '{print $NF}'`
+    COMMIT_ID=${_commit:0:7}
+}
+
+function _git_update() {
+    if [[ ${UPDATE_GIT} -ne 1 ]]; then
+        _get_commit
+        return
+    fi
+
+    git checkout . && git pull && _get_commit
+}
+
 function _npm_compile() {
     local _project_base_dir=`pwd`
     local _project_base_name
@@ -73,6 +91,13 @@ function _npm_compile() {
         _project_base_name=$(basename `pwd`)
 
         info "start to build project: ${_project_base_name}"
+
+        _git_update
+
+        if [[ x"${COMMIT_ID}" == "x" ]]; then
+            error "fail to get current commit id."
+            exit 1
+        fi
 
         # to fix websocket connection address
         local _origin_file="src/routes/transaction/index.js"
@@ -125,6 +150,13 @@ EOF
 
         info "start to build project: ${_project_base_name}"
 
+        _git_update
+
+        if [[ x"${COMMIT_ID}" == "x" ]]; then
+            error "fail to get current commit id."
+            exit 1
+        fi
+
         if [[ -d conf ]]; then
             _env_arg="-Denv=dev"
         fi
@@ -170,8 +202,11 @@ EOF
     popd >/dev/null
 }
 
-while getopts :h FLAG; do
+while getopts :uh FLAG; do
     case $FLAG in
+        u)
+            UPDATE_GIT=1
+        ;;
         h)
             help_message >&2
             list_dir "${COMPILE_BASE}" >&2
