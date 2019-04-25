@@ -178,6 +178,9 @@ function _npm_compile() {
             error "publishing ${_project_base_name}[${COMMIT_ID}] failed."
             exit 1
         fi
+
+        echo -n "version: ${COMMIT_ID}" > "${_project_pub_dir}/version"
+
         nginx-pub data ${PUB_MAPPER[$_project_base_name]}
     popd &>/dev/null
 }
