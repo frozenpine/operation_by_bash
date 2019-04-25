@@ -188,7 +188,7 @@ EOF
 
             local _log4j2_ext
             local _log4j2_origin=`ls ${module}/src/main/resources/log4j2* 2>/dev/null`
-            if [[ $? -eq 0 ]]; then
+            if [[ x"${_log4j2_origin}" != "x" ]]; then
                 _log4j2_ext=`echo ${_log4j2_origin} | cut -d'.' -f2`
             else
                 _log4j2_ext=xml
