@@ -75,6 +75,17 @@ function _get_commit() {
 }
 
 function _git_update() {
+    git branch | grep master &>/dev/null
+    if [[ $? -ne 0 ]]; then
+        warning "current branch is not master, checkout to master."
+        git checkout master
+
+        if [[ $? -ne 0 ]]; then
+            error "check out to master failed."
+            exit 1
+        fi
+    fi
+
     if [[ ${UPDATE_GIT} -ne 1 ]]; then
         _get_commit
         return
