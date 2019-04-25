@@ -26,3 +26,7 @@ sleep 1
 ${BASE_DIR}/trade start
 sleep 1
 ${BASE_DIR}/trade status
+sleep 1
+${BASE_DIR}/market start
+sleep 1
+${BASE_DIR}/market status
