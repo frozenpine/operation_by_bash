@@ -1,0 +1,22 @@
+diff --git a/src/routes/transaction/index.js b/src/routes/transaction/index.js
+index 651340d..c2a5834 100644
+--- a/src/routes/transaction/index.js
++++ b/src/routes/transaction/index.js
+@@ -302,12 +302,11 @@ class Index extends Component {
+             type: "instrument/save",
+             payload: { symbolCurrent: symbol }
+         })
+-        console.log(process.env.NODE_ENV)
+-        if(process.env.NODE_ENV === 'development'){//开发环境
+-            this.ws = new webSocket("ws://192.168.1.22:9988", null, { breatheParams: "ping", reconnectInterval: 600000, timeoutInterval: 10000, debugger: false });
+-        }else{//部署环境
+-            this.ws = new webSocket("ws://192.168.1.22:9988", null, { breatheParams: "ping", reconnectInterval: 600000, timeoutInterval: 10000, debugger: false });
+-        }
++	    // this.ws = new webSocket("ws://192.168.1.22:9988", null, { breatheParams: "ping", reconnectInterval: 600000, timeoutInterval: 10000, debugger: false });
++	    var websocket_proto = document.location.protocol === "https:"? "wss://" : "ws://"
++        var websocket_url = websocket_proto + document.location.host + "/realtime"
++        console.log("websocket:" + websocket_url)
++        this.ws = new webSocket(websocket_url, null, { breatheParams: "ping", reconnectInterval: 600000, timeoutInterval: 10000, debugger: false });
+         // this.ws = new webSocket("wss://testnet.bitmex.com/realtime", null, { breatheParams: "ping", reconnectInterval: 600000, timeoutInterval: 10000, debugger: false });
+         this.ws.onopen = (evt) => {
+             this.firstRender = true;

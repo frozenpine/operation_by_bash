@@ -74,6 +74,17 @@ function _npm_compile() {
 
         info "start to build project: ${_project_base_name}"
 
+        # to fix websocket connection address
+        local _origin_file="src/routes/transaction/index.js"
+        local _patch_file="${TEMPLATE_BASE}/365MEX/patch.diff"
+        if [[ -f "${_origin_file}" && -f "${_patch_file}" ]]; then
+            git apply --check "${_patch_file}" && git apply "${_patch_file}"
+            if [[ $? -ne 0 ]]; then
+                error "patch index.js for websocket address fix failed."
+                exit 1
+            fi
+        fi
+
         npm install && npm run build
         
         if [[ $? -ne 0 ]]; then
@@ -82,8 +93,8 @@ function _npm_compile() {
         fi
 
         local _tar_file="${_project_base_name}_`date '+%Y%m%d%H%M%S'`.tar.gz"
-        cd build && tar -czvf "${_tar_file}" . --exclude "*.tar.gz" >/dev/null
-        ls -l "${_tar_file}"
+        cd build && tar -czvf "${_tar_file}" . --exclude "*.tar.gz" &>/dev/null
+        ls -l --color=auto "${_tar_file}"
     popd &>/dev/null
 }
 
