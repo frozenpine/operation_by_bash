@@ -61,8 +61,8 @@ docker run -d \
     -v "${CONTAINER_BASE}/log":/${NAME}/logs \
     registry:5000/trade$1/${NAME}:${VERSION} \
         ${JVM_OPTS} \
+        -Dlog.level.root=${LOG_LEVEL:=info} \
         -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
-        --log.level.root=${LOG_LEVEL:=info} \
         --logging.level.com.quantdo.trade=${LOG_LEVEL:=info} \
         --server.address=${SELF_IP} \
         --server.port=${CLEAR_PORT} \

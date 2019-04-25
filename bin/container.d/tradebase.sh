@@ -113,8 +113,8 @@ docker run -d \
     -v "${CONTAINER_BASE}/log":/${NAME}/logs \
     registry:5000/service/${NAME}:${VERSION} \
         ${JVM_OPTS} \
+        -Dlog.level.root=${LOG_LEVEL:=info} \
         -jar /${NAME}/service-${NAME}-${VERSION}.jar \
-        --log.level.root=${LOG_LEVEL:=info} \
         --server.port=${TRADEBASE_PORT} \
         --spring.cloud.consul.host=${CONSUL_HOST} \
         --spring.cloud.consul.port=${CONSUL_PORT} \

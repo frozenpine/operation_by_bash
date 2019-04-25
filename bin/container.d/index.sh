@@ -107,8 +107,8 @@ docker run -d \
     -v "${CONTAINER_BASE}/log":/${NAME}/logs \
     registry:5000/service/${NAME}:${VERSION} \
         ${JVM_OPTS} \
+        -Dlog.level.root=${LOG_LEVEL:=info} \
         -jar /${NAME}/service-${NAME}-${VERSION}.jar \
-        --log.level.root=${LOG_LEVEL:=info} \
         --logging.level.com.quantdo.market.service.impl=${LOG_LEVEL:=warning} \
         --logging.level.com.quantdo.market.service.ws=${LOG_LEVEL:=warning} \
         --spring.cloud.consul.host=${CONSUL_HOST} \

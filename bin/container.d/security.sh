@@ -83,8 +83,8 @@ docker run -d \
     -v "${CONTAINER_BASE}/log":/${NAME}/logs \
     registry:5000/digital/${NAME}:${VERSION} \
         ${JVM_OPTS} \
+        -Dlog.level.root=${LOG_LEVEL:=info} \
         -jar /${NAME}/digital-${NAME}-${VERSION}.jar \
-        --log.level.root=${LOG_LEVEL:=info} \
         --server.port=$((DIGITAL_PORT-1)) \
         --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?characterEncoding=utf-8" \
         --spring.datasource.username="${DB_USER:=$DEFAULT_DB_USER}" \
