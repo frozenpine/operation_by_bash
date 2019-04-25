@@ -249,9 +249,11 @@ EOF
 
             case ${_log4j2_ext} in
                 yml)
+                    LOG_FILE_NAME=${module}
                     template "${TEMPLATE_BASE}/log4j2/log4j2.yml.template" "${_log4j2_file}"
                 ;;
                 xml)
+                    LOG_FILE_NAME=${module}
                     template "${TEMPLATE_BASE}/log4j2/log4j2.xml.template" "${_log4j2_file}"
                 ;;
                 *)

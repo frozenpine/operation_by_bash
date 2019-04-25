@@ -15,7 +15,7 @@ Configuration:
     - name: log.path
       value: log
     - name: project.name
-      value: digital-serviceimpl
+      value: ${LOG_FILE_NAME}
     - name: log.pattern
       value: "%-d{yyyy-MM-dd HH:mm:ss,SSS}-[%l]-[%p] \${PID:-} %m%n"
   Appenders:

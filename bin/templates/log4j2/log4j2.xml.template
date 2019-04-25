@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration status="info" packages="org.apache.logging.log4j.core,io.sentry.log4j2">
     <Properties>
-        <property name="application">query</property>
+        <property name="application">${LOG_FILE_NAME}</property>
         <property name="file_duration">\${sys:LOG_FILE_DURATION:-\${env:LOG_FILE_DURATION:-10d}}</property>
         <property name="file_size">\${sys:LOG_FILE_SIZE:-\${env:LOG_FILE_SIZE:-500M}}</property>
         <property name="file_count">\${sys:LOG_FILE_COUNT:-\${env:LOG_FILE_COUNT:-10}}</property>Duration
