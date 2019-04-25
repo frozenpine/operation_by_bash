@@ -163,6 +163,7 @@ while getopts :h FLAG; do
     case $FLAG in
         h)
             help_message >&2
+            list_dir "${COMPILE_BASE}" >&2
             exit
         ;;
         *)
