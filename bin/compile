@@ -65,6 +65,24 @@ function _decide_compiler() {
     return 1
 }
 
+function _npm_compile() {
+    local _project_base_dir=`find . -maxdepth 2 -type f -name pom.xml | xargs dirname | head -1`
+    local _project_base_name
+
+    pushd "${_project_base_dir}" >/dev/null
+        _project_base_name=$(basename `pwd`)
+
+        npm install && npm run build
+        
+        if [[ $? -ne 0 ]]; then
+            error "project[${_project_base_name}] build failed."
+            exit 1
+        fi
+
+        cd build && tar -czvf "${_project_base_name}_`date '+%Y%m%d%H%M%S'`.tar.gz" . --exclude "*.tar.gz"
+    popd &>/dev/null
+}
+
 function _mvn_compile() {
     local _project_base_dir=`find . -maxdepth 2 -type f -name pom.xml | xargs dirname | head -1`
     local _project_base_name
@@ -79,6 +97,17 @@ function _mvn_compile() {
     pushd "${_project_base_dir}" >/dev/null
         _project_base_name=$(basename `pwd`)
 
+        if [[ x"${JAVA_MODULE_DEFINE[$_project_base_name]}" == "x" ]]; then
+            cat<<EOF | error
+not supported project: ${_project_base_name}
+please upgrade this \`compile\` command to support new project.
+
+contact: journeyblue@163.com or sonny.frozenpine@gmail.com
+git repo: https://github.com/frozenpine/operation_by_bash
+EOF
+            exit 1
+        fi
+
         if [[ -d conf ]]; then
             _env_arg="-Denv=dev"
         fi
@@ -91,7 +120,7 @@ function _mvn_compile() {
                 exit 1
             fi
 
-            ${SUDO} sed -i '/<dependencies>/ a \         <dependency>\n            <groupId>io.sentry</groupId>\n            <artifactId>sentry-log4j2</artifactId>\n            <version>1.7.16</version>\n        </dependency>' "${_pom_file}"
+            ${SUDO} sed -i '/<dependencies>/ a \        <dependency>\n            <groupId>io.sentry</groupId>\n            <artifactId>sentry-log4j2</artifactId>\n            <version>1.7.16</version>\n        </dependency>' "${_pom_file}"
 
             local _log4j2_origin=`ls ${module}/src/main/resources/log4j2*`
             local _log4j2_ext=`echo ${_log4j2_origin} | cut -d'.' -f2`
@@ -116,6 +145,11 @@ function _mvn_compile() {
         done
 
         mvn clean package -DskipTests=true ${_env_arg} -U
+
+        if [[ $? -ne 0 ]]; then
+            error "project[${_project_base_name}] build failed."
+            exit 1
+        fi
     popd >/dev/null
 }
 
@@ -140,7 +174,7 @@ if [[ $# -lt 1 ]]; then
 fi
 
 if [[ $* =~ all ]]; then
-    PROJECTS="${!JAVA_MODULE_DEFINE[@]}"
+    PROJECTS=`find "${COMPILE_BASE}" -maxdepth 1 -type d -not -name "${COMPILE_BASE}" -exec basename {} \; | xargs`
 else
     PROJECTS="$*"
 fi
