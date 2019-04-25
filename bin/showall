@@ -22,9 +22,9 @@ while getopts :uh FLAG; do
 done
 shift $((OPTIND-1))
 
-${BASE_DIR}/zk check
+${BASE_DIR}/zk status
 
-${BASE_DIR}/kfk check
+${BASE_DIR}/kfk status
 
 ${BASE_DIR}/trade status
 
