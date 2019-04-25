@@ -21,7 +21,7 @@ MAVEN_MIRROR_PORT=8181
 UPDATE_GIT=0
 COMMIT_ID=
 
-HELP_ARGS["-u"]="optional,Pull lastest update from github@master."
+HELP_ARGS["u"]="optional,Pull lastest update from github@master."
 
 HELP_POSITION_ARGS[0]="{all | project_name}..."
 
