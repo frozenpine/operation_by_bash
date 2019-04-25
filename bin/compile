@@ -269,7 +269,7 @@ EOF
             return
         fi
 
-        local _project_version=`sed -n '/<version>.*<\/version>/ s/'"[[:space:]]"'*<version>\(.*\)<\/version>/\1/p; ' pom.xml`
+        local _project_version=`sed -n '/<version>.*<\/version>/ s/'"[[:space:]]"'*<version>\(.*\)<\/version>/\1/p;' pom.xml | head -1`
 
         for module in ${JAVA_MODULE_DEFINE[$_project_base_name]}; do
             if [[ x"${PUB_MAPPER[$module]}" == "x" ]]; then
