@@ -192,7 +192,7 @@ if [[ $# -lt 1 ]]; then
 fi
 
 if [[ $* =~ all ]]; then
-    PROJECTS=`find "${COMPILE_BASE}" -maxdepth 1 -type d -not -name "${COMPILE_BASE}" -exec basename {} \; | xargs`
+    PROJECTS=$(find "${COMPILE_BASE}" -maxdepth 1 -type d -not -name `basename "${COMPILE_BASE}"` -exec basename {} \; | xargs)
 else
     PROJECTS="$*"
 fi
