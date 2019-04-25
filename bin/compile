@@ -19,6 +19,8 @@ JAVA_MODULE_DEFINE["service-management"]="exchange-index-server scheduler-server
 
 MAVEN_MIRROR_PORT=8181
 
+HELP_POSITION_ARGS[0]="{all | project_name}..."
+
 function _check_compiler() {
     if [[ $# -lt 1 ]]; then
         error "compiler name missing."
