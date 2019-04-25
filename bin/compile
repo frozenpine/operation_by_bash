@@ -244,6 +244,7 @@ EOF
                 _log4j2_ext=`echo ${_log4j2_file} | cut -d'.' -f2`
             else
                 _log4j2_ext=xml
+                _log4j2_file="${module}/src/main/resources/log4j2.xml"
             fi
 
             case ${_log4j2_ext} in
@@ -251,7 +252,7 @@ EOF
                     template "${TEMPLATE_BASE}/log4j2/log4j2.yml.template" "${_log4j2_file}"
                 ;;
                 xml)
-                    template "${TEMPLATE_BASE}/log4j2/log4j2.yml.template" "${_log4j2_file}"
+                    template "${TEMPLATE_BASE}/log4j2/log4j2.xml.template" "${_log4j2_file}"
                 ;;
                 *)
                     error "invalid log4j2 config file found: ${_log4j2_file}"
