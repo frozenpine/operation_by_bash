@@ -124,6 +124,13 @@ function _npm_compile() {
             fi
         fi
 
+        local _tar_file="${_project_base_name}_${COMMIT_ID}.tar.gz"
+
+        if [[ -f "build/${_tar_file}" ]]; then
+            info "project ${_project_base_name}[${COMMIT_ID}]'s build aleady exist, skip building."
+            return
+        fi
+
         npm install && npm run build
         
         if [[ $? -ne 0 ]]; then
@@ -131,7 +138,6 @@ function _npm_compile() {
             exit 1
         fi
 
-        local _tar_file="${_project_base_name}_`date '+%Y%m%d%H%M%S'`.tar.gz"
         cd build && tar -czvf "${_tar_file}" . --exclude "*.tar.gz" &>/dev/null
         ls -l --color=auto "${_tar_file}"
     popd &>/dev/null
