@@ -258,6 +258,10 @@ EOF
                     exit 1
                 ;;
             esac
+
+            find ${module}/src/main/resources -type f -name "*.properties" | while read FILE; do
+                ${SUDO} sed -i '/spring.redis.password=/ d' ${FILE}
+            done
         done
 
         mvn clean package -DskipTests=true ${_env_arg} -U
