@@ -22,6 +22,7 @@ UPDATE_GIT=0
 COMMIT_ID=
 
 HELP_ARGS["u"]="optional,Pull lastest update from master@github."
+HELP_ARGS["c:npm|mvn"]="optional,Specify compiler type for project, and ignore all others."
 
 HELP_POSITION_ARGS[0]="{all | project_name}..."
 
@@ -135,7 +136,7 @@ function _npm_compile() {
 }
 
 function _mvn_compile() {
-    local _project_base_dir=`find . -maxdepth 2 -type f -name pom.xml | xargs dirname | head -1`
+    local _project_base_dir=`find . -maxdepth 2 -type f -name pom.xml -exec dirname {} \; | sort | head -1`
     local _project_base_name
     local _env_arg
 
@@ -150,7 +151,7 @@ function _mvn_compile() {
 
         if [[ x"${JAVA_MODULE_DEFINE[$_project_base_name]}" == "x" ]]; then
             cat<<EOF | error
-not supported project: ${_project_base_name}
+not supported project: ${_project_base_name} `pwd`
 please upgrade this \`compile\` command to support new project.
 
 contact: journeyblue@163.com or sonny.frozenpine@gmail.com
@@ -222,10 +223,17 @@ EOF
     popd >/dev/null
 }
 
-while getopts :uh FLAG; do
+while getopts :c:uh FLAG; do
     case $FLAG in
         u)
             UPDATE_GIT=1
+        ;;
+        c)
+            WANTED_COMPILER=${OPTARG}
+            if [[ ! ${WANTED_COMPILER} =~ npm|mvn ]]; then
+                error "invalid compiler specified: ${WANTED_COMPILER}"
+                exit 1
+            fi
         ;;
         h)
             help_message >&2
@@ -263,6 +271,11 @@ for PRJ in ${PROJECTS}; do
     pushd "${COMPILE_DIR}" &>/dev/null
 
         COMPILER=`_decide_compiler`
+
+        if [[ x"${WANTED_COMPILER}" != "x" && ${COMPILER} != ${WANTED_COMPILER} ]]; then
+            warning "project[${PRJ}] compiler not satisfied."
+            continue
+        fi
 
         _check_compiler ${COMPILER}
 
