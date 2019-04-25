@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="info" packages="org.apache.logging.log4j.core,io.sentry.log4j2">
+    <Properties>
+        <property name="application">query</property>
+        <property name="file_duration">\${sys:LOG_FILE_DURATION:-\${env:LOG_FILE_DURATION:-10d}}</property>
+        <property name="file_size">\${sys:LOG_FILE_SIZE:-\${env:LOG_FILE_SIZE:-500M}}</property>
+        <property name="file_count">\${sys:LOG_FILE_COUNT:-\${env:LOG_FILE_COUNT:-10}}</property>Duration
+        <property name="file_location">\${sys:LOG_FILE_LOCATION:-\${env:LOG_FILE_LOCATION:-logs}}</property>
+        <property name="pattern">%d{yyyy-MM-dd HH:mm:ss }%-5level %c{1.} %L %M - %msg%xEx%n</property>
+        <property name="file">\${file_location}/\${application}.log</property>
+        <property name="rolling-file">\${file_location}/%d{yyyy-MM-dd}/\${application}-%d{yyyy-MM-dd}-%i.log.gz</property>
+        <property name="file-size">\${file_size}</property>
+    </Properties>
+    <appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss }%-5level %c{1.} %L %M - %msg%xEx%n" />
+        </Console>
+        
+        <RollingFile name="RollingFile" fileName="\${file}" filePattern="\${rolling-file}" append="true">
+            <PatternLayout pattern="\${pattern}"/>
+
+            <Policies>
+                <OnStartupTriggeringPolicy/>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="\${file-size}"/>
+            </Policies>
+
+            <DefaultRolloverStrategy max="\${file_count}">
+                <Delete basePath="\${file_location}" maxDepth="2">
+                    <IfFileName glob="*/\${application}*.log.gz"/>
+                    <IfLastModified age="\${file_duration}"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+        
+        <Sentry name="Sentry" />
+    </appenders>
+
+    <loggers>
+        <root level="INFO">
+            <!-- <appender-ref ref="Console" /> -->
+            <AppenderRef ref="RollingFile" level="\${sys:log.level.root}"/>
+            <!-- Note that the Sentry logging threshold is overridden to the WARN level -->
+            <appender-ref ref="Sentry" level="WARN" />
+        </root>
+    </loggers>
+</configuration>
