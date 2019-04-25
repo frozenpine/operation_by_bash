@@ -1,0 +1,163 @@
+#!/bin/bash
+
+[[ -L $0 ]] && SCRIPT_FILE=`readlink -fn $0` || SCRIPT_FILE=$0
+pushd `dirname "${SCRIPT_FILE}"` >/dev/null
+BASE_DIR=`pwd`
+popd >/dev/null
+
+source "${BASE_DIR}/module.d/common.sh" || exit 1
+
+FUNC_FILE_TEMPLATE="${MODULE_BASE}/template.sh"
+import_functions
+
+COMPILE_BASE="${DATA_BASE:=/opt}/build"
+
+declare -A JAVA_MODULE_DEFINE
+JAVA_MODULE_DEFINE["digital"]="digital-rest digital-serviceimpl"
+JAVA_MODULE_DEFINE["trade-system"]="trade-clear-database trade-clear-memory trade-match trade-order trade-query"
+JAVA_MODULE_DEFINE["service-management"]="exchange-index-server scheduler-server sms-mail-server trade-base"
+
+MAVEN_MIRROR_PORT=8181
+
+function _check_compiler() {
+    if [[ $# -lt 1 ]]; then
+        error "compiler name missing."
+        exit 1
+    fi
+
+    local _compiler=$1
+
+    which ${_compiler} &>/dev/null
+    if [[ $? -ne 0 ]]; then
+        error "\`${_compiler}\` command missing, stop compiling."
+        exit 1
+    fi
+}
+
+function _decide_compiler() {
+    ls npm* &>/dev/null && {
+        echo -n npm
+        return
+    }
+
+    ls yarn.lock &>/dev/null && {
+        echo -n npm
+        return
+    }
+
+    ls package*.json &>/dev/null && {
+        echo -n npm
+        return
+    }
+
+    ls pom.xml &>/dev/null && {
+        echo -n mvn
+        return
+    }
+
+    ls */pom.xml &>/dev/null && {
+        echo -n mvn
+        return
+    }
+
+    return 1
+}
+
+function _mvn_compile() {
+    local _project_base_dir=`find . -maxdepth 2 -type f -name pom.xml | xargs dirname | head -1`
+    local _project_base_name
+    local _env_arg
+
+    netstat -tnl | grep :${MAVEN_MIRROR_PORT} | grep LISTEN
+    if [[ $? -ne 0 ]]; then
+        warning "maven mirror port for js local repository not open."
+        confirm -t 10 || exit 1
+    fi
+    
+    pushd "${_project_base_dir}" >/dev/null
+        _project_base_name=$(basename `pwd`)
+
+        if [[ -d conf ]]; then
+            _env_arg="-Denv=dev"
+        fi
+
+        for module in ${JAVA_MODULE_DEFINE[$_project_base_name]}; do
+            local _pom_file="${module}/pom.xml"
+            
+            if [[ ! -f "${_pom_file}" ]]; then
+                error "pom.xml missing in ${_project_base_dir} ${module}"
+                exit 1
+            fi
+
+            ${SUDO} sed -i '/<dependencies>/ a \         <dependency>\n            <groupId>io.sentry</groupId>\n            <artifactId>sentry-log4j2</artifactId>\n            <version>1.7.16</version>\n        </dependency>' "${_pom_file}"
+
+            local _log4j2_origin=`ls ${module}/src/main/resources/log4j2*`
+            local _log4j2_ext=`echo ${_log4j2_origin} | cut -d'.' -f2`
+            local _log4j2_file="${module}/src/main/resources/log4j2.${_log4j2_ext}"
+
+            case ${_log4j2_ext} in
+                yml)
+                    template "${TEMPLATE_BASE}/log4j2/log4j2.yml.template" "${_log4j2_file}"
+                ;;
+                xml)
+                    template "${TEMPLATE_BASE}/log4j2/log4j2.yml.template" "${_log4j2_file}"
+                ;;
+                *)
+                    error "invalid log4j2 config file found: ${_log4j2_origin}"
+                    exit 1
+                ;;
+            esac
+
+            if [[ "${_log4j2_origin}" != "${_log4j2_file}" ]]; then
+                ${SUDO} rm -f "${_log4j2_origin}"
+            fi
+        done
+
+        mvn clean package -DskipTests=true ${_env_arg} -U
+    popd >/dev/null
+}
+
+while getopts :h FLAG; do
+    case $FLAG in
+        h)
+            help_message >&2
+            exit
+        ;;
+        *)
+            error "invalid args for compile: $*"
+            exit 1
+        ;;
+    esac
+done
+shift $((OPTIND))
+
+if [[ $# -lt 1 ]]; then
+    error "project name misssing for compile."
+    list_dir "${COMPILE_BASE}" >&2
+    exit 1
+fi
+
+if [[ $* =~ all ]]; then
+    PROJECTS="${!JAVA_MODULE_DEFINE[@]}"
+else
+    PROJECTS="$*"
+fi
+
+for PRJ in ${PROJECTS}; do
+    COMPILE_DIR="${COMPILE_BASE}/${PRJ}"
+    
+    if [[ ! -d "${COMPILE_DIR}" ]]; then
+        error "invalid project name: ${PRJ}"
+        exit 1
+    fi
+
+    pushd "${COMPILE_DIR}" &>/dev/null
+
+        COMPILER=`_decide_compiler`
+
+        _check_compiler ${COMPILER}
+
+        eval _${COMPILER}_compile
+
+    popd &>/dev/null
+done
