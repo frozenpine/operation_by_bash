@@ -87,12 +87,14 @@ function _git_update() {
         fi
     fi
 
+    git checkout .
+
     if [[ ${UPDATE_GIT} -ne 1 ]]; then
         _get_commit
         return
     fi
 
-    git checkout . && git pull && _get_commit
+    git pull && _get_commit
 }
 
 function _npm_compile() {
