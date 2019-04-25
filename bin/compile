@@ -190,13 +190,12 @@ EOF
             fi
 
             local _log4j2_ext
-            local _log4j2_origin=`ls ${module}/src/main/resources/log4j2* 2>/dev/null`
-            if [[ x"${_log4j2_origin}" != "x" ]]; then
-                _log4j2_ext=`echo ${_log4j2_origin} | cut -d'.' -f2`
+            local _log4j2_file=`ls ${module}/src/main/resources/log4j2* 2>/dev/null`
+            if [[ x"${_log4j2_file}" != "x" ]]; then
+                _log4j2_ext=`echo ${_log4j2_file} | cut -d'.' -f2`
             else
                 _log4j2_ext=xml
             fi
-            local _log4j2_file="${module}/src/main/resources/log4j2.${_log4j2_ext}"
 
             case ${_log4j2_ext} in
                 yml)
@@ -206,14 +205,10 @@ EOF
                     template "${TEMPLATE_BASE}/log4j2/log4j2.yml.template" "${_log4j2_file}"
                 ;;
                 *)
-                    error "invalid log4j2 config file found: ${_log4j2_origin}"
+                    error "invalid log4j2 config file found: ${_log4j2_file}"
                     exit 1
                 ;;
             esac
-
-            if [[ "${_log4j2_origin}" != "${_log4j2_file}" ]]; then
-                ${SUDO} rm -f "${_log4j2_origin}"
-            fi
         done
 
         mvn clean package -DskipTests=true ${_env_arg} -U
