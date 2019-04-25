@@ -44,7 +44,7 @@ while getopts :c:h FLAG; do
             MASTER_PORT=${OPTARG}
         ;;
         h)
-            _help >&2
+            help_message >&2
             exit
         ;;
         *)

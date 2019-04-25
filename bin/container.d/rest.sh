@@ -86,12 +86,12 @@ docker run -d \
     --network host \
     --user `grep ${USER} /etc/passwd | cut -d':' -f3` \
     -e SENTRY_DSN="${SENTRY_DSN}" \
-    -e LOG_LEVEL_ROOT="${LOG_LEVEL:=warning}" \
     -v "${CONTAINER_BASE}/log":/${NAME}/log \
     -v "${CONTAINER_BASE}/data":/${NAME}/data \
     registry:5000/digital/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/digital-${NAME}-${VERSION}.jar \
+        --log.level.root=${LOG_LEVEL:=info} \
         --server.port="${DIGITAL_PORT}" \
         --spring.redis.host="${REDIS_HOST}" \
         --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?characterEncoding=utf-8" \

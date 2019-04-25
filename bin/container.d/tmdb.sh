@@ -92,13 +92,12 @@ docker run -d \
     --network host \
     --user `grep ${USER} /etc/passwd | cut -d':' -f3` \
     -e SENTRY_DSN="${SENTRY_DSN}" \
-    -e LOG_LEVEL_ROOT="${LOG_LEVEL:=warning}" \
     -v "${CONTAINER_BASE}/log":/${NAME}/logs \
     registry:5000/trade$1/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
-        --logging.level.root=${LOG_LEVEL:=warning} \
-        --logging.level.com.quantdo.trade=${LOG_LEVEL:=warning} \
+        --log.level.root=${LOG_LEVEL:=info} \
+        --logging.level.com.quantdo.trade=${LOG_LEVEL:=info} \
         --server.address=${SELF_IP} \
         --server.port=${TMDB_PORT} \
         --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&connectionCollation=utf8_general_ci&useSSL=false&serverTimezone=Asia/Shanghai" \

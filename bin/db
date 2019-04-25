@@ -140,7 +140,7 @@ while getopts :H:u:p:P:Dh FLAG; do
             GROUP_NAME=${OPTARG}
         ;;
         h)
-            _help >&2
+            help_message >&2
             exit 
         ;;
         *)

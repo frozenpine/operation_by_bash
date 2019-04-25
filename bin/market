@@ -195,7 +195,7 @@ function _deploy() {
 while getopts :Dh FLAG; do
     case $FLAG in
         h)
-            _help >&2
+            help_message >&2
             exit
         ;;
         *)

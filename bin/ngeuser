@@ -164,7 +164,7 @@ while getopts :u:p:d:g:h FLAG; do
             PYLOAD_GROUP=${OPTARG}
         ;;
         h)
-            _help >&2
+            help_message >&2
             exit
         ;;
         *)

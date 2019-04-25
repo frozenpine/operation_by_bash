@@ -165,7 +165,7 @@ while getopts :H:u:p:Dh FLAG; do
             MANAGE_GROUP=${OPTARG}
         ;;
         h)
-            _help >&2
+            help_message >&2
             exit
         ;;
         *)

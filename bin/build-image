@@ -110,7 +110,7 @@ while getopts :b:cpfDh FLAG; do
             BUILD_DIR="${BUILD_BASE}/${BUILD_NAME}"
         ;;
         h)
-            _help
+            help_message
             _extra_help
             exit
         ;;

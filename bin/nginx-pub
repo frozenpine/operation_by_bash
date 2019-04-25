@@ -95,7 +95,7 @@ while getopts :g:Drh FLAG; do
             RELOAD=1
         ;;
         h)
-            _help >&2
+            help_message >&2
             exit
         ;;
         *)

@@ -42,7 +42,7 @@ while getopts :H:C:h FLAG; do
             MASTER_IP=${OPTARG}
         ;;
         h)
-            _help >&2
+            help_message >&2
             exit
         ;;
         *)

@@ -239,11 +239,11 @@ while getopts :dh FLAG; do
             DEAMON=1
         ;;
         h)
-            _help
+            help_message
             exit
         ;;
         *)
-            _help >&2
+            help_message >&2
             exit 1
         ;;
     esac

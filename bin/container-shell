@@ -27,7 +27,7 @@ while getopts :H:u:p:s:h FLAG; do
             SHELL_ARG="-s ${OPTARG}"
         ;;
         h)
-            _help >&2
+            help_message >&2
             exit
         ;;
         *)

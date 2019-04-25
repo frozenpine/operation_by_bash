@@ -10,12 +10,12 @@ source "${BASE_DIR}/module.d/common.sh" || exit 1
 while getopts :uh FLAG; do
     case $FLAG in
         h)
-            _help >&2
+            help_message >&2
             exit
         ;;
         *)
             error "invalid args: $*"
-            _help >&2
+            help_message >&2
             exit 1
         ;;
     esac

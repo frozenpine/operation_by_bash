@@ -39,7 +39,7 @@ while getopts :dh FLAG; do
             DRY_RUN="echo"
         ;;
         h)
-            _help
+            help_message
             exit 1
         ;;
         *)

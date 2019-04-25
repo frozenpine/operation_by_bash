@@ -37,12 +37,12 @@ while getopts :u:H:p:g:Dh FLAG; do
             DRY_RUN="echo"
         ;;
         h)
-            _help >&2
+            help_message >&2
             exit
         ;;
         *)
             error "invalid args: $*"
-            _help >&2
+            help_message >&2
             exit 1
         ;;
     esac

@@ -223,3 +223,49 @@ function stop_container() {
         fi
     fi
 }
+
+function build_image() {
+    if [[ $# -lt 1 ]]; then
+        error "module name missing in build image."
+        exit 1
+    fi
+
+    which template &>/dev/null
+    if [[ $? -ne 0 ]]; then
+        FUNC_FILE_TEMPLATE="${MODULE_BASE}/template.sh"
+        import_functions
+    fi
+
+    BUILD_BASE="${DATA_BASE:=/opt}/docker-hub"
+    BUILD_DIR=
+    BUILD_NAME=
+
+    local OPTIND FLAG
+    while getopts :b:cpfh FLAG; do
+        case $FLAG in
+            c)
+                CLEAN_LOCAL=1
+            ;;
+            p)
+                PUSH_REGISTRY=1
+            ;;
+            f)
+                FORCE=1
+            ;;
+            b)
+                BUILD_NAME=${OPTARG}
+                BUILD_DIR="${BUILD_BASE}/${BUILD_NAME}"
+            ;;
+            h)
+                help_message
+                _extra_help
+                exit
+            ;;
+            *)
+                error "invalid args: $*"
+                exit 1
+            ;;
+        esac
+    done
+    shift $((OPTIND-1))
+}

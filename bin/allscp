@@ -43,12 +43,12 @@ while getopts :u:H:p:g:Drh FLAG; do
             RECURSIVE="-r"
         ;;
         h)
-            _help >&2
+            help_message >&2
             exit
         ;;
         *)
             error "invalid args: $*"
-            _help >&2
+            help_message >&2
             exit 1
         ;;
     esac

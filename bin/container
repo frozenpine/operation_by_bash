@@ -51,11 +51,11 @@ function shell() {
 while getopts :h FLAG; do
     case $FLAG in
         h)
-            _help >&2
+            help_message >&2
             exit
         ;;
         *)
-            _help >&2
+            help_message >&2
             exit 1
         ;;
     esac

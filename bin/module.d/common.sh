@@ -359,7 +359,7 @@ function _trim_line() {
     done
 }
 
-function _help() {
+function help_message() {
     local _CMD
     local _ARG_LIST
     local _POSITION_ARG_LIST
@@ -547,4 +547,34 @@ function check_env_true() {
     fi
 
     return 1
+}
+
+function list_dir() {
+    if [[ $# -ne 1 ]]; then
+        error "base dir missing in list dir."
+        exit 1
+    fi
+    
+    local _idx=1
+    local _base_dir=$1
+
+    if [[ ! -d "${_base_dir}" ]]; then
+        error "path[${_base_dir}] is not a directory."
+        exit 1
+    fi
+    
+    echo
+    echo "Available {dir_name}: "
+
+    find "${_base_dir}" -maxdepth 1 -type d -not -name "`basename ${_base_dir}`" -exec basename {} \; | \
+        while read _dir_name; do
+            if [[ ${_idx} -lt 100 ]]; then
+                _space_width=4
+            else
+                _space_width=$((6-${#_idx}))
+            fi
+
+            printf "%${_space_width}s%02d. %s\n" " " "${_idx}" "${_dir_name}"
+            _idx=$((_idx+1))
+        done
 }

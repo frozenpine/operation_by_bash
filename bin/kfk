@@ -224,7 +224,7 @@ while getopts :hD FLAG; do
             DRY_RUN="echo"
         ;;
         h)
-            _help >&2
+            help_message >&2
             exit
         ;;
         *)

@@ -110,11 +110,11 @@ docker run -d \
     --restart no \
     --network host \
     -e SENTRY_DSN="${SENTRY_DSN}" \
-    -e LOG_LEVEL_ROOT="${LOG_LEVEL:=warning}" \
     -v "${CONTAINER_BASE}/log":/${NAME}/logs \
     registry:5000/service/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/service-${NAME}-${VERSION}.jar \
+        --log.level.root=${LOG_LEVEL:=info} \
         --server.port=${TRADEBASE_PORT} \
         --spring.cloud.consul.host=${CONSUL_HOST} \
         --spring.cloud.consul.port=${CONSUL_PORT} \
