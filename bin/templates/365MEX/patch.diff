@@ -1,15 +1,20 @@
 diff --git a/src/routes/transaction/index.js b/src/routes/transaction/index.js
-index de34e6d..bd7b4ce 100644
+index c70e7f6..b36cd49 100644
 --- a/src/routes/transaction/index.js
 +++ b/src/routes/transaction/index.js
-@@ -312,7 +312,11 @@ class Index extends Component {
-         if(process.env.NODE_ENV === 'development'){//开发环境
+@@ -308,7 +308,16 @@ class Index extends Component {
+         if (process.env.NODE_ENV === 'development') {//开发环境
              this.ws = new webSocket("ws://192.168.1.22:9988", null, { breatheParams: "ping", reconnectInterval: 600000, timeoutInterval: 10000, debugger: false });
-         }else{//部署环境
+         } else {//部署环境
 -            this.ws = new webSocket("ws://192.168.1.22:9988", null, { breatheParams: "ping", reconnectInterval: 600000, timeoutInterval: 10000, debugger: false });
 +            // this.ws = new webSocket("ws://192.168.1.22:9988", null, { breatheParams: "ping", reconnectInterval: 600000, timeoutInterval: 10000, debugger: false });
-+            var ws_proto = document.location.protocol === "https:" ? "wss:" : "ws:"
-+            var ws_url = ws_proto + "//" + document.location.host + "/realtime"
++            var ws_url = ""
++            if (document.location.host.startswith("192.168.")) {
++                ws_url = "ws://192.168.1.22:9988"
++            } else {
++                var ws_proto = document.location.protocol === "https:" ? "wss:" : "ws:"
++                ws_url = ws_proto + "//" + document.location.host + "/realtime"
++            }
 +            console.log(ws_url)
 +            this.ws = new webSocket(ws_url, null, { breatheParams: "ping", reconnectInterval: 600000, timeoutInterval: 10000, debugger: false });
          }
