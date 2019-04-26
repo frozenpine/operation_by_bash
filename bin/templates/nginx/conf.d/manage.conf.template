@@ -15,6 +15,13 @@ server {
         index  index.html index.htm;
     }
 
+    location = /version {
+        root   /var/lib/nginx/quant-coinMS;
+
+        auth_basic "Restricted";
+        auth_basic_user_file /var/lib/nginx/loginuser;
+    }
+
     location ^~  /sso/ {
         proxy_pass http://manage-front;
     }

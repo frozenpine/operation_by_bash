@@ -42,6 +42,13 @@ server {
         index  index.html index.htm;
     }
 
+    location = /version {
+        root   /var/lib/nginx/quant-coin;
+
+        auth_basic "Restricted";
+        auth_basic_user_file /var/lib/nginx/loginuser;
+    }
+
     location ^~ /api/v1/user {
         access_log  /var/log/nginx/trade.access.log  proxy;
 
