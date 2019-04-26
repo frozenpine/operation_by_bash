@@ -267,6 +267,7 @@ EOF
             done
         done
 
+        export COMMIT_ID
         mvn clean package -DskipTests=true ${_env_arg} -U
 
         if [[ $? -ne 0 ]]; then

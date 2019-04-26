@@ -1,5 +1,8 @@
 FROM registry:5000/openjdk:8u201-jre-alpine
 COPY . /${MODULE}
+LABEL repo=${REPO:=https://github.com/jisheng-cn/service-management.git} \
+      branch=${BRANCH:=master} \
+      commit=${COMMIT_ID:=UNKNOWN}
 WORKDIR /${MODULE}
 ENTRYPOINT ["java", "-XX:+UseG1GC", "-XX:MaxGCPauseMillis=100", "-Dfile.encoding=UTF-8"]
 CMD ["-jar", "/${MODULE}/service-${MODULE}-${VERSION}.jar"]
