@@ -205,7 +205,7 @@ _show_image_labels() {
     for IMG_NAME in ${!TAGS[@]}; do
         echo -n "\"${IMG_NAME}\": ["
         for TAG in ${TAGS[$IMG_NAME]}; do
-            echo -n "{\"${TAG}\": \"${LABELS[${IMG_NAME}:${TAG}]}\"}, "
+            echo -n "{\"${TAG}\": ${LABELS[${IMG_NAME}:${TAG}]}}, "
         done | sed 's/, $//'
         printf "], "
     done | sed 's/, $//'
