@@ -442,7 +442,7 @@ case $1 in
         fi
     ;;
     *)
-        _usage >&2
+        help_message >&2
         exit 1
     ;;
 esac
