@@ -4,9 +4,9 @@ spring:
     is-dynamic-datasource: true
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://172.16.10.215:3306/digital?characterEncoding=utf-8&amp;autoReconnect=true
+    url: jdbc:mysql://192.168.1.22:3306/digital?characterEncoding=utf-8&amp;autoReconnect=true
     username: trader
-    password: Jjs@2018
+    password: js2018
     druid:
       #连接池配置
       #初始化时建立物理连接的个数
@@ -55,9 +55,9 @@ spring:
     - name: front
       master-dataSource: true
       driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://172.16.10.215:3306/clear?characterEncoding=utf-8&amp;autoReconnect=true
+      url: jdbc:mysql://192.168.1.22:3306/clear?characterEncoding=utf-8&amp;autoReconnect=true
       username: trader
-      password: Jjs@2018
+      password: js2018
     #    - name: demo-role
     #      driver-class-name: com.mysql.jdbc.Driver
     #      url: jdbc:mysql://localhost/demo-role?characterEncoding=utf-8

@@ -15,6 +15,21 @@ logging:
         framework: Warn
 
 spring:
+  kafka:
+    consumer:
+      enable:
+        auto:
+          commit: false
+      session:
+        timeout: 6000
+      auto:
+        commit:
+          interval: 100
+        offset:
+          reset: earliest
+      group:
+        id: digital
+      concurrency: 10
   application:
     #指定当前服务/应用的名字（同样的服务名字相同，不要和别的服务同名）
     name: quantdo-digital-provider
@@ -81,8 +96,11 @@ com:
           enabled: true
         command:
           producer:
+            acks: all
+            enable:
+              idempotence: true
             bootstrap:
-              servers: 172.16.10.216:9092
+              servers: 192.168.1.21:9091
             key:
               serializer: org.apache.kafka.common.serialization.StringSerializer
             value:
@@ -96,14 +114,14 @@ com:
             group:
               id: digital
             bootstrap:
-              servers: 172.16.10.216:9092
+              servers: 192.168.1.21:9091
             isolation:
               level: read_committed
             key:
               deserializer: org.apache.kafka.common.serialization.StringDeserializer
             value:
               deserializer: com.quantdo.trade.kafka.kryo.KryoDeserializer
-          enabled: false
+          enabled: true
           topics: NOTIFY
 
 

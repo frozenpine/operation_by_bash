@@ -19,7 +19,7 @@ dubbo:
   registry:
     id: zk-consumer-registry
     protocol: zookeeper
-    address: zookeeper://172.16.10.216:2181
+    address: zookeeper://192.168.1.21:2181
     #address: 192.168.100.166:2181,192.168.100.167:2181,192.168.100.168:2181
 
 #服务接口版本号

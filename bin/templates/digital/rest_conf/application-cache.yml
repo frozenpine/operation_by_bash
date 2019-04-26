@@ -4,11 +4,11 @@ spring:
     # Redis数据库索引（默认为0）
     #database: 0
     # Redis服务器地址
-    host: 172.16.10.216
+    host: 192.168.1.22
     # Redis服务器连接端口
     port: 6379
     # Redis服务器连接密码（默认为空）
-    # password: 
+    password: 123456
     # 连接超时时间（毫秒）
     timeout: 2000
     #redis pool配置
@@ -64,7 +64,7 @@ spring:
         ##Redis缓存过期时间设置，单位毫秒.
         expire:
           customRealm.authenticationCache: 1800000
-          customRealm.authorizationCache: 1800000
+          customRealm.authorizationCache: 5000
           shiro-activeSessionCache: 1800000
           #customRealm.authenticationCache: 3600000
           #customRealm.authorizationCache: 3600000

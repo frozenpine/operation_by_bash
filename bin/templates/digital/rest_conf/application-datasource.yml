@@ -7,9 +7,9 @@ spring:
     #url: jdbc:mysql://192.168.100.167/sso?characterEncoding=utf-8
     #username: root
     #password: root
-    url: jdbc:mysql://172.16.10.215:3306/sso?characterEncoding=utf-8&amp;autoReconnect=true
+    url: jdbc:mysql://192.168.1.22:3306/security?characterEncoding=utf-8&amp;autoReconnect=true&amp;useSSL=false
     username: trader
-    password: Jjs@2018
+    password: js2018
     driver-class-name: com.mysql.jdbc.Driver
     #连接池配置
     initialSize: 5
