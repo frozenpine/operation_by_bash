@@ -21,6 +21,7 @@ BASE_IMG_LIST="${CONF_BASE}/image.list"
 declare -a IMAGES
 declare -A TAGS
 declare -A MANIFESTS
+declare -A DIGESTS
 declare -A LABELS
 
 HTTP_AUTH="--user ${REGISTRY_USER}:${REGISTRY_PASS}"
@@ -104,14 +105,45 @@ _get_image_manifests() {
     fi
 }
 
+_get_image_digests() {
+    _get_image_tags $*
+    if [[ $# -eq 0 ]]; then
+        for IMG in ${IMAGES[@]}; do
+            for TAG in ${TAGS[${IMG}]}; do
+                DIGESTS["${IMG}:${TAG}"]=`curl -s ${HTTP_AUTH} \
+                    -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+                    -I "${SCHEME}://${BASE_URI}/v2/${IMG}/manifests/${TAG}" | jq '.config.digest'`
+            done
+        done
+    elif [[ $# -eq 1 ]]; then
+        IMG_NAME=
+        for IMG in ${IMAGES[@]}; do
+            [[ ${IMG} == $1 ]] && IMG_NAME=${IMG} && break
+        done
+        [[ -z ${IMG_NAME} ]] && {
+            echo "Image($1) not exist." >&2
+            exit 1
+        }
+        for TAG in ${TAGS[$IMG_NAME]}; do
+            DIGESTS["${IMG_NAME}:${TAG}"]=`curl -s ${HTTP_AUTH} \
+            -H "Accept: application/vnd.docker.distribution.manifest.v2+json" 
+            "${SCHEME}://${BASE_URI}/v2/${IMG_NAME}/manifests/${TAG}" | jq '.config.digest'`
+        done
+    else
+        echo "Invalid params." >&2
+        _usage >&2
+        exit 1
+    fi
+}
+
 _get_image_labels() {
-    _get_image_manifests $*
+    _get_image_digests $*
     if [[ $# -eq 0 ]]; then
         for IMG in ${IMAGES[@]}; do
             for TAG in ${TAGS[${IMG}]}; do
                 LABELS["${IMG}:${TAG}"]=`curl -s ${HTTP_AUTH} \
                     -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
-                    "${SCHEME}://${BASE_URI}/v2/${IMG}/blobs/${MANIFESTS[$IMG:$TAG]}" | jq '.container_config.Labels'`
+                    "${SCHEME}://${BASE_URI}/v2/${IMG}/blobs/${DIGESTS[$IMG:$TAG]}" | jq '.container_config.Labels'`
             done
         done
     elif [[ $# -eq 1 ]]; then
@@ -126,7 +158,7 @@ _get_image_labels() {
         for TAG in ${TAGS[$IMG_NAME]}; do
             LABELS["${IMG_NAME}:${TAG}"]=`curl -s ${HTTP_AUTH} \
                 -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
-                "${SCHEME}://${BASE_URI}/v2/${IMG_NAME}/blobs/${MANIFESTS[$IMG:$TAG]}" | jq '.container_config.Labels'`
+                "${SCHEME}://${BASE_URI}/v2/${IMG_NAME}/blobs/${DIGESTS[$IMG:$TAG]}" | jq '.container_config.Labels'`
         done
     else
         echo "Invalid params." >&2
