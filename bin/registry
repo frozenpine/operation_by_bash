@@ -112,7 +112,7 @@ _get_image_digests() {
             for TAG in ${TAGS[${IMG}]}; do
                 DIGESTS["${IMG}:${TAG}"]=`curl -s ${HTTP_AUTH} \
                     -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
-                    -I "${SCHEME}://${BASE_URI}/v2/${IMG}/manifests/${TAG}" | jq '.config.digest'`
+                    "${SCHEME}://${BASE_URI}/v2/${IMG}/manifests/${TAG}" | jq '.config.digest' | sed 's/"//g'`
             done
         done
     elif [[ $# -eq 1 ]]; then
@@ -126,8 +126,8 @@ _get_image_digests() {
         }
         for TAG in ${TAGS[$IMG_NAME]}; do
             DIGESTS["${IMG_NAME}:${TAG}"]=`curl -s ${HTTP_AUTH} \
-            -H "Accept: application/vnd.docker.distribution.manifest.v2+json" 
-            "${SCHEME}://${BASE_URI}/v2/${IMG_NAME}/manifests/${TAG}" | jq '.config.digest'`
+                -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+                "${SCHEME}://${BASE_URI}/v2/${IMG_NAME}/manifests/${TAG}" | jq '.config.digest' | sed 's/"//g'`
         done
     else
         echo "Invalid params." >&2
@@ -141,9 +141,12 @@ _get_image_labels() {
     if [[ $# -eq 0 ]]; then
         for IMG in ${IMAGES[@]}; do
             for TAG in ${TAGS[${IMG}]}; do
-                LABELS["${IMG}:${TAG}"]=`curl -s ${HTTP_AUTH} \
+                local _result=`curl -s ${HTTP_AUTH} \
                     -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
-                    "${SCHEME}://${BASE_URI}/v2/${IMG}/blobs/${DIGESTS[$IMG:$TAG]}" | jq '.container_config.Labels'`
+                    "${SCHEME}://${BASE_URI}/v2/${IMG}/blobs/${DIGESTS[$IMG:$TAG]}" | \
+                    jq '.container_config.Labels'`
+                _result=${_result##\"}
+                LABELS["${IMG}:${TAG}"]=${_result%%\"}
             done
         done
     elif [[ $# -eq 1 ]]; then
@@ -156,9 +159,12 @@ _get_image_labels() {
             exit 1
         }
         for TAG in ${TAGS[$IMG_NAME]}; do
-            LABELS["${IMG_NAME}:${TAG}"]=`curl -s ${HTTP_AUTH} \
+            local _result=`curl -s ${HTTP_AUTH} \
                 -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
-                "${SCHEME}://${BASE_URI}/v2/${IMG_NAME}/blobs/${DIGESTS[$IMG:$TAG]}" | jq '.container_config.Labels'`
+                "${SCHEME}://${BASE_URI}/v2/${IMG_NAME}/blobs/${DIGESTS[$IMG:$TAG]}" | \
+                jq '.container_config.Labels'`
+            _result=${_result##\"}
+            LABELS["${IMG_NAME}:${TAG}"]=${_result%%\"}
         done
     else
         echo "Invalid params." >&2
@@ -406,7 +412,7 @@ case $1 in
     labels)
         shift
         echo "Results from registry: ${SCHEME}://${BASE_URI}" >&2
-        [[ -n ${PRETTY} ]] && _show_image_labels $* | jq 2>/dev/null || _show_image_manifests $*
+        [[ -n ${PRETTY} ]] && _show_image_labels $* | jq 2>/dev/null || _show_image_labels $*
     ;;
     delete)
         shift
