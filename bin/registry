@@ -38,7 +38,7 @@ HELP_COMMANDS["sync"]="Sync a image fron source registry to dest."
 
 _get_images () {
     IMAGES=(`curl -s ${HTTP_AUTH} "${SCHEME}://${BASE_URI}/v2/_catalog" 2>/dev/null | \
-               jq -r '.repositories|.[]'`)
+               jq -r '.repositories|.[]?'`)
 }
 
 _list_images () {
@@ -55,7 +55,7 @@ _get_image_tags() {
     if [[ $# -eq 0 ]]; then
         for IMG in ${IMAGES[@]}; do
             TAGS[$IMG]=`curl -s ${HTTP_AUTH} "${SCHEME}://${BASE_URI}/v2/$IMG/tags/list" 2>/dev/null | \
-                        jq -r '.tags|.[]' | tr '\n' ' '`
+                        jq -r '.tags|.[]?' | tr '\n' ' '`
         done
     elif [[ $# -eq 1 ]]; then
         IMG_NAME=
@@ -67,7 +67,7 @@ _get_image_tags() {
             exit 1
         }
         TAGS[$IMG_NAME]=`curl -s ${HTTP_AUTH} "${SCHEME}://${BASE_URI}/v2/${IMG_NAME}/tags/list" 2>/dev/null | \
-                    jq -r '.tags|.[]' | tr '\n' ' '`
+                    jq -r '.tags|.[]?' | tr '\n' ' '`
     else
         echo "Invalid params." >&2
         _usage >&2
@@ -112,7 +112,8 @@ _get_image_digests() {
             for TAG in ${TAGS[${IMG}]}; do
                 DIGESTS["${IMG}:${TAG}"]=`curl -s ${HTTP_AUTH} \
                     -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
-                    "${SCHEME}://${BASE_URI}/v2/${IMG}/manifests/${TAG}" | jq '.config.digest' | sed 's/"//g'`
+                    "${SCHEME}://${BASE_URI}/v2/${IMG}/manifests/${TAG}" | \
+                    jq '.config.digest' 2>/dev/null | sed 's/"//g'`
             done
         done
     elif [[ $# -eq 1 ]]; then
@@ -127,7 +128,8 @@ _get_image_digests() {
         for TAG in ${TAGS[$IMG_NAME]}; do
             DIGESTS["${IMG_NAME}:${TAG}"]=`curl -s ${HTTP_AUTH} \
                 -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
-                "${SCHEME}://${BASE_URI}/v2/${IMG_NAME}/manifests/${TAG}" | jq '.config.digest' | sed 's/"//g'`
+                "${SCHEME}://${BASE_URI}/v2/${IMG_NAME}/manifests/${TAG}" | \
+                jq '.config.digest' 2>/dev/null | sed 's/"//g'`
         done
     else
         echo "Invalid params." >&2
@@ -144,9 +146,10 @@ _get_image_labels() {
                 local _result=`curl -s ${HTTP_AUTH} \
                     -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
                     "${SCHEME}://${BASE_URI}/v2/${IMG}/blobs/${DIGESTS[$IMG:$TAG]}" | \
-                    jq '.container_config.Labels'`
+                    jq '.container_config.Labels' 2>/dev/null`
                 _result=${_result##\"}
-                LABELS["${IMG}:${TAG}"]=${_result%%\"}
+                _result=${_result%%\"}
+                LABELS["${IMG}:${TAG}"]=
             done
         done
     elif [[ $# -eq 1 ]]; then
@@ -162,7 +165,7 @@ _get_image_labels() {
             local _result=`curl -s ${HTTP_AUTH} \
                 -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
                 "${SCHEME}://${BASE_URI}/v2/${IMG_NAME}/blobs/${DIGESTS[$IMG:$TAG]}" | \
-                jq '.container_config.Labels'`
+                jq '.container_config.Labels' 2>/dev/null`
             _result=${_result##\"}
             LABELS["${IMG_NAME}:${TAG}"]=${_result%%\"}
         done
@@ -205,7 +208,7 @@ _show_image_labels() {
     for IMG_NAME in ${!TAGS[@]}; do
         echo -n "\"${IMG_NAME}\": ["
         for TAG in ${TAGS[$IMG_NAME]}; do
-            echo -n "{\"${TAG}\": ${LABELS[${IMG_NAME}:${TAG}]}}, "
+            echo -n "{\"${TAG}\": ${LABELS[$IMG_NAME:$TAG]}}, "
         done | sed 's/, $//'
         printf "], "
     done | sed 's/, $//'
