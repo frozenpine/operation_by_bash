@@ -957,6 +957,22 @@ CREATE TABLE `t_warn_result` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='报警记录';
 
+/*Table structure for table `t_notice_kafka_property` */
+
+DROP TABLE IF EXISTS `t_notice_kafka_property`;
+
+CREATE TABLE `t_notice_kafka_property` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID自增长序列',
+  `property_type` varchar(100) NOT NULL COMMENT 'kafka通知类型 ',
+  `property_id` varchar(20) NOT NULL COMMENT '通知类型的列表ID（commId）',
+  `notice_number` bigint(20) NOT NULL COMMENT '通知个数',
+  `receive_number` bigint(20) NOT NULL COMMENT '接收个数',
+  `operator_id` varchar(20) DEFAULT NULL COMMENT '操作人',
+  `operate_time` bigint(20) NOT NULL COMMENT '操作时间',
+  PRIMARY KEY (`id`),
+  KEY `property_type` (`property_type`,`property_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='kafka通知记录';
+
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
