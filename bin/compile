@@ -265,6 +265,11 @@ EOF
             find ${module}/src/main/resources -type f -name "*.properties" | while read FILE; do
                 ${SUDO} sed -i '/spring.redis.password=/ d' ${FILE}
             done
+
+            local _cache_conf="${module}/src/main/resources/application-cache.yml"
+            if [[ -f "${_cache_conf}" ]]; then
+                ${SUDO} sed -i 's/password/# password/' "${_cache_conf}"
+            fi
         done
 
         export COMMIT_ID
