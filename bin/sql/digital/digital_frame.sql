@@ -552,10 +552,10 @@ DROP TABLE IF EXISTS `t_risk_leverage_point_detail`;
 CREATE TABLE `t_risk_leverage_point_detail` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '自增长序列号',
   `product_id` varchar(30) NOT NULL COMMENT '品种代码',
-  `risk_limit` decimal(30,10) NOT NULL COMMENT '风险限额',
+  `risk_limit` decimal(30,0) NOT NULL COMMENT '风险限额',
   `leverage` decimal(10,2) NOT NULL COMMENT '杠杆',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='杠杆点分布明细\n初始化配置';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='杠杆点分布明细初始化配置';
 
 /*Table structure for table `t_risk_limit` */
 
@@ -566,8 +566,8 @@ CREATE TABLE `t_risk_limit` (
   `product_id` varchar(30) NOT NULL COMMENT '品种代码',
   `instrument_id` varchar(30) DEFAULT NULL COMMENT '合约代码',
   `level` varchar(10) DEFAULT NULL COMMENT '客户分类代码',
-  `base_risk_limit` decimal(30,10) DEFAULT NULL COMMENT '最低风险限额(BTC)',
-  `step_risk_limit` decimal(30,10) DEFAULT NULL COMMENT '风险限额递增量',
+  `base_risk_limit` decimal(30,0) DEFAULT NULL COMMENT '最低风险限额(BTC)',
+  `step_risk_limit` decimal(30,0) DEFAULT NULL COMMENT '风险限额递增量',
   `step_times` tinyint(3) DEFAULT NULL COMMENT '递增次数',
   `base_maint_margin` decimal(10,4) DEFAULT NULL COMMENT '基础维持保证金率',
   `base_init_margin` decimal(10,4) DEFAULT NULL COMMENT '基础起始保证金率',
