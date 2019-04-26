@@ -21,6 +21,7 @@ BASE_IMG_LIST="${CONF_BASE}/image.list"
 declare -a IMAGES
 declare -A TAGS
 declare -A MANIFESTS
+declare -A LABELS
 
 HTTP_AUTH="--user ${REGISTRY_USER}:${REGISTRY_PASS}"
 
@@ -101,7 +102,38 @@ _get_image_manifests() {
         _usage >&2
         exit 1
     fi
-    }
+}
+
+_get_image_labels() {
+    _get_image_manifests $*
+    if [[ $# -eq 0 ]]; then
+        for IMG in ${IMAGES[@]}; do
+            for TAG in ${TAGS[${IMG}]}; do
+                LABELS["${IMG}:${TAG}"]=`curl -s ${HTTP_AUTH} \
+                    -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+                    "${SCHEME}://${BASE_URI}/v2/${IMG}/blobs/${MANIFESTS[$IMG:$TAG]}" | jq '.container_config.Labels'`
+            done
+        done
+    elif [[ $# -eq 1 ]]; then
+        IMG_NAME=
+        for IMG in ${IMAGES[@]}; do
+            [[ ${IMG} == $1 ]] && IMG_NAME=${IMG} && break
+        done
+        [[ -z ${IMG_NAME} ]] && {
+            echo "Image($1) not exist." >&2
+            exit 1
+        }
+        for TAG in ${TAGS[$IMG_NAME]}; do
+            LABELS["${IMG_NAME}:${TAG}"]=`curl -s ${HTTP_AUTH} \
+                -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+                "${SCHEME}://${BASE_URI}/v2/${IMG_NAME}/blobs/${MANIFESTS[$IMG:$TAG]}" | jq '.container_config.Labels'`
+        done
+    else
+        echo "Invalid params." >&2
+        _usage >&2
+        exit 1
+    fi
+}
 
 _show_image_tags() {
     _get_image_tags $*
@@ -123,6 +155,19 @@ _show_image_manifests() {
         echo -n "\"${IMG_NAME}\": ["
         for TAG in ${TAGS[$IMG_NAME]}; do
             echo -n "{\"${TAG}\": \"${MANIFESTS[${IMG_NAME}:${TAG}]}\"}, "
+        done | sed 's/, $//'
+        printf "], "
+    done | sed 's/, $//'
+    echo "}"
+}
+
+_show_image_labels() {
+    _get_image_labels $*
+    echo -n "{"
+    for IMG_NAME in ${!TAGS[@]}; do
+        echo -n "\"${IMG_NAME}\": ["
+        for TAG in ${TAGS[$IMG_NAME]}; do
+            echo -n "{\"${TAG}\": \"${LABELS[${IMG_NAME}:${TAG}]}\"}, "
         done | sed 's/, $//'
         printf "], "
     done | sed 's/, $//'
@@ -325,6 +370,11 @@ case $1 in
         shift
         echo "Results from registry: ${SCHEME}://${BASE_URI}" >&2
         [[ -n ${PRETTY} ]] && _show_image_manifests $* | jq 2>/dev/null || _show_image_manifests $*
+    ;;
+    labels)
+        shift
+        echo "Results from registry: ${SCHEME}://${BASE_URI}" >&2
+        [[ -n ${PRETTY} ]] && _show_image_labels $* | jq 2>/dev/null || _show_image_manifests $*
     ;;
     delete)
         shift
