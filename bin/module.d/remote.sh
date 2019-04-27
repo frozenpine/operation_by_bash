@@ -177,8 +177,26 @@ function remote_sync() {
     local _remote_shell
     local _SRC=$1
     local _DST=$2
+    local _keep_flag
 
-    _rsync_args=(-rlptzv --progress --delete --human-readable --chmod="D+rx,Fgo+r")
+    local OPTIND FLAG
+    while getopts :k FLAG; do
+        case $FLAG in
+            k)
+                _keep_flag=1
+            ;;
+            *)
+                error "invalid args: $*"
+                exit 1
+            ;;
+        esac
+    done
+    shift $((OPTIND-1))
+
+    _rsync_args=(-rlptzv --progress --human-readable --chmod="D+rx,Fgo+r")
+    if [[ ${_keep_flag} -ne 1 ]]
+        _rsync_args=(${_rsync_args[@]} --delete)
+    fi
 
     if [[ x"${IDENTITY_FILE}" != "x" ]]; then
         _remote_shell="ssh -i ${IDENTITY_FILE}"

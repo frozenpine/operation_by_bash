@@ -209,7 +209,7 @@ function _deploy() {
                 continue
             fi
 
-            remote_sync "${DATA_BASE:=/opt}/market/" "${DATA_BASE:=/opt}/market/"
+            remote_sync -k "${DATA_BASE:=/opt}/market/" "${DATA_BASE:=/opt}/market/"
         done
     done
 }
