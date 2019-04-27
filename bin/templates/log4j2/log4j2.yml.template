@@ -53,6 +53,6 @@ Configuration:
       AppenderRef:
       # - ref: CONSOLE
       - ref: ROLLING_FILE
-        level: \${sys:log.level.root}
+        level: \${env:LOG_LEVEL_ROOT}
       - ref: sentry
         level: warn

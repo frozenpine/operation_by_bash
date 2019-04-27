@@ -84,10 +84,10 @@ docker run -d \
     --network host \
     --user `grep ${USER} /etc/passwd | cut -d':' -f3` \
     -e SENTRY_DSN="${SENTRY_DSN}" \
+    -e LOG_LEVEL_ROOT=${LOG_LEVEL:=info} \
     -v "${CONTAINER_BASE}/log":/${NAME}/logs \
     registry:5000/service/${NAME}:${VERSION} \
         ${JVM_OPTS} \
-        -Dlog.level.root=${LOG_LEVEL:=info} \
         -jar /${NAME}/service-${NAME}-${VERSION}.jar \
         --server.port=${SMS_PORT} \
         --spring.cloud.consul.host=${CONSUL_HOST} \

@@ -90,10 +90,10 @@ docker run -d \
     --network host \
     --user `grep ${USER} /etc/passwd | cut -d':' -f3` \
     -e SENTRY_DSN="${SENTRY_DSN}" \
+    -e LOG_LEVEL_ROOT=${LOG_LEVEL:=info} \
     -v "${CONTAINER_BASE}/log":/${NAME}/logs \
     registry:5000/trade$1/${NAME}:${VERSION} \
         ${JVM_OPTS} \
-        -Dlog.level.root=${LOG_LEVEL:=info} \
         -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
         --logging.level.com.quantdo.trade=${LOG_LEVEL:=info} \
         --server.port=${QUERY_PORT} \
