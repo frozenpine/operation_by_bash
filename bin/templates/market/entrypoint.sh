@@ -77,15 +77,7 @@ function _check_marketserver_env() {
         TRADE_FRONT="http://${TRADE_FRONT}"
     fi
 
-    get_id `uname -n`
-    if [[ $? -ne 0 ]]; then
-        
-    fi
-
-    if [[ x"${ID}" == "x" ]]; then
-        error "server id missing."
-        exit 1
-    fi
+    get_id `uname -n` || exit 1
 
         cat<<EOF | info
 All starting variables:
