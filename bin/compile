@@ -264,6 +264,14 @@ EOF
 
             find ${module}/src/main/resources -type f -name "*.properties" | while read FILE; do
                 ${SUDO} sed -i '/spring.redis.password=/ d' ${FILE}
+
+                local _public_ip=`curl http://members.3322.org/dyndns/getip`
+                # ali test environment
+                if [[ ${_public_ip} == "47.105.52.41" ]]; then
+                    ${SUDO} sed -i 's/test.configuration'"[[:space:]]"'*='"[[:space:]]"'*false/test.configuration = true/' ${FILE}
+                else
+                    ${SUDO} sed -i '/test.configuration/ d' ${FILE}
+                fi
             done
         done
 
