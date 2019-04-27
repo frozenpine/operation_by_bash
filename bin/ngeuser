@@ -89,7 +89,8 @@ function _get_users() {
     fi
 
     MYSQL_HOST=
-    IDX=$((RANDOM % ${#MYSQL_LIST[@]}))
+    # IDX=$((RANDOM % ${#MYSQL_LIST[@]}))
+    IDX=0
     COUNT=0
     for SVR_NAME in ${!MYSQL_LIST[@]}; do
         if [[ ${COUNT} -eq ${IDX} ]]; then
@@ -125,7 +126,8 @@ function _show_me_the_money() {
     fi
 
     MYSQL_HOST=
-    IDX=$((RANDOM % ${#MYSQL_LIST[@]}))
+    # IDX=$((RANDOM % ${#MYSQL_LIST[@]}))
+    IDX=0
     COUNT=0
     for SVR_NAME in ${!MYSQL_LIST[@]}; do
         if [[ ${COUNT} -eq ${IDX} ]]; then

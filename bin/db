@@ -45,7 +45,8 @@ DB_PASS=
 DBS=
 
 function _shuffle_host() {
-    IDX=$((RANDOM % ${#MYSQL_LIST[@]}))
+    # IDX=$((RANDOM % ${#MYSQL_LIST[@]}))
+    IDX=0
 
     COUNT=0
     for NAME in ${!MYSQL_LIST[@]}; do

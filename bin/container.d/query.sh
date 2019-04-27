@@ -50,7 +50,8 @@ for SVR_NAME in ${!CONSUL_LIST[@]}; do
 done
 
 MYSQL_HOST=
-IDX=$((RANDOM % ${#MYSQL_LIST[@]}))
+# IDX=$((RANDOM % ${#MYSQL_LIST[@]}))
+IDX=0
 COUNT=0
 for SVR_NAME in ${!MYSQL_LIST[@]}; do
     if [[ ${COUNT} -eq ${IDX} ]]; then
