@@ -194,7 +194,8 @@ function remote_sync() {
     shift $((OPTIND-1))
 
     _rsync_args=(-rlptzv --progress --human-readable --chmod="D+rx,Fgo+r")
-    if [[ ${_keep_flag} -ne 1 ]]
+    
+    if [[ ${_keep_flag} -ne 1 ]]; then
         _rsync_args=(${_rsync_args[@]} --delete)
     fi
 
