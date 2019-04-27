@@ -185,7 +185,7 @@ function _deploy() {
                 gen_md5 ${module}
             popd >/dev/null
         done
-    popd
+    popd >/dev/null
 
     # allscp -r "${_deploy_base}/*" "${MARKET_BASE}/"
 
