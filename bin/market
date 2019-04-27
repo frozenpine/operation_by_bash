@@ -122,6 +122,7 @@ function _deploy() {
 
     pushd "${_deploy_base}" > /dev/null
         cp "${TEMPLATE_BASE}/market/entrypoint.sh" ./
+        chmod ugo+x entrypoint.sh
 
         pushd libs >/dev/null
             source ./link &>/dev/null
@@ -182,6 +183,7 @@ function _deploy() {
         for module in ${MODULE_LIST[@]}; do
             pushd ${module} >/dev/null
                 cp ${TEMPLATE_BASE}/market/${module}.*.template ./
+                chmod ugo+x ${module}
                 gen_md5 ${module}
             popd >/dev/null
         done
