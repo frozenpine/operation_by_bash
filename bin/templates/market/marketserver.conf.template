@@ -1,5 +1,5 @@
 # 公有配置
-appname=logs/marketserver
+appname=log/marketserver
 
 # 是否将日志输入到文件
 LogToFile=true
