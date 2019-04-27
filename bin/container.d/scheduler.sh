@@ -54,7 +54,8 @@ for CONF in `extract_ini_sec ${PRIM_DB_NAME} "${CONF_BASE}/dbs.ini"`; do
 done
 
 MYSQL_HOST=
-IDX=$((RANDOM % ${#MYSQL_LIST[@]}))
+# IDX=$((RANDOM % ${#MYSQL_LIST[@]}))
+IDX=0
 COUNT=0
 for SVR_NAME in ${!MYSQL_LIST[@]}; do
     if [[ ${COUNT} -eq ${IDX} ]]; then
