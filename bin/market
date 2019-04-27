@@ -12,7 +12,7 @@ import_functions
 
 GROUP=
 
-MODULE_LIST=(qmarket qwsfront)
+MODULE_LIST=(qmarket qwsfront marketserver)
 
 ENTRYPOINT="${DATA_BASE:=/opt}/market/entrypoint.sh"
 MARKET_BASE="${DATA_BASE:=/opt}/market"
@@ -37,7 +37,7 @@ function _find_group() {
     done
     MODULE_PATTERN=${MODULE_PATTERN:1}
 
-    if [[ $1 == "qwsfront" ]]; then
+    if [[ $1 =~ qwsfront|marketserver ]]; then
         GROUP="websocket"
         return
     fi
@@ -115,9 +115,9 @@ function _stop() {
 function _deploy() {
     local _deploy_base
 
-    _deploy_base="${DATA_BASE:=/opt}/packages/market"
+    _deploy_base="${DATA_BASE:=/opt}/market"
 
-    make_dir -b "${_deploy_base}" "module.d" conf libs qwsfront qmarket || exit 1
+    make_dir -b "${_deploy_base}" "module.d" conf libs qwsfront qmarket marketserver || exit 1
 
     pushd "${_deploy_base}" > /dev/null
         cp "${TEMPLATE_BASE}/market/entrypoint.sh" ./
@@ -178,23 +178,39 @@ function _deploy() {
             gen_md5 common.env
         popd >/dev/null
 
-        pushd qmarket >/dev/null
-            cp "${TEMPLATE_BASE}/market/qmarket.ini.template" ./
-            gen_md5 qmarket
-        popd >/dev/null
-
-        pushd qwsfront >/dev/null
-            cp "${TEMPLATE_BASE}/market/qwsfront.ini.template" ./
-            gen_md5 qwsfront
-        popd >/dev/null
-
-        pushd marketserver >/dev/null
-            cp "${TEMPLATE_BASE}/market/marketserver.conf.template" ./
-            gen_md5 marketserver
-        popd >/dev/null
+        for module in ${MODULE_LIST[@]}; do
+            pushd ${module} >/dev/null
+                cp ${TEMPLATE_BASE}/market/${module}.*.template ./
+                gen_md5 ${module}
+            popd >/dev/null
+        done
     popd
 
-    allscp -r "${_deploy_base}/*" "${MARKET_BASE}/"
+    # allscp -r "${_deploy_base}/*" "${MARKET_BASE}/"
+
+    local _group_list=
+
+    for _module in ${MODULE_LIST[@]}; do
+        _find_group ${_module}
+        
+        if [[ ! ${_group_list} =~ ${GROUP} ]]; then
+            _group_list="${_group_list} ${GROUP}"
+        fi
+    done
+
+    for _group in ${_group_list}; do
+        GROUP_NAME=${_group}
+        
+        host_list | while read HOST_CONF;do
+            parse_ssh ${HOST_CONF}
+            if [[ $? -ne 0 ]]; then
+                warning "invalid config in group ${GROUP_NAME}: $HOST_CONF"
+                continue
+            fi
+
+            remote_sync "${DATA_BASE:=/opt}/market/" "${DATA_BASE:=/opt}/market/"
+        done
+    done
 }
 
 while getopts :Dh FLAG; do
