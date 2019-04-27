@@ -57,6 +57,7 @@ function _shuffle_host() {
 
         COUNT=$((COUNT+1))
     done
+    info "database[${NAME}:${DB_HOST}] selected."
 }
 
 function _create() {
@@ -222,6 +223,7 @@ case ${COMMAND} in
     ;;
     destory)
         allssh -g${GROUP_NAME} container stop -crf mysql
+        allssh -g${GROUP_NAME} container stop -rf mysql-exporter
     ;;
     pub)
         allscp -g${GROUP_NAME} ${CONTAINER_BASE}/mysql.sh
