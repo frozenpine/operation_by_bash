@@ -9,7 +9,7 @@ source "${BASE_DIR}/module.d/common.sh" || exit 1
 FUNC_FILE_CONFIG="${BASE_DIR}/module.d/template.sh"
 import_functions
 
-MODULE_LIST=(qmarket qwsfront)
+MODULE_LIST=(qmarket qwsfront marketserver)
 
 for MODULE in ${MODULE_LIST[@]}; do
     HELP_COMMANDS["${MODULE}"]="Start ${MODULE} module."
@@ -61,6 +61,42 @@ qmarket:  tcp://${MARKET_ADDR:=127.0.0.1}:${MARKET_PORT:=30007}
 qwsfront: ws://${WS_LISTEN_ADDR}:${WS_PORT:=9988}
 
 trade front: ${TRADE_FRONT}
+EOF
+}
+
+function _check_marketserver_env() {
+    if [[ x"${KFK_SERVERS}" == "x" ]]; then
+        error "kafka connection info missing."
+        exit 1
+    fi
+
+    if [[ x"${TRADE_FRONT}" == "x" ]]; then
+        error "trade front address mising."
+        exit 1
+    elif [[ ! "${TRADE_FRONT}" =~ ^http ]]; then
+        TRADE_FRONT="http://${TRADE_FRONT}"
+    fi
+
+    get_id `uname -n`
+    if [[ $? -ne 0 ]]; then
+        
+    fi
+
+    if [[ x"${ID}" == "x" ]]; then
+        error "server id missing."
+        exit 1
+    fi
+
+        cat<<EOF | info
+All starting variables:
+listen: ws://${LISTEN_ADDR:=0.0.0.0}:${WS_PORT:=9988}
+
+kafka brokers:    ${KFK_SERVERS}
+kafka group name: marketserver${ID}
+kafka topics: 
+    1. checkpoint topic: ${KFK_CHECKPOINT_TOPIC:=MATCH-JSON-SS}
+    2. increment topic:  ${KFK_INCREMENT_TOPIC:=MATCH-JSON-SS-INCREMENT}
+    3. notify topic:     ${KFK_NOTIFY_TOPIC:=NOTIFY-CLIENT}
 EOF
 }
 
@@ -124,7 +160,7 @@ function _start() {
     _module_name=$1
     shift
     _module_base="${BASE_DIR}/${_module_name}"
-    _template_file="${_module_base}/${_module_name}.ini.template"
+    # _template_file="${_module_base}/${_module_name}.ini.template"
     _pid_file="${_module_base}/${_module_name}.pid"
 
     _status ${_module_name} &>/dev/null
@@ -134,6 +170,7 @@ function _start() {
     fi
     
     pushd "${_module_base}" >/dev/null
+        _template_file=`find . -maxdepth 1 -type f -name "*.template" -exec basename {} \;`
         if [[ ! -f "${_template_file}" ]]; then
             error "${_module_name}'s template file missing."
             exit 1

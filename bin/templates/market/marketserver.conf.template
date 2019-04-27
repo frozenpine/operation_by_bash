@@ -1,0 +1,43 @@
+# 公有配置
+appname=logs/marketserver
+
+# 是否将日志输入到文件
+LogToFile=true
+
+#监控端口
+monitorlistenip=${LISTEN_ADDR:=0.0.0.0}
+monitorlistenport=${MONITOR_PORT:=8888}
+monitortoken=123
+
+
+# kafka 配置
+KafkaGroupID=marketserver${ID}
+KafkaBrokers=${KFK_SERVERS}
+# 行情全量快照kafka topic名称
+KafkaTopicSnapshot=${KFK_CHECKPOINT_TOPIC:=MATCH-JSON-SS}
+# 行情增量、基础行情、合约kafka topic名称
+KafkaTopicIncrement=${KFK_INCREMENT_TOPIC:=MATCH-JSON-SS-INCREMENT}
+# order、trade、position、margin等信息kafka topic名称
+KafkaTopicOther=${KFK_NOTIFY_TOPIC:=NOTIFY-CLIENT}
+#Partition=2
+
+# websocket 配置
+#是否开启websocket前置
+EnableWsSend=true
+WsThreadNum=1
+#websocket侦听地址 
+WsHost=${LISTEN_ADDR:=0.0.0.0}
+#websocket的端口号
+WsPort=${WS_PORT:=9988}
+#客户端连接成功后的欢迎语
+WelcomeMsg={"info":"Welcome to the JS Realtime API.","version":"2019-03-26T18:43:09.000Z","timestamp":"2019-03-28T06:05:15.309Z","docs":"https://www.js.com/app/wsAPI","limit":{"remaining":39}}
+#apikey和signature校验地址
+CheckSignatureURL=${TRADE_FRONT}/api/v1/signature
+#当前订单查询接口
+QueryOrderURL=${TRADE_FRONT}/api/v1/orderx/sys
+#资金查询接口
+QueryMarginURL=${TRADE_FRONT}/api/v1/accountx
+#仓位查询接口
+QueryPositionURL=${TRADE_FRONT}/api/v1/positionx
+#近期交易列表接口
+QueryTradeURL=${TRADE_FRONT}/api/v1/trade?reverse=true

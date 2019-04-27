@@ -211,8 +211,8 @@ function is_relative_path() {
 
 function get_id() {
     if [[ $# -ne 1 || ! $1 =~ [a-zA-Z_-]+0*([0-9]+) ]]; then
-        echo "invalid hostname: $1" >&2
-        exit 1
+        warning "invalid hostname: $1"
+        return 1
     fi
     ID=`echo ${BASH_REMATCH[1]}`
 }

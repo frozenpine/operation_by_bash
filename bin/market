@@ -187,6 +187,11 @@ function _deploy() {
             cp "${TEMPLATE_BASE}/market/qwsfront.ini.template" ./
             gen_md5 qwsfront
         popd >/dev/null
+
+        pushd marketserver >/dev/null
+            cp "${TEMPLATE_BASE}/market/marketserver.conf.template" ./
+            gen_md5 marketserver
+        popd >/dev/null
     popd
 
     allscp -r "${_deploy_base}/*" "${MARKET_BASE}/"
