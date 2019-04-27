@@ -8,6 +8,7 @@ popd >/dev/null
 source "${BASE_DIR}/module.d/common.sh" || exit 1
 FUNC_FILE_CONFIG="${MODULE_BASE}/config.sh"
 FUNC_FILE_TEMPLATE="${MODULE_BASE}/template.sh"
+FUNC_FILE_REMOTE="${MODULE_BASE}/remote.sh"
 import_functions
 
 GROUP=
