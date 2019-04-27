@@ -163,21 +163,10 @@ function remote_cp() {
 }
 
 function remote_sync() {
-    if [[ $# -ne 2 ]]; then
+    if [[ $# -lt 2 ]]; then
         error "must specify src & dst in remote sync."
         exit 1
     fi
-
-    local _USER
-    local _HOST
-    local _PORT
-    local _CONN_STRING
-    local _HOST_IP
-    local _EXTRA_ARGS
-    local _remote_shell
-    local _SRC=$1
-    local _DST=$2
-    local _keep_flag
 
     local OPTIND FLAG
     while getopts :k FLAG; do
@@ -192,6 +181,17 @@ function remote_sync() {
         esac
     done
     shift $((OPTIND-1))
+
+    local _USER
+    local _HOST
+    local _PORT
+    local _CONN_STRING
+    local _HOST_IP
+    local _EXTRA_ARGS
+    local _remote_shell
+    local _SRC=$1
+    local _DST=$2
+    local _keep_flag
 
     _rsync_args=(-rlptzv --progress --human-readable --chmod="D+rx,Fgo+r")
     
