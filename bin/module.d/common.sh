@@ -4,6 +4,7 @@ CONTAINER_BASE="${BASE_DIR}/container.d"
 SERVICE_BASE="${BASE_DIR}/service.d"
 TEMPLATE_BASE="${BASE_DIR}/templates"
 SQL_BASE="${BASE_DIR}/sql"
+PATCH_BASE="${BASE_DIR}/patch.d"
 
 COMMON_ENV="${CONF_BASE}/common.env"
 

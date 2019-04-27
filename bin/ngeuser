@@ -151,6 +151,25 @@ EOF
         done
 }
 
+function _correct_password() {
+    MYSQL_HOST=
+    # IDX=$((RANDOM % ${#MYSQL_LIST[@]}))
+    IDX=0
+    COUNT=0
+    for SVR_NAME in ${!MYSQL_LIST[@]}; do
+        if [[ ${COUNT} -eq ${IDX} ]]; then
+            MYSQL_HOST=${MYSQL_LIST[$SVR_NAME]}
+            break
+        fi
+
+        COUNT=$((COUNT+1))
+    done
+
+    mysql -h${MYSQL_HOST} -u${DB_USER} -p${DB_PASS} ${DB_NAME} -N -e "select user_id from t_trade_user where email like '%@qq.com'" | while read user_id; do
+        echo "update \`t_trade_user\` set password='`echo -n "${user_id}123456" | openssl md5 | awk '{print $2}'`' where user_id='${user_id}';"
+    done | mysql -h${MYSQL_HOST} -u${DB_USER} -p${DB_PASS} ${DB_NAME}
+}
+
 while getopts :u:p:d:g:h FLAG; do
     case $FLAG in
         u)

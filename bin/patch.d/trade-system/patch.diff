@@ -1,0 +1,21 @@
+diff --git a/trade-core/src/main/java/com/quantdo/trade/producer/PolyProducer.java b/trade-core/src/main/java/com/quantdo/trade/producer/PolyProducer.java
+index 7e42d1e9..0810183c 100644
+--- a/trade-core/src/main/java/com/quantdo/trade/producer/PolyProducer.java
++++ b/trade-core/src/main/java/com/quantdo/trade/producer/PolyProducer.java
+@@ -22,6 +22,8 @@ import java.util.Map;
+ import java.util.Properties;
+ import java.util.concurrent.Future;
+ 
++import com.quantdo.trade.exception.TradeHandleExceptionHandler;
++
+ public class PolyProducer<K, V> implements Producer<K, V> {
+     private static final ProduceAction[] EMPTY = new ProduceAction[0];
+     private final Logger logger = LoggerFactory.getLogger(getClass());
+@@ -41,6 +43,7 @@ public class PolyProducer<K, V> implements Producer<K, V> {
+ 
+         this.transactionBatchSize = transactionBatchSize;
+         this.disruptor = new Disruptor<>(ProduceActionWrapper::new, 1 << cacheBitSize, new NamedThreadFactory(transactionId));
++        this.disruptor.setDefaultExceptionHandler(new TradeHandleExceptionHandler());
+         this.disruptor.handleEventsWith(this::realProduce);
+         this.disruptor.start();
+     }
