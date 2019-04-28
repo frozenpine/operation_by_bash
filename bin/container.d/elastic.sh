@@ -28,7 +28,7 @@ for SVR_NAME in ${!ELASTIC_LIST[@]}; do
 done
 ES_SERVERS=${ES_SERVERS:1}
 
-CONTAINER_BASE="${DATA_BASE:=/opt}/${NAME}"
+CONTAINER_BASE="${DATA_BASE:=/opt}/${SHORT_NAME}"
 find_user ${USER}
 if [[ $? -ne 0 ]]; then
     ${SUDO} useradd --home-dir "${CONTAINER_BASE}" \
