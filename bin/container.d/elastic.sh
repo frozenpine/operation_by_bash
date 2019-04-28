@@ -24,7 +24,7 @@ for SVR_NAME in ${!ELASTIC_LIST[@]}; do
     # if [[ x"${FIRST_IP}" == "x" ]]; then
     #     FIRST_IP=${ELASTIC_LIST[$SVR_NAME]}
     # fi
-    ES_SERVERS="${ES_SERVERS},${SVR_NAME}:$((ES_PORT+100))"
+    ES_SERVERS="${ES_SERVERS},${SVR_NAME}:$((ELASTIC_PORT+100))"
 done
 ES_SERVERS=${ES_SERVERS:1}
 
@@ -50,8 +50,8 @@ if [[ ${#ELASTIC_LIST[@]} -ge 3 ]]; then
         -v "${CONTAINER_BASE}/data:/usr/share/elasticsearch/data" \
         -e "cluster.name=${CLUSTER_NAME}" \
         -e "discovery.zen.ping.unicast.hosts=${ES_SERVERS}" \
-        -e "http.port=${ES_PORT}" \
-        -e "transport.tcp.port=$((ES_PORT+100))" \
+        -e "http.port=${ELASTIC_PORT}" \
+        -e "transport.tcp.port=$((ELASTIC_PORT+100))" \
         registry:5000/${NAME}:${VERSION}
 else
     docker run -d \
