@@ -40,6 +40,7 @@ COMMIT_ID=
 HELP_ARGS["u"]="optional,Pull lastest update from master@github."
 HELP_ARGS["p"]="optional,Publish new build to nginx or docker registry."
 HELP_ARGS["c:npm|mvn"]="optional,Specify compiler type for project, and ignore all others."
+HELP_ARGS["e:ali|aws"]="optional,Specify running envirionment manually, if auto detection failed."
 
 HELP_POSITION_ARGS[0]="{all | project_name}..."
 
