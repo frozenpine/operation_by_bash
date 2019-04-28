@@ -1,4 +1,4 @@
-VERSION="6.6.0"
+VERSION="7.0.0"
 NAME=elasticsearch
 SHORT_NAME=elastic
 USER=${SHORT_NAME}
