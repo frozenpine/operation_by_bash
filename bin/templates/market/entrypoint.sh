@@ -89,6 +89,8 @@ kafka topics:
     1. checkpoint topic: ${KFK_CHECKPOINT_TOPIC:=MATCH-JSON-SS}
     2. increment topic:  ${KFK_INCREMENT_TOPIC:=MATCH-JSON-SS-INCREMENT}
     3. notify topic:     ${KFK_NOTIFY_TOPIC:=NOTIFY-CLIENT}
+
+trade front: ${TRADE_FRONT}
 EOF
 }
 
