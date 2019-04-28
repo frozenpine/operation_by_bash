@@ -13,7 +13,8 @@ import_functions
 
 GROUP=
 
-MODULE_LIST=(qmarket qwsfront marketserver)
+# MODULE_LIST=(qmarket qwsfront marketserver)
+MODULE_LIST=(marketserver)
 
 ENTRYPOINT="${DATA_BASE:=/opt}/market/entrypoint.sh"
 MARKET_BASE="${DATA_BASE:=/opt}/market"
