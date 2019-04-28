@@ -220,6 +220,9 @@ case ${COMMAND} in
     money)
         _show_me_the_money
     ;;
+    correct)
+        _correct_password
+    ;;
     *)
         error "invalid command: $*"
         exit 1
