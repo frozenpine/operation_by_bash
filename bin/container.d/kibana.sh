@@ -18,21 +18,28 @@ if [[ $? -ne 0 ]]; then
             ${USER} || exit 1
 fi
 
-# make_dir -b "${DATA_BASE:=/opt}/${NAME}" || exit 1
-# chown -R ${USER}:${USER} "/opt/${NAME}"
-# 
-# make_dir -b "/etc/${NAME}" || exit 1
-
 ES_SERVERS=
 for SVR_NAME in ${!ELASTIC_LIST[@]}; do
-    ES_SERVERS="${ES_SERVERS},http://${SVR_NAME}:${ELASTIC_PORT}"
+    ES_SERVERS="${ES_SERVERS},\"http://${SVR_NAME}:${ELASTIC_PORT}\""
 done
 ES_SERVERS=${ES_SERVERS:1}
+
+CONTAINER_BASE="${DATA_BASE:=/opt}/${NAME}"
+make_dir -b "${CONTAINER_BASE}" conf || exit 1
+${SUDO} cat<<EOF >"${CONTAINER_BASE}/conf/kibana.yml"
+server.name: kibana
+server.host: "0"
+elasticsearch.hosts: [ ${ES_SERVERS} ]
+xpack.monitoring.ui.container.elasticsearch.enabled: true
+EOF
+${SUDO} chown -R ${USER}:${USER} "/opt/${NAME}"
+
+make_dir -b "/etc/${NAME}" || exit 1
 
 docker run -d \
     --name ${NAME} \
     --restart always \
     --network host \
     --user `grep ${USER} /etc/passwd | cut -d':' -f3` \
-    -e ELASTICSEARCH_HOSTS=${ES_SERVERS} \
+    -v "${CONTAINER_BASE}/conf/kibana.yml":/usr/share/kibana/config/kibana.yml:ro \
     registry:5000/${NAME}:${VERSION}
