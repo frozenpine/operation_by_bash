@@ -10,9 +10,10 @@ for SERVICE in ${SERVICE_LIST}; do
     }
 done
 
+CONTAINER_BASE="${DATA_BASE:=/opt}/${NAME}"
 find_user ${USER}
 if [[ $? -ne 0 ]]; then
-    useradd --home-dir "/opt/${NAME}" \
+    useradd --home-dir "${CONTAINER_BASE}" \
             --create-home \
             --shell /sbin/nologin \
             ${USER} || exit 1
@@ -24,8 +25,7 @@ for SVR_NAME in ${!ELASTIC_LIST[@]}; do
 done
 ES_SERVERS=${ES_SERVERS:1}
 
-CONTAINER_BASE="${DATA_BASE:=/opt}/${NAME}"
-make_dir -b "${CONTAINER_BASE}" conf || exit 1
+make_dir -b"${CONTAINER_BASE}" conf || exit 1
 ${SUDO} cat<<EOF >"${CONTAINER_BASE}/conf/kibana.yml"
 server.name: kibana
 server.host: "0"
@@ -33,8 +33,6 @@ elasticsearch.hosts: [ ${ES_SERVERS} ]
 xpack.monitoring.ui.container.elasticsearch.enabled: true
 EOF
 ${SUDO} chown -R ${USER}:${USER} "/opt/${NAME}"
-
-make_dir -b "/etc/${NAME}" || exit 1
 
 docker run -d \
     --name ${NAME} \
