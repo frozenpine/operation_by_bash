@@ -18,8 +18,13 @@ get_id `uname -n`
 BROKER_ID=${ID}
 CLIENT_PORT=9200
 
-for SVR_NAME in ${!ES_LIST[@]}; do
-    ES_SERVERS="${ES_SERVERS},${SVR_NAME}:${ES_PORT}"
+ES_SERVERS=
+FIRST_IP=
+for SVR_NAME in ${!ELASTIC_LIST[@]}; do
+    if [[ x"${FIRST_IP}" == "x" ]]; then
+        FIRST_IP=${ELASTIC_LIST[$SVR_NAME]}
+    fi
+    ES_SERVERS="${ES_SERVERS},${SVR_NAME}:${ELASTIC_PORT}"
 done
 ES_SERVERS=${ES_SERVERS:1}
 
@@ -36,9 +41,7 @@ make_dir -b "${CONTAINER_BASE}" data config log || exit 1
 
 ${SUDO} chown -R ${USER}:${USER} "${CONTAINER_BASE}"
 
-if [[ ${#ES_LIST[@]} -ge 3 ]]; then
-    FIRST_IP=${ES_LIST[es001]}
-
+if [[ ${#ELASTIC_LIST[@]} -ge 3 ]]; then
     docker run -d \
         --name ${SHORT_NAME} \
         --restart always \
