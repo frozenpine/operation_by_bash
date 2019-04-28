@@ -51,7 +51,7 @@ if [[ ${#ELASTIC_LIST[@]} -ge 3 ]]; then
         -e "cluster.name=${CLUSTER_NAME}" \
         -e "discovery.zen.ping.unicast.hosts=${ES_SERVERS}" \
         -e "http.port=${ES_PORT}" \
-        -e "transport.tcp.port=$((ES_PORT+100))"
+        -e "transport.tcp.port=$((ES_PORT+100))" \
         registry:5000/${NAME}:${VERSION}
 else
     docker run -d \
@@ -62,5 +62,7 @@ else
         -v "${CONTAINER_BASE}/data:/usr/share/elasticsearch/data" \
         -e "cluster.name=${CLUSTER_NAME}" \
         -e "discovery.type=single-node" \
+        -e "http.port=${ES_PORT}" \
+        -e "transport.tcp.port=$((ES_PORT+100))" \
         registry:5000/${NAME}:${VERSION}
 fi
