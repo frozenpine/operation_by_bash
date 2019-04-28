@@ -38,11 +38,11 @@ server {
     proxy_send_timeout 300;
 
     location / {
-        # root   /var/lib/nginx/quant-coin;
-        # index  index.html index.htm;
+        root   /var/lib/nginx/quant-coin;
+        index  index.html index.htm;
 
         # 用于配合 browserHistory使用
-        try_files \$uri \$uri/ /var/lib/nginx/quant-coin/index.html;
+        try_files \$uri \$uri/ /index.html;
 
         # 如果有资源，建议使用 https + http2，配合按需加载可以获得更好的体验
         # rewrite ^/(.*)$ https://preview.pro.ant.design/$1 permanent;
