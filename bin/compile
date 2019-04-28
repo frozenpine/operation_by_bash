@@ -43,6 +43,26 @@ HELP_ARGS["c:npm|mvn"]="optional,Specify compiler type for project, and ignore a
 
 HELP_POSITION_ARGS[0]="{all | project_name}..."
 
+ENVIRONMENT=
+
+function _check_environment() {
+    if [[ x"${ENVIRONMENT}" != "x" ]]; then
+        return
+    fi
+
+    local _public_ip=`curl http://members.3322.org/dyndns/getip 2>/dev/null`
+    if [[ $? -ne 0 ]]; then
+        error "checking running environment failed, please specify manually."
+        exit 1
+    fi
+
+    if [[ "${_public_ip}" == "47.105.52.41" ]]; then
+        ENVIRONMENT="ali"
+    else
+        ENVIRONMENT="aws"
+    fi
+}
+
 function _check_compiler() {
     if [[ $# -lt 1 ]]; then
         error "compiler name missing."
@@ -279,13 +299,24 @@ EOF
             find ${module}/src/main/resources -type f -name "*.properties" | while read FILE; do
                 ${SUDO} sed -i '/spring.redis.password=/ d' ${FILE}
 
-                local _public_ip=`curl http://members.3322.org/dyndns/getip`
-                # ali test environment
-                if [[ ${_public_ip} == "47.105.52.41" ]]; then
-                    ${SUDO} sed -i 's/test.configuration'"[[:space:]]"'*='"[[:space:]]"'*false/test.configuration = true/' ${FILE}
-                else
-                    ${SUDO} sed -i '/test.configuration/ d' ${FILE}
-                fi
+                case ${ENVIRONMENT} in
+                    ali)
+                        ${SUDO} sed -i 's/test.configuration'"[[:space:]]"'*='"[[:space:]]"'*false/test.configuration = true/' ${FILE}
+                    ;;
+                    aws)
+                        ${SUDO} sed -i '/test.configuration/ d' ${FILE}
+                    ;;
+                    *)
+                        cat<<EOF | error
+unknown environment: ${ENVIRONMENT}
+please upgrade this \`compile\` command to support new project.
+
+contact: journeyblue@163.com or sonny.frozenpine@gmail.com
+git repo: https://github.com/frozenpine/operation_by_bash
+EOF
+                        exit 1
+                    ;;
+                esac
             done
         done
 
@@ -327,7 +358,7 @@ EOF
     popd >/dev/null
 }
 
-while getopts :c:uph FLAG; do
+while getopts :c:e:uph FLAG; do
     case $FLAG in
         u)
             UPDATE_GIT=1
@@ -339,6 +370,13 @@ while getopts :c:uph FLAG; do
             WANTED_COMPILER=${OPTARG}
             if [[ ! ${WANTED_COMPILER} =~ npm|mvn ]]; then
                 error "invalid compiler specified: ${WANTED_COMPILER}"
+                exit 1
+            fi
+        ;;
+        e)
+            ENVIRONMENT=${OPTARG}
+            if [[ ! ${ENVIRONMENT} =~ ali|aws ]]; then
+                error "invalid environment name: ${ENVIRONMENT}"
                 exit 1
             fi
         ;;
@@ -360,6 +398,8 @@ if [[ $# -lt 1 ]]; then
     list_dir "${COMPILE_BASE}" >&2
     exit 1
 fi
+
+_check_environment
 
 if [[ $* =~ all ]]; then
     PROJECTS=$(find "${COMPILE_BASE}" -maxdepth 1 -type d -not -name `basename "${COMPILE_BASE}"` -exec basename {} \; | xargs)
