@@ -67,7 +67,7 @@ CREATE TABLE `t_checkpoint` (
   `checkpoint` bigint(20) DEFAULT NULL,
   `offset` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8 COMMENT='快照表';
+) ENGINE=InnoDB AUTO_INCREMENT=1155 DEFAULT CHARSET=utf8 COMMENT='快照表';
 
 -- ----------------------------
 -- Table structure for t_order_history
@@ -155,7 +155,7 @@ CREATE TABLE `t_position` (
   `maint_margin_rate` decimal(30,10) DEFAULT NULL COMMENT '维持保证金率',
   `init_margin` decimal(30,10) DEFAULT NULL COMMENT '起始保证金',
   `maint_margin` decimal(30,10) DEFAULT NULL COMMENT '维持保证金',
-  `deleverage_percentile` tinyint(3) DEFAULT NULL COMMENT '自动减仓风险度',
+  `deleverage_percentile` decimal(30,0) DEFAULT NULL COMMENT '自动减仓排序',
   `rebalanced_pnl` decimal(30,10) DEFAULT NULL COMMENT '已划入账户的盈亏',
   `prev_realised_pnl` decimal(30,10) DEFAULT NULL COMMENT '上一次平仓已划入账户的盈亏',
   `current_cost` decimal(30,10) DEFAULT NULL COMMENT '当前仓位价值',
