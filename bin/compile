@@ -40,7 +40,7 @@ COMMIT_ID=
 HELP_ARGS["u"]="optional,Pull lastest update from master@github."
 HELP_ARGS["p"]="optional,Publish new build to nginx or docker registry."
 HELP_ARGS["c:npm|mvn"]="optional,Specify compiler type for project, and ignore all others."
-HELP_ARGS["e:ali|aws"]="optional,Specify running envirionment manually, if auto detection failed."
+HELP_ARGS["e:test|prod"]="optional,Specify running envirionment manually, if auto detection failed."
 
 HELP_POSITION_ARGS[0]="{all | project_name}..."
 
@@ -57,11 +57,14 @@ function _check_environment() {
         exit 1
     fi
 
-    if [[ "${_public_ip}" == "47.105.52.41" ]]; then
-        ENVIRONMENT="ali"
-    else
-        ENVIRONMENT="aws"
-    fi
+    case "${_public_ip}" in
+        "47.105.52.41"|"203.110.179.26")
+            ENVIRONMENT=test
+        ;;
+        *)
+            ENVIRONMENT=prod
+        ;;
+    esac
 }
 
 function _check_compiler() {
@@ -305,10 +308,10 @@ EOF
                 ${SUDO} sed -i '/spring.redis.password=/ d' ${FILE}
 
                 case ${ENVIRONMENT} in
-                    ali)
+                    test)
                         ${SUDO} sed -i 's/test.configuration'"[[:space:]]"'*='"[[:space:]]"'*false/test.configuration = true/' ${FILE}
                     ;;
-                    aws)
+                    prod)
                         ${SUDO} sed -i '/test.configuration/ d' ${FILE}
                     ;;
                     *)
