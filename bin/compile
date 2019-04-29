@@ -36,9 +36,11 @@ MAVEN_MIRROR_PORT=8181
 UPDATE_GIT=0
 PUBLISH=0
 COMMIT_ID=
+FORCE=0
 
 HELP_ARGS["u"]="optional,Pull lastest update from master@github."
 HELP_ARGS["p"]="optional,Publish new build to nginx or docker registry."
+HELP_ARGS["f"]="optional,Compile project forcelly, without check pre-build."
 HELP_ARGS["c:npm|mvn"]="optional,Specify compiler type for project, and ignore all others."
 HELP_ARGS["e:test|prod"]="optional,Specify running envirionment manually, if auto detection failed."
 HELP_ARGS["b:{commit_id}"]="optional,Sepcify commit id to checkout, this action has higher priority than \"-u\" option."
@@ -193,7 +195,7 @@ function _npm_compile() {
 
         local _tar_file="${_project_base_name}_${COMMIT_ID}.tar.gz"
 
-        if [[ -f "build/${_tar_file}" ]]; then
+        if [[ -f "build/${_tar_file}" && ${FORCE} -ne 1 ]]; then
             info "project ${_project_base_name}[${COMMIT_ID}]'s build aleady exist, skip building."
             return
         fi
@@ -382,7 +384,7 @@ EOF
     popd >/dev/null
 }
 
-while getopts :b:c:e:uph FLAG; do
+while getopts :b:c:e:upfh FLAG; do
     case $FLAG in
         u)
             UPDATE_GIT=1
@@ -406,6 +408,9 @@ while getopts :b:c:e:uph FLAG; do
                 error "invalid environment name: ${ENVIRONMENT}"
                 exit 1
             fi
+        ;;
+        f)
+            FORCE=1
         ;;
         h)
             help_message >&2
