@@ -60,6 +60,8 @@ function remote_exec() {
     [[ -n ${REMOTE_HOST} ]] && _HOST="${REMOTE_HOST}" || _HOST="${SSH_HOST}"
     [[ -n ${REMOTE_PORT} ]] && _PORT="${REMOTE_PORT}" || _PORT="${SSH_PORT}"
 
+    check_env_true INDEPENDENT_CONFIG_NODE && is_self ${_HOST} && return
+
     if [[ ${_PORT} -eq 22 ]]; then
         _CONN_STRING="${_USER}@${_HOST}"
         _ssh_args=(${_ssh_args[@]})

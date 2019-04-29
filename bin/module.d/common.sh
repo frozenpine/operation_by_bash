@@ -579,3 +579,20 @@ function list_dir() {
             _idx=$((_idx+1))
         done
 }
+
+function is_self_ip() {
+    if [[ $# -lt 1 ]]; then
+        error "ip missing in self check."
+        exit 1
+    fi
+
+    local _self_ip=$1
+
+    for ip in `ip address show | grep inet | grep -v inet6 | awk '{split($2, addr, "/"); print addr[1]}'`; do
+        if [[ ${ip} == ${_self_ip} ]]; then
+            return 0
+        fi
+    done
+
+    return 1
+}

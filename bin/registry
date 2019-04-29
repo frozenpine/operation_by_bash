@@ -394,7 +394,7 @@ shift $((OPTIND - 1))
 
 [[ $# -lt 1 ]] && {
     echo "Command missing." >&2
-    _usage >&2
+    help_message >&2
     exit 1
 }
 

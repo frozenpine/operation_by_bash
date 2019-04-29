@@ -119,7 +119,12 @@ function parse_ssh() {
 }
 
 function get_all_hosts() {
-    sed 's/#.*$//g' /etc/hosts | grep -v -E "localhost|^[ \t]*$" | awk '{printf("ssh://%s\n", $1)}'
+    # sed 's/#.*$//g' /etc/hosts | grep -v -E "localhost|^[ \t]*$" | awk '{printf("ssh://%s\n", $1)}'
+    for ALIAS_SEC_NAME in `list_sections ${CONF_BASE}/alias.ini`; do
+        HOST_IP=`echo ${ALIAS_SEC_NAME} | cut -d':' -f2`
+        HOST_NAME=`echo ${ALIAS_SEC_NAME} | cut -d':' -f1`
+        echo "ssh://${HOST_IP}"
+    done
 }
 
 function host_list() {
