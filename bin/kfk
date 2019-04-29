@@ -9,7 +9,11 @@ source "${BASE_DIR}/module.d/common.sh" || exit 1
 FUNC_FILE_CONFIG="${MODULE_BASE}/config.sh"
 import_functions
 
-KAFKA_HOME="${APP_BASE:=/opt}/kafka_2.12-2.1.0"
+if [[ ! -d "${KAFKA_HOME}" ]]; then
+    error "${KAFKA_HOME} not exists."
+    exit 1
+fi
+
 TOPIC_SCRIPT="${KAFKA_HOME}/bin/kafka-topics.sh"
 GROUP_SCRIPT="${KAFKA_HOME}/bin/kafka-consumer-groups.sh"
 CONSUMER_SCRIPT="${KAFKA_HOME}/bin/kafka-console-consumer.sh"
