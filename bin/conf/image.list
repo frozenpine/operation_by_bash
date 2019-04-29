@@ -5,6 +5,7 @@ wurstmeister/kafka:2.12-2.2.0
 openjdk:8u201-jre-alpine
 zookeeper:3.4.13
 mysql:5.7.25
+prom/mysqld-exporter:v0.11.0
 consul:1.4.3
 sonatype/nexus3:3.16.1
 store/elastic/filebeat:7.0.0
