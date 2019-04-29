@@ -221,7 +221,7 @@ function _npm_compile() {
             exit 1
         fi
 
-        echo -n "version: ${COMMIT_ID}" > "${_project_pub_dir}/version"
+        echo -n "{\"version\": \"${COMMIT_ID}\"}" > "${_project_pub_dir}/version"
 
         nginx-pub data ${PUB_MAPPER[$_project_base_name]}
     popd &>/dev/null
@@ -370,13 +370,16 @@ EOF
     popd >/dev/null
 }
 
-while getopts :c:e:uph FLAG; do
+while getopts :b:c:e:uph FLAG; do
     case $FLAG in
         u)
             UPDATE_GIT=1
         ;;
         p)
             PUBLISH=1
+        ;;
+        b)
+            COMMIT_ID=${OPTARG}
         ;;
         c)
             WANTED_COMPILER=${OPTARG}

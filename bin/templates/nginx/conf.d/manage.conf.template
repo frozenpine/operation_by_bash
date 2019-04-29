@@ -16,6 +16,8 @@ server {
     }
 
     location = /version {
+        default_type application/json;
+        
         root   /var/lib/nginx/quant-coinMS;
 
         auth_basic "Restricted";
