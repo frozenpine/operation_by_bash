@@ -206,6 +206,10 @@ function _npm_compile() {
         local _project_pub_dir="${_nginx_data_base}/${PUB_MAPPER[$_project_base_name]}"
 
         info "publishing ${_project_base_name}[${COMMIT_ID}] to ${_project_pub_dir}"
+
+        if [[ ! -d "${_project_pub_dir}" ]]; then
+            mkdir -p "${_project_pub_dir}"
+        fi
         
         # aleady cd build on tar build files
         ${SUDO} tar -xzvf "${_tar_file}" -C "${_project_pub_dir}"
@@ -347,6 +351,10 @@ EOF
             local _publish_file="${_docker_hub_base}/${_docker_hub_prj_name}/${_publish_name}"
 
             info "publishing ${_project_base_name} ${module}[${COMMIT_ID}] to ${_publish_file}"
+
+            if [[ ! -d "${_docker_hub_base}/${_docker_hub_prj_name}" ]]; then
+                mkdir -p "${_docker_hub_base}/${_docker_hub_prj_name}"
+            fi
             
             ${SUDO} cp -f ${module}/target/*.jar "${_publish_file}"
             if [[ $? -ne 0 ]]; then
