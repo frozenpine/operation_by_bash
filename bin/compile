@@ -41,6 +41,7 @@ HELP_ARGS["u"]="optional,Pull lastest update from master@github."
 HELP_ARGS["p"]="optional,Publish new build to nginx or docker registry."
 HELP_ARGS["c:npm|mvn"]="optional,Specify compiler type for project, and ignore all others."
 HELP_ARGS["e:test|prod"]="optional,Specify running envirionment manually, if auto detection failed."
+HELP_ARGS["b:{commit_id}"]="optional,Sepcify commit id to checkout, this action has higher priority than \"-u\" option."
 
 HELP_POSITION_ARGS[0]="{all | project_name}..."
 
@@ -129,6 +130,17 @@ function _git_update() {
     fi
 
     git checkout .
+
+    if [[ x"${COMMIT_ID}" != "x" ]]; then
+        git checkout ${COMMIT_ID}
+        
+        if [[ $? -ne 0 ]]; then
+            error "checkout commit[${COMMIT_ID}] failed."
+            exit 1
+        fi
+
+        return
+    fi
 
     if [[ ${UPDATE_GIT} -ne 1 ]]; then
         _get_commit
