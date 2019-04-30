@@ -9,7 +9,7 @@ source "${BASE_DIR}/module.d/common.sh" || exit 1
 FUNC_FILE_CONFIG="${MODULE_BASE}/config.sh"
 import_functions
 
-SERVICE_LIST="front"
+SERVICE_LIST="front elastic"
 for SERVICE in ${SERVICE_LIST}; do
     source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
         echo "service list file missing: ${SERVICE}.sh" >&2
@@ -219,6 +219,21 @@ case ${COMMAND} in
         if [[ $# -lt 1 ]]; then
             allssh -g${MANAGE_GROUP} container stop -crf rest security serviceimpl
             db truncate all
+
+            ELASTIC_HOST=
+            IDX=$((RANDOM % ${#ELASTIC_LIST[@]}))
+            COUNT=0
+            for SVR_NAME in ${!ELASTIC_LIST[@]}; do
+                if [[ ${COUNT} -eq ${IDX} ]]; then
+                    ELASTIC_HOST=${ELASTIC_LIST[$SVR_NAME]}
+                    break
+                fi
+
+                COUNT=$((COUNT+1))
+            done
+
+            curl -XDELETE "http://${ELASTIC_HOST}:${ELASTIC_PORT}/order*"
+            curl -XDELETE "http://${ELASTIC_HOST}:${ELASTIC_PORT}/trade*"
         else
             allssh -g${MANAGE_GROUP} container stop -crf $*
         fi
