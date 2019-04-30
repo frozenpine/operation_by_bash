@@ -2,14 +2,19 @@ VERSION="7.0.0"
 NAME=filebeat
 USER=
 
-SERVICE_LIST="registry"
-
+SERVICE_LIST="registry elastic"
 for SERVICE in ${SERVICE_LIST}; do
     source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
         echo "service list file missing: ${SERVICE}.sh" >&2
         exit 1
     }
 done
+
+ELASTIC_SERVERS=
+for SVR_NAME in ${!ELASTIC_LIST[@]}; do
+    ELASTIC_SERVERS="${ELASTIC_SERVERS},\"http://${SVR_NAME}:${ELASTIC_PORT}\""
+done
+ELASTIC_SERVERS=${ELASTIC_SERVERS:1}
 
 CONTAINER_BASE="${DATA_BASE:=/opt}/${NAME}"
 make_dir -b "${CONTAINER_BASE}" conf || exit 1
@@ -34,7 +39,6 @@ filebeat.inputs:
 
 output.elasticsearch:
   hosts: [${ELASTIC_SERVERS}]
-  index: "filebeat-%{[agent.version]}-%{+yyyy.MM.dd}"
 EOF
 
 docker run -d \
