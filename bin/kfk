@@ -21,11 +21,11 @@ TOPIC_LIST_FILE="${CONF_BASE}/topic.list"
 
 KEY_DESERIALIZER="--key-deserializer org.apache.kafka.common.serialization.StringDeserializer"
 VALUE_DESERIALIZER="--value-deserializer com.quantdo.trade.kafka.kryo.KryoDeserializer"
-# VALUE_DESERIALIZER=
 
 DRY_RUN=
 
 HELP_ARGS["D"]="optional,Dry run command for test."
+HELP_ARGS["t"]="optional,Specify value deserializer as text."
 
 HELP_COMMANDS["start"]="Start an Kafka cluster/standalone."
 HELP_COMMANDS["stop"]="Stop an Kafka cluster/standalone."
@@ -99,20 +99,6 @@ function _group() {
 }
 
 function _consumer() {
-    local OPTIND FLAG
-    while getopts :D FLAG; do
-        case $FLAG in
-            D)
-                VALUE_DESERIALIZER=
-            ;;
-            *)
-                error "invalid consumer args: $*"
-                exit 1
-            ;;
-        esac
-    done
-    shift $((OPTIND-1))
-
     eval "${DRY_RUN} ${CONSUMER_SCRIPT} \
             --bootstrap-server ${KAFKA_SERVERS} \
             ${KEY_DESERIALIZER} \
@@ -236,10 +222,13 @@ function _delete() {
     info "delete finished, checking topics..."
 }
 
-while getopts :hD FLAG; do
+while getopts :thD FLAG; do
     case $FLAG in
         D)
             DRY_RUN="echo"
+        ;;
+        t)
+            VALUE_DESERIALIZER=
         ;;
         h)
             help_message >&2
