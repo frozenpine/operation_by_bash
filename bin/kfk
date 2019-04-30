@@ -99,6 +99,18 @@ function _group() {
 }
 
 function _consumer() {
+    local OPTIND FLAG
+    while getopts :D FLAG; do
+        D)
+            VALUE_DESERIALIZER=
+        ;;
+        *)
+            error "invalid consumer args: $*"
+            exit 1
+        ;;
+    done
+    shift $((OPTIND-1))
+
     eval "${DRY_RUN} ${CONSUMER_SCRIPT} \
             --bootstrap-server ${KAFKA_SERVERS} \
             ${KEY_DESERIALIZER} \
