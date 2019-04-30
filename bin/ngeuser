@@ -106,7 +106,8 @@ function _get_users() {
     mysql -h${MYSQL_HOST} \
          -u${DB_USER} -p${DB_PASS} ${DB_NAME} \
          -e 'select u.email as identity, u.password as password, k.key_id as api_key, k.secret_key as api_secret \
-                    from t_trade_user as u inner join t_api_key as k on u.user_id = k.user_id' | \
+                from t_trade_user as u inner join t_api_key as k on u.user_id = k.user_id \
+                where u.user_type = 1;' | \
         awk '{printf("%s,%s,%s,%s\n", $1,$2,$3,$4)}' | ${SUDO} tee "${ORIGN_USER_FILE}"
     
     info "Total user count: $((`wc -l "${ORIGN_USER_FILE}" | cut -d' ' -f1` - 1))"
