@@ -101,13 +101,15 @@ function _group() {
 function _consumer() {
     local OPTIND FLAG
     while getopts :D FLAG; do
-        D)
-            VALUE_DESERIALIZER=
-        ;;
-        *)
-            error "invalid consumer args: $*"
-            exit 1
-        ;;
+        case $FLAG in
+            D)
+                VALUE_DESERIALIZER=
+            ;;
+            *)
+                error "invalid consumer args: $*"
+                exit 1
+            ;;
+        esac
     done
     shift $((OPTIND-1))
 
