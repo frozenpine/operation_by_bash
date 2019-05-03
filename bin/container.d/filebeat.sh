@@ -32,15 +32,15 @@ filebeat.inputs:
   paths:
   - ${DATA_BASE:=/opt}/rest/log/*.log
   - ${DATA_BASE:=/opt}/serviceimpl/log/*.log
-  - ${DATA_BASE:=/opt}/index/logs/*.log
-  - ${DATA_BASE:=/opt}/sms/logs/*.log
-  - ${DATA_BASE:=/opt}/scheduler/logs/*.log
-  - ${DATA_BASE:=/opt}/tradebase/logs/*.log
-  - ${DATA_BASE:=/opt}/order/logs/*.log
-  - ${DATA_BASE:=/opt}/query/logs/*.log
-  - ${DATA_BASE:=/opt}/clear/logs/*.log
-  - ${DATA_BASE:=/opt}/tmdb/logs/*.log
-  - ${DATA_BASE:=/opt}/match/logs/*.log
+  - ${DATA_BASE:=/opt}/index/log*/*.log
+  - ${DATA_BASE:=/opt}/sms/log*/*.log
+  - ${DATA_BASE:=/opt}/scheduler/log*/*.log
+  - ${DATA_BASE:=/opt}/tradebase/log*/*.log
+  - ${DATA_BASE:=/opt}/order/log*/*.log
+  - ${DATA_BASE:=/opt}/query/log*/*.log
+  - ${DATA_BASE:=/opt}/clear/log*/*.log
+  - ${DATA_BASE:=/opt}/tmdb/log*/*.log
+  - ${DATA_BASE:=/opt}/match/log*/*.log
   multiline:
     pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}'
     negate: true
