@@ -5,7 +5,8 @@ pushd `dirname "${SCRIPT_FILE}"` >/dev/null
 BASE_DIR=`pwd`
 popd >/dev/null
 
-source "${BASE_DIR}/module.d/common.sh" || exit 1
+source "${BASE_DIR}/module.d/common.sh"
+check_env || exit 1
 
 HELP_ARGS["u:user_name"]="optional,Specify user name used in ssh connection, if not specified, local user will be used."
 HELP_ARGS["H:host_name"]="Specify a ssh host to connect to."

@@ -5,7 +5,8 @@ pushd `dirname "${SCRIPT_FILE}"` >/dev/null
 BASE_DIR=`pwd`
 popd >/dev/null
 
-source "${BASE_DIR}/module.d/common.sh" || exit 1
+source "${BASE_DIR}/module.d/common.sh"
+check_env || exit 1
 
 ${BASE_DIR}/zk start
 sleep 1

@@ -8,13 +8,6 @@ PATCH_BASE="${BASE_DIR}/patch.d"
 
 COMMON_ENV="${CONF_BASE}/common.env"
 
-if [[ -f "${COMMON_ENV}" ]]; then
-    source "${COMMON_ENV}"
-else
-    echo "[error] common.env missing." >&2
-    exit 1
-fi
-
 # Bash Color start
 # to display color with enhanced echo command: "echo -e"
 # color only functioned properly under xterm terminal
@@ -23,6 +16,16 @@ declare -A COLOR
 
 COLOR=([black]='\033[0;30m' [red]='\033[0;31m' [green]='\033[0;32m' [orange]='\033[0;33m' [blue]='\033[0;34m' [purple]='\033[0;35m' [cyan]='\033[0;36m' [light_gray]='\033[0;37m' [dark_gray]='\033[1;30m' [light_red]='\033[1;31m' [light_green]='\033[1;32m' [yellow]='\033[1;33m' [light_blue]='\033[1;34m' [light_purple]='\033[1;35m' [light_cyan]='\033[1;36m' [white]='\033[1;37m' [nc]='\033[0m')
 # Bash color end
+
+function check_env() {
+    if [[ ! -f "${COMMON_ENV}" ]]; then
+        echo -e "[${COLOR[orange]}warni${COLOR[nc]}] common.env missing." >&2
+
+        return 1
+    fi
+
+    source "${COMMON_ENV}"
+}
 
 # Bash log start
 # logger function will retrive log message from stdin with prefix: [log level]

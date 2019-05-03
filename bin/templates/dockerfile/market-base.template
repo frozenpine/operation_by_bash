@@ -1,8 +1,0 @@
-FROM alpine:3.9
-RUN apk add --no-cache \
-        bash vim curl jq \
-        libstdc++ libc6-compat \
-        librdkafka libuv \
-        libssl1.1 libcrypto1.1 && \
-    cd /usr/lib && ln -s libuv.so.1.0.0 libuv.so
-ENTRYPOINT ["bash"]

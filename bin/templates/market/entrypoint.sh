@@ -5,7 +5,14 @@ pushd `dirname "${SCRIPT_FILE}"` >/dev/null
 BASE_DIR=`pwd`
 popd >/dev/null
 
-source "${BASE_DIR}/module.d/common.sh" || exit 1
+RUNNING_IN_DOCOKER=
+
+source "${BASE_DIR}/module.d/common.sh"
+check_env_true RUNNING_IN_DOCOKER
+if [[ $? -ne 0 ]]; then
+    check_env || exit 1
+fi
+
 FUNC_FILE_CONFIG="${BASE_DIR}/module.d/template.sh"
 import_functions
 

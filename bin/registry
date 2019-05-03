@@ -4,7 +4,8 @@
 cd `dirname "${SCRIPT_FILE}"`
 BASE_DIR=`pwd`
 
-source "${BASE_DIR}/module.d/common.sh" || exit 1
+source "${BASE_DIR}/module.d/common.sh"
+check_env || exit 1
 
 REGISTRY_USER=quantdo
 REGISTRY_PASS=quantdo123456
