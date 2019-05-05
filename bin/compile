@@ -408,7 +408,13 @@ function _gcc_compile() {
     local _project_base_dir=`find . -maxdepth 2 -type f -name CMakeLists.txt -exec dirname {} \;`
     local _project_base_name
 
-    local _library_dir=`find . -type f -name "*.so" -exec dirname {} \;`
+    local _library_dir
+
+    pushd `find . -type f -name "*.so" -exec dirname {} \;` >/dev/null
+        _library_dir=`pwd`
+        source ./link >/dev/null
+        export LD_LIBRARY_PATH=`pwd`:$LD_LIBRARY_PATH
+    popd >/dev/null
 
     pushd "${_project_base_dir}" >/dev/null
         _project_base_name=$(basename `pwd`)
@@ -421,11 +427,6 @@ function _gcc_compile() {
         fi
 
         info "start to build project: ${_project_base_name}[${COMMIT_ID}]"
-
-        pushd "${_library_dir}" >/dev/null
-            source ./link >/dev/null
-            export LD_LIBRARY_PATH=`pwd`:$LD_LIBRARY_PATH
-        popd >/dev/null
 
         _git_patch ${_project_base_name}
 
