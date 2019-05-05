@@ -15,6 +15,7 @@ JVM_OPTS=""
 SERVICE_LIST="registry zookeeper kafka mysql redis consul tradebase sms"
 
 DB_NAME="digital"
+SECOND_DB_NAME="clear"
 
 WALLET_BASE_URI="/api/BTC/testnet"
 
@@ -37,6 +38,21 @@ for CONF in `extract_ini_sec ${DB_NAME} "${CONF_BASE}/dbs.ini"`; do
         DB_PASS=`echo ${CONF} | cut -d'=' -f2`
         DB_PASS=${DB_PASS## }
         DB_PASS=${DB_PASS%% }
+    fi
+done
+
+SECOND_DB_USER=
+SECOND_DB_PASS=
+for CONF in `extract_ini_sec ${SECOND_DB_NAME} "${CONF_BASE}/dbs.ini"`; do
+    if [[ $CONF =~ .*[Uu][Ss][Ee][Rr] ]]; then
+        SECOND_DB_USER=`echo ${CONF} | cut -d'=' -f2`
+        SECOND_DB_USER=${DB_USER## }
+        SECOND_DB_USER=${DB_USER%% }
+    fi
+    if [[ $CONF =~ .*[Pp][Aa][Ss][Ss]([Ww][Oo][Rr][Dd])? ]]; then
+        SECOND_DB_PASS=`echo ${CONF} | cut -d'=' -f2`
+        SECOND_DB_PASS=${DB_PASS## }
+        SECOND_DB_PASS=${DB_PASS%% }
     fi
 done
 
@@ -119,9 +135,12 @@ docker run -d \
         --server.port=${TRADEBASE_PORT} \
         --spring.cloud.consul.host=${CONSUL_HOST} \
         --spring.cloud.consul.port=${CONSUL_PORT} \
-        --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?characterEncoding=utf-8" \
-        --spring.datasource.username="${DB_USER:=$DEFAULT_DB_USER}" \
-        --spring.datasource.password="${DB_PASS:=$DEFAULT_DB_PASS}" \
+        --spring.datasource.sentinel.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?characterEncoding=utf-8" \
+        --spring.datasource.sentinel.username="${DB_USER:=$DEFAULT_DB_USER}" \
+        --spring.datasource.sentinel.password="${DB_PASS:=$DEFAULT_DB_PASS}" \
+        --spring.datasource.clear.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${SECOND_DB_NAME}?characterEncoding=utf-8" \
+        --spring.datasource.clear.username=${SECOND_DB_USER} \
+        --spring.datasource.clear.password=${SECOND_DB_PASS} \
         --spring.redis.host="${REDIS_HOST}" \
         --url.sms.sing="http://${SMS_HOST}:${SMS_PORT}/sms/send" \
         --url.email.sing="http://${SMS_HOST}:${SMS_PORT}/mail/send" \
