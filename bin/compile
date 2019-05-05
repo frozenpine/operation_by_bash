@@ -469,4 +469,6 @@ for PRJ in ${PROJECTS}; do
         eval _${COMPILER}_compile
 
     popd &>/dev/null
+
+    COMMIT_ID=
 done
