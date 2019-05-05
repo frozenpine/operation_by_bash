@@ -87,6 +87,15 @@ function _check_compiler() {
         error "\`${_compiler}\` command missing, stop compiling."
         exit 1
     fi
+
+    if [[ ${_compiler} == "gcc" ]]; then
+        for _extra_complier in g++ cmake make; do
+            which ${_extra_complier} &>/dev/null || {
+                error "\`${_extra_complier}\` missing, stop compiling."
+                exit 1
+            }
+        done
+    fi
 }
 
 function _decide_compiler() {
@@ -112,6 +121,11 @@ function _decide_compiler() {
 
     ls */pom.xml &>/dev/null && {
         echo -n mvn
+        return
+    }
+
+    ls */CMakeLists.txt &>/dev/null && {
+        echo -n gcc
         return
     }
 
@@ -348,6 +362,7 @@ EOF
         done
 
         export COMMIT_ID
+        export BRANCH
         mvn clean package -DskipTests=true ${_env_arg} -U
 
         if [[ $? -ne 0 ]]; then
@@ -381,11 +396,82 @@ EOF
             ${SUDO} cp -f ${module}/target/*.jar "${_publish_file}"
             if [[ $? -ne 0 ]]; then
                 error "publishing ${_project_base_name} ${module}[${COMMIT_ID}] failed."
-            exit 1
-        fi
+                exit 1
+            fi
         done
 
         build-image -cp -b${_docker_hub_prj_name} all
+    popd >/dev/null
+}
+
+functoin _gcc_compile() {
+    local _project_base_dir=`find . -maxdepth 2 -type f -name CMakeLists.txt -exec dirname {} \; | sort | head -1`
+    local _project_base_name
+
+    local _library_dir=`find . -type f -name "*.so" -exec dirname {} \;`
+
+    pushd "${_project_base_dir}" >/dev/null
+        _project_base_name=$(basename `pwd`)
+
+        _git_update
+
+        if [[ x"${COMMIT_ID}" == "x" ]]; then
+            error "fail to get current commit id."
+            exit 1
+        fi
+
+        info "start to build project: ${_project_base_name}[${COMMIT_ID}]"
+
+        pushd "${_library_dir}" >/dev/null
+            source ./link >/dev/null
+            export LD_LIBRARY_PATH=`pwd`:$LD_LIBRARY_PATH
+        popd >/dev/null
+
+        _git_patch ${_project_base_name}
+
+        ${SUDO} sed -i 's/.*\/openssl/\.\/openssl/' CMakeLists.txt
+
+        make clean
+        cmake .
+        make
+
+        if [[ $? -ne 0 ]]; then
+            error "project[${_project_base_name}] build failed."
+            exit 1
+        fi
+
+        if [[ ${PUBLISH} -ne 1 ]]; then
+            return
+        fi
+
+        local _publish_name=`find . -maxdepth 1 -executable -type f -exec basename {} \;`
+        local _publish_base_dir="${DATA_BASE:=/opt}/${_project_base_dir}"
+        local _publish_dir="${_publish_base_dir}/${_publish_name}"
+        local _publish_file_name="${_publish_dir}/${_publish_name}"
+
+        info "publishing ${_project_base_name} ${_publish_name}[${COMMIT_ID}] to ${_publish_file}"
+
+        if [[ ! -d "${_publish_dir}" ]]; then
+            mkdir -p "${_publish_dir}"
+        fi
+
+        if [[ ! -d "${_publish_base_dir}/libs" ]]; then
+            mkdir -p "${_publish_base_dir}/libs"
+        fi
+
+        ${SUDO} cp -rf "${_library_dir}/*" "${_publish_base_dir}/libs"
+        if [[ $? -ne 0 ]]; then
+            error "publishing ${_project_base_name} ${_publish_name} libraries failed."
+            exit 1
+        fi
+
+        ${SUDO} cp -f "${_publish_name}" "${_publish_file_name}"
+        if [[ $? -ne 0 ]]; then
+            error "publishing ${_project_base_name} ${_publish_name}[${COMMIT_ID}] failed."
+            exit 1
+        fi
+
+        market deploy
     popd >/dev/null
 }
 
