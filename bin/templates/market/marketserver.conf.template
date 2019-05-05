@@ -4,7 +4,7 @@
 LogToFile=true
 
 # log文件目录，注意：目录后面的正斜杠不要少！
-logFileDir=logs/
+logFileDir=log/
 
 # log 文件名
 logFileName=market
