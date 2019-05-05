@@ -430,6 +430,14 @@ function _gcc_compile() {
 
         _git_patch ${_project_base_name}
 
+        if [[ ! -f "CMakeLists.txt" ]]; then
+            cat <<EOF | error
+CMakeLists.txt file missing.
+`pwd`
+`ls -l`
+EOF
+            exit 1
+        fi
         ${SUDO} sed -i 's/.*\/openssl/\.\/openssl/' CMakeLists.txt
 
         make clean
