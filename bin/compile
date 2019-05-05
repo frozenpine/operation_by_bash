@@ -26,7 +26,7 @@ PUB_MAPPER["trade-clear-memory"]=trade-clear
 PUB_MAPPER["trade-match"]=trade-match
 PUB_MAPPER["trade-order"]=trade-order
 PUB_MAPPER["trade-query"]=trade-query
-PUB_MAPPER["trade-kline"]=trade-klinejia
+PUB_MAPPER["trade-kline"]=trade-kline
 PUB_MAPPER["exchange-index-server"]=service-index
 PUB_MAPPER["scheduler-server"]=service-scheduler
 PUB_MAPPER["sms-mail-server"]=service-sms
@@ -37,15 +37,17 @@ PUB_MAPPER["webadmin-front"]=quant-coinMS
 MAVEN_MIRROR_PORT=8181
 UPDATE_GIT=0
 PUBLISH=0
+BRANCH=master
 COMMIT_ID=
 FORCE=0
 
 HELP_ARGS["u"]="optional,Pull lastest update from master@github."
 HELP_ARGS["p"]="optional,Publish new build to nginx or docker registry."
 HELP_ARGS["f"]="optional,Compile project forcelly, without check pre-build."
-HELP_ARGS["c:npm|mvn"]="optional,Specify compiler type for project, and ignore all others."
+HELP_ARGS["C:npm|mvn"]="optional,Specify compiler type for project, and ignore all others."
 HELP_ARGS["e:test|prod"]="optional,Specify running envirionment manually, if auto detection failed."
-HELP_ARGS["b:{commit_id}"]="optional,Sepcify commit id to checkout, this action has higher priority than \"-u\" option."
+HELP_ARGS["b:{branch_name}"]="optional,Specify local branch name, default(master)."
+HELP_ARGS["c:{commit_id}"]="optional,Sepcify commit id to checkout, this action has higher priority than \"-u\" option."
 
 HELP_POSITION_ARGS[0]="{all | project_name}..."
 
@@ -122,18 +124,19 @@ function _get_commit() {
 }
 
 function _git_update() {
-    git branch | grep master &>/dev/null
+    # drop all local changes.
+    git checkout .
+
+    git branch | grep ${BRANCH} &>/dev/null
     if [[ $? -ne 0 ]]; then
-        warning "current branch is not master, checkout to master."
-        git checkout master
+        warning "current branch is not ${BRANCH}, checkout to ${BRANCH}."
+        git checkout ${BRANCH}
 
         if [[ $? -ne 0 ]]; then
-            error "check out to master failed."
+            error "check out to ${BRANCH} failed."
             exit 1
         fi
     fi
-
-    git checkout .
 
     if [[ x"${COMMIT_ID}" != "x" ]]; then
         git checkout ${COMMIT_ID}
@@ -386,7 +389,7 @@ EOF
     popd >/dev/null
 }
 
-while getopts :b:c:e:upfh FLAG; do
+while getopts :b:c:C:e:upfh FLAG; do
     case $FLAG in
         u)
             UPDATE_GIT=1
@@ -395,9 +398,12 @@ while getopts :b:c:e:upfh FLAG; do
             PUBLISH=1
         ;;
         b)
-            COMMIT_ID=${OPTARG}
+            BRANCH=${OPTARG}
         ;;
         c)
+            COMMIT_ID=${OPTARG}
+        ;;
+        C)
             WANTED_COMPILER=${OPTARG}
             if [[ ! ${WANTED_COMPILER} =~ npm|mvn ]]; then
                 error "invalid compiler specified: ${WANTED_COMPILER}"
