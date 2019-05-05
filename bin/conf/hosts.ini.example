@@ -60,3 +60,6 @@ ssh://qmk
 
 [websocket]
 ssh://ws
+
+[kline]
+ssh://kline
