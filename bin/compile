@@ -412,7 +412,7 @@ function _gcc_compile() {
 
     pushd `find . -type f -name "*.so" -exec dirname {} \;` >/dev/null
         _library_dir=`pwd`
-        source ./link >/dev/null
+        source ./link &>/dev/null
         export LD_LIBRARY_PATH=`pwd`:$LD_LIBRARY_PATH
     popd >/dev/null
 
@@ -468,7 +468,7 @@ EOF
             mkdir -p "${_publish_base_dir}/libs"
         fi
 
-        ${SUDO} cp -rf ${_library_dir}/* "${_publish_base_dir}/libs/"
+        ${SUDO} cp -f ${_library_dir}/* "${_publish_base_dir}/libs/"
         if [[ $? -ne 0 ]]; then
             error "publishing ${_project_base_name} ${_publish_name} libraries failed."
             exit 1

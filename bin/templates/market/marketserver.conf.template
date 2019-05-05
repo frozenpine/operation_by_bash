@@ -1,8 +1,16 @@
 # 公有配置
-appname=log/marketserver
 
 # 是否将日志输入到文件
 LogToFile=true
+
+# log文件目录，注意：目录后面的正斜杠不要少！
+logFileDir=logs/
+
+# log 文件名
+logFileName=market
+
+# 单个日志文件的大小,200M
+LogFileRollSize=209715200
 
 #监控端口
 monitorlistenip=${LISTEN_ADDR:=0.0.0.0}
@@ -19,7 +27,8 @@ KafkaTopicSnapshot=${KFK_CHECKPOINT_TOPIC:=MATCH-JSON-SS}
 KafkaTopicIncrement=${KFK_INCREMENT_TOPIC:=MATCH-JSON-SS-INCREMENT}
 # order、trade、position、margin等信息kafka topic名称
 KafkaTopicOther=${KFK_NOTIFY_TOPIC:=NOTIFY-CLIENT}
-#Partition=2
+# instrument topic名称
+KafkaTopicInstrument=${KFK_INSTRUMENT_TOPIC:=INSTRUMENT_XBTUSD}
 
 # websocket 配置
 #是否开启websocket前置
