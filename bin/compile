@@ -65,7 +65,7 @@ function _check_environment() {
     fi
 
     case "${_public_ip}" in
-        "47.105.52.41"|"203.110.179.26")
+        47.105.52.41 | 203.110.179.26)
             ENVIRONMENT=test
         ;;
         *)
@@ -127,7 +127,7 @@ function _git_update() {
     # drop all local changes.
     git checkout .
 
-    git branch | grep ${BRANCH}
+    git branch | grep "*" | grep ${BRANCH}
     if [[ $? -ne 0 ]]; then
         warning "current branch is not ${BRANCH}, checkout to ${BRANCH}."
         git checkout ${BRANCH}
@@ -324,11 +324,11 @@ EOF
             esac
 
             find ${module}/src/main/resources -type f -name "*.properties" | while read FILE; do
-                ${SUDO} sed -i '/spring.redis.password=/ d' ${FILE}
+                ${SUDO} sed -i '/spring.redis.password/ d; /jedis.pool.password/ d' ${FILE}
 
                 case ${ENVIRONMENT} in
                     test)
-                        ${SUDO} sed -i 's/test.configuration'"[[:space:]]"'*='"[[:space:]]"'*false/test.configuration = true/' ${FILE}
+                        ${SUDO} sed -i '/test.configuration/ d; $ a test.configuration = true' ${FILE}
                     ;;
                     prod)
                         ${SUDO} sed -i '/test.configuration/ d' ${FILE}
@@ -412,7 +412,7 @@ while getopts :b:c:C:e:upfh FLAG; do
         ;;
         e)
             ENVIRONMENT=${OPTARG}
-            if [[ ! ${ENVIRONMENT} =~ ali|aws ]]; then
+            if [[ ! ${ENVIRONMENT} =~ test|prod ]]; then
                 error "invalid environment name: ${ENVIRONMENT}"
                 exit 1
             fi
