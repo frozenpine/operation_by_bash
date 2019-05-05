@@ -30,6 +30,14 @@ done
 `
 }
 
+upstream kline-front {
+`
+for SVR_NAME in ${!KLINE_LIST[@]}; do
+    echo "    server ${KLINE_LIST[$SVR_NAME]}:${KLINE_PORT};"
+done
+`
+}
+
 server {
     listen      80;
     server_name trade localhost;
@@ -55,6 +63,19 @@ server {
 
         auth_basic "Restricted";
         auth_basic_user_file /var/lib/nginx/loginuser;
+    }
+
+    location ~ ^/(config|symbol|history) {
+        access_log  /var/log/nginx/trade.access.log  proxy;
+
+        proxy_http_version 1.1;
+
+        proxy_pass http://kline-front;
+
+        proxy_set_header HOST \$HOST;
+        proxy_set_header X-REAL-IP \$remote_addr;
+        proxy_set_header X-Forwarded-SERVER \$HOST;
+        proxy_set_header Request-Url \$request_uri;
     }
 
     location ^~ /api/v1/user {
