@@ -52,4 +52,5 @@ docker run -d \
         --logging.level.com.quantdo.trade=${LOG_LEVEL:=info} \
         --server.port=${KLINE_PORT} \
         --com.quantdo.trade.kline.trade.consumer.bootstrap.servers=${KAFKA_SERVERS} \
+        --com.quantdo.trade.kline.tradekline.consumer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.kline.tradekline.producer.bootstrap.servers=${KAFKA_SERVERS} \
