@@ -54,5 +54,7 @@ Configuration:
       # - ref: CONSOLE
       - ref: ROLLING_FILE
         level: \${env:LOG_LEVEL_ROOT}
+`check_env_true SENTRY_ENABLE && cat <<EOF
       - ref: sentry
         level: warn
+EOF`
