@@ -404,8 +404,8 @@ EOF
     popd >/dev/null
 }
 
-functoin _gcc_compile() {
-    local _project_base_dir=`find . -maxdepth 2 -type f -name CMakeLists.txt -exec dirname {} \; | sort | head -1`
+function _gcc_compile() {
+    local _project_base_dir=`find . -maxdepth 2 -type f -name CMakeLists.txt -exec dirname {} \;`
     local _project_base_name
 
     local _library_dir=`find . -type f -name "*.so" -exec dirname {} \;`
