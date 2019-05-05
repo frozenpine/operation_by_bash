@@ -50,3 +50,6 @@ QueryMarginURL=${TRADE_FRONT}/api/v1/accountx
 QueryPositionURL=${TRADE_FRONT}/api/v1/positionx
 #近期交易列表接口
 QueryTradeURL=${TRADE_FRONT}/api/v1/trade?reverse=true
+
+#获取全量instrument接口
+GetInstrumentDataURL=${TRADE_FRONT}/api/v1/push/instrument/XBTUSD
