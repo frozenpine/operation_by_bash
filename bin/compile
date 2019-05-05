@@ -127,7 +127,7 @@ function _git_update() {
     # drop all local changes.
     git checkout .
 
-    git branch | grep ${BRANCH} &>/dev/null
+    git branch | grep ${BRANCH}
     if [[ $? -ne 0 ]]; then
         warning "current branch is not ${BRANCH}, checkout to ${BRANCH}."
         git checkout ${BRANCH}
