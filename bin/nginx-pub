@@ -14,7 +14,7 @@ import_functions
 
 NGINX_GROUP=front
 
-SERVICE_LIST="digital order tradebase query websocket"
+SERVICE_LIST="digital order tradebase query websocket kline"
 for SERVICE in ${SERVICE_LIST}; do
     source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
         echo "service list file missing: ${SERVICE}.sh" >&2
