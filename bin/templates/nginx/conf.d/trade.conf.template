@@ -40,10 +40,11 @@ done
 
 proxy_cache_path /var/lib/nginx/caches levels=1:2 keys_zone=kline_cache:20m max_size=20g inactive=3d use_temp_path=off;
 
-log_format  proxy   '$remote_addr - $remote_user [$time_local] to $upstream_addr: "$request", '
-                    'status: $status, body_bytes_send: $body_bytes_sent, '
-                    'header: ("$http_referer" "$http_user_agent" "$http_x_forwarded_for"), '
-                    'upstream_response_time: $upstream_response_time';
+log_format  proxy   '\$remote_addr - \$remote_user [\$time_local] to \$upstream_addr: "\$request", '
+                    'cache: \$upstream_cache_status, '
+                    'status: \$status, body_bytes_send: \$body_bytes_sent, '
+                    'header: ("\$http_referer" "\$http_user_agent" "\$http_x_forwarded_for"), '
+                    'upstream_response_time: \$upstream_response_time';
 
 server {
     listen      80;
