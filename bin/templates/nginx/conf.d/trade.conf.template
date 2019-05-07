@@ -88,15 +88,15 @@ server {
     location ^~ /history {
         access_log  /var/log/nginx/trade.access.log  proxy;
 
-        set_by_lua \$arg_from '
+        set_by_lua \$args '
             local from = tonumber(ngx.var.arg_from)
-            t1, t2 = math.modf(from / 60)
-            return t1 * 60
-        ';
-        set_by_lua \$arg_to '
             local to = tonumber(ngx.var.arg_to)
+            local symbol = ngx.var.arg_symbol
+            local resolution = ngx.var.arg_resolution
+
+            f1, f2 = math.modf(from / 60)
             t1, t2 = math.modf(to / 10)
-            return t1 * 10
+            return string.format("symbol=%s&resolution=%s&from=%d&to=%d", symbol, resolution, f1 * 60, t1 * 10)
         ';
 
         proxy_cache kline_cache;
