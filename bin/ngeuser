@@ -108,7 +108,7 @@ function _get_users() {
          -u${DB_USER} -p${DB_PASS} ${DB_NAME} \
          -e 'select u.email as identity, u.password as password, k.key_id as api_key, k.secret_key as api_secret \
                 from t_trade_user as u inner join t_api_key as k on u.user_id = k.user_id \
-                where u.user_type = 1;' | \
+                where u.user_type = 1 or u.user_type is NULL;' | \
         awk '{printf("%s,%s,%s,%s\n", $1,$2,$3,$4)}' | ${SUDO} tee "${ORIGN_USER_FILE}"
     
     info "Total user count: $((`wc -l "${ORIGN_USER_FILE}" | cut -d' ' -f1` - 1))"
@@ -122,11 +122,6 @@ function _pub_users() {
 }
 
 function _show_me_the_money() {
-    if [[ ! -f "${ORIGN_USER_FILE}" ]]; then
-        error "origin user file missing."
-        exit 1
-    fi
-
     MYSQL_HOST=
     # IDX=$((RANDOM % ${#MYSQL_LIST[@]}))
     IDX=0
@@ -167,7 +162,8 @@ function _correct_password() {
         COUNT=$((COUNT+1))
     done
 
-    mysql -h${MYSQL_HOST} -u${DB_USER} -p${DB_PASS} ${DB_NAME} -N -e "select user_id from t_trade_user where email like '%@qq.com'" | while read user_id; do
+    mysql -h${MYSQL_HOST} -u${DB_USER} -p${DB_PASS} ${DB_NAME} -N -e \
+        "select user_id from t_trade_user where user_type is NULL;" | while read user_id; do
         echo "update \`t_trade_user\` set password='`echo -n "${user_id}123456" | openssl md5 | awk '{print $2}'`' where user_id='${user_id}';"
     done | mysql -h${MYSQL_HOST} -u${DB_USER} -p${DB_PASS} ${DB_NAME}
 }
