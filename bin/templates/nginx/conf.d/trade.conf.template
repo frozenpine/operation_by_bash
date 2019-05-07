@@ -85,12 +85,12 @@ server {
 
         set_by_lua \$arg_from '
             local from = tonumber(ngx.var.arg_from)
-            from = math.modf(from / 60000) * 60000
+            from = math.modf(from / 60) * 60
             return from;
         ';
         set_by_lua \$arg_to '
             local to = tonumber(ngx.var.arg_to)
-            to = math.modf(to / 10000) * 10000
+            to = math.modf(to / 10) * 10
             return to;
         ';
 
