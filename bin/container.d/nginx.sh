@@ -27,9 +27,9 @@ docker run -d \
     --name nginx \
     --restart always \
     --network host \
-    -v ${DATA_BASE:=/opt}/${NAME}/data:/var/lib/${NAME} \
-    -v ${DATA_BASE:=/opt}/${NAME}/conf/nginx.conf:/etc/${NAME}/nginx.conf:ro \
-    -v ${DATA_BASE:=/opt}/${NAME}/conf/conf.d:/etc/${NAME}/conf.d:ro \
-    -v ${DATA_BASE:=/opt}/${NAME}/log:/var/log/${NAME} \
-    -v ${DATA_BASE:=/opt}/${NAME}/cache:/var/cache/${NAME} \
+    -v ${DATA_BASE:=/opt}/nginx/data:/var/lib/nginx \
+    -v ${DATA_BASE:=/opt}/nginx/conf/nginx.conf:/etc/nginx/nginx.conf:ro \
+    -v ${DATA_BASE:=/opt}/nginx/conf/conf.d:/etc/nginx/conf.d:ro \
+    -v ${DATA_BASE:=/opt}/nginx/log:/var/log/nginx \
+    -v ${DATA_BASE:=/opt}/nginx/cache:/var/cache/nginx \
     registry:5000/${NAME}:${VERSION}
