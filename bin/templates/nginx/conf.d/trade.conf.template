@@ -83,7 +83,24 @@ server {
     location ^~ /history {
         access_log  /var/log/nginx/trade.access.log  proxy;
 
+        set_by_lua \$arg_from '
+            local from = tonumber(ngx.var.arg_from)
+            from = math.modf(from / 60000) * 60000
+            return from;
+        ';
+        set_by_lua \$arg_to '
+            local to = tonumber(ngx.var.arg_to)
+            to = math.modf(to / 10000) * 10000
+            return to;
+        ';
+
         proxy_cache kline_cache;
+        proxy_cache_revalidate on;
+        proxy_cache_min_uses 1;
+        proxy_cache_use_stale error timeout updating http_500 http_502
+                              http_503 http_504;
+        proxy_cache_background_update on;
+        proxy_cache_lock on;
 
         proxy_http_version 1.1;
 

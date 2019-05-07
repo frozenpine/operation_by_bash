@@ -1,6 +1,6 @@
-VERSION="1.14.2"
-NAME=nginx
-USER=${NAME}
+VERSION="1.15.8"
+NAME=openresty
+USER=nginx
 
 SERVICE_LIST="registry"
 
@@ -24,7 +24,7 @@ if [[ ! -f "${DATA_BASE:=/opt}/${NAME}/conf/nginx.conf" ]]; then
 fi
 
 docker run -d \
-    --name ${NAME} \
+    --name nginx \
     --restart always \
     --network host \
     -v ${DATA_BASE:=/opt}/${NAME}/data:/var/lib/${NAME} \
