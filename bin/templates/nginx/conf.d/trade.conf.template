@@ -38,6 +38,8 @@ done
 `
 }
 
+proxy_cache_path /var/lib/nginx/caches levels=1:2 key_zone=kline_cache:20m max_size=20g inactive=4320m use_temp_path=off;
+
 server {
     listen      80;
     server_name trade localhost;
@@ -65,8 +67,23 @@ server {
         auth_basic_user_file /var/lib/nginx/loginuser;
     }
 
-    location ~ ^/(config|symbol|history) {
+    location ~ ^/(config|symbol) {
         access_log  /var/log/nginx/trade.access.log  proxy;
+
+        proxy_http_version 1.1;
+
+        proxy_pass http://kline-front;
+
+        proxy_set_header HOST \$HOST;
+        proxy_set_header X-REAL-IP \$remote_addr;
+        proxy_set_header X-Forwarded-SERVER \$HOST;
+        proxy_set_header Request-Url \$request_uri;
+    }
+
+    location ^~ /history {
+        access_log  /var/log/nginx/trade.access.log  proxy;
+
+        proxy_cache kline_cache;
 
         proxy_http_version 1.1;
 
