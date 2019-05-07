@@ -68,7 +68,7 @@ server {
     }
 
     location ~ ^/(config|symbol) {
-        access_log  /var/log/nginx/trade.access.log  proxy;
+        # access_log  /var/log/nginx/trade.access.log  proxy;
 
         proxy_http_version 1.1;
 
@@ -81,7 +81,7 @@ server {
     }
 
     location ^~ /history {
-        access_log  /var/log/nginx/trade.access.log  proxy;
+        # access_log  /var/log/nginx/trade.access.log  proxy;
 
         set_by_lua \$arg_from '
             local from = tonumber(ngx.var.arg_from)
@@ -113,7 +113,7 @@ server {
     }
 
     location ^~ /api/v1/user {
-        access_log  /var/log/nginx/trade.access.log  proxy;
+        # access_log  /var/log/nginx/trade.access.log  proxy;
 
         proxy_http_version 1.1;
 
@@ -138,7 +138,7 @@ server {
     }
 
     location ^~ /api/v1/apiKey {
-        access_log  /var/log/nginx/trade.access.log  proxy;
+        # access_log  /var/log/nginx/trade.access.log  proxy;
 
         add_header Access-Control-Allow-Headers X-Requested-With;
         add_header Access-Control-Allow-Methods GET,POST,OPTIONS;
@@ -203,7 +203,7 @@ server {
     }
 
     location ^~ /api/v1/user/margin {
-        access_log  /var/log/nginx/trade.access.log  proxy;
+        # access_log  /var/log/nginx/trade.access.log  proxy;
 
         if (\$http_api_key = '') {
             return 401 'no api-key header found.';
@@ -230,7 +230,7 @@ server {
     }
 
     location ^~ /api/v1/order/all {
-        access_log  /var/log/nginx/trade.access.log  proxy;
+        # access_log  /var/log/nginx/trade.access.log  proxy;
 
         if (\$http_api_key = '') {
             return 401 'no api-key header found.';
@@ -274,7 +274,7 @@ server {
     }
 
     location ^~ /api/v1/order {
-        access_log  /var/log/nginx/trade.access.log  proxy;
+        # access_log  /var/log/nginx/trade.access.log  proxy;
 
         if (\$http_api_key = '') {
             return 401 'no api-key header found.';
@@ -306,7 +306,7 @@ server {
     }
 
     location ~ /api/v1/position/(leverage|riskLimit|isolate|transferMargin) {
-        access_log  /var/log/nginx/trade.access.log  proxy;
+        # access_log  /var/log/nginx/trade.access.log  proxy;
 
         proxy_http_version 1.1;
         
