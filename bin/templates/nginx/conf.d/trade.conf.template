@@ -38,7 +38,7 @@ done
 `
 }
 
-proxy_cache_path /var/lib/nginx/caches levels=1:2 key_zone=kline_cache:20m max_size=20g inactive=4320m use_temp_path=off;
+proxy_cache_path /var/lib/nginx/caches levels=1:2 keys_zone=kline_cache:20m max_size=20g inactive=4320m use_temp_path=off;
 
 server {
     listen      80;
