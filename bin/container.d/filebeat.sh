@@ -22,7 +22,7 @@ cat <<EOF > "${CONTAINER_BASE}/conf/filebeat.yml"
 filebeat.config:
   modules:
     path: \${path.config}/modules.d/*.yml
-    reload.enabled: false
+    reload.enabled: true
 
 processors:
 - add_cloud_metadata: ~

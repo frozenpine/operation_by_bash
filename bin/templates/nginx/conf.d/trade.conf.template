@@ -38,6 +38,14 @@ done
 `
 }
 
+upstream index-front {
+`
+for SVR_NAME in ${!INDEX_LIST[@]}; do
+    echo "    server ${INDEX_LIST[$SVR_NAME]}:${INDEX_PORT};"
+done
+`
+}
+
 proxy_cache_path /var/lib/nginx/caches levels=1:2 keys_zone=kline_cache:20m max_size=20g inactive=3d use_temp_path=off;
 
 log_format  proxy   '\$remote_addr - \$remote_user [\$time_local] to \$upstream_addr: "\$request", '
@@ -120,6 +128,19 @@ server {
         proxy_set_header Request-Url \$request_uri;
 
         add_header  Nginx-Cache "$upstream_cache_status";
+    }
+
+    location ^~ /api/v1/full/instrument {
+        access_log  /var/log/nginx/trade.access.log  proxy;
+
+        proxy_http_version 1.1;
+
+        proxy_pass http://index-front;
+
+        proxy_set_header HOST \$HOST;
+        proxy_set_header X-REAL-IP \$remote_addr;
+        proxy_set_header X-Forwarded-SERVER \$HOST;
+        proxy_set_header Request-Url \$request_uri;
     }
 
     location ^~ /api/v1/user {

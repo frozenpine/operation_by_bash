@@ -6,6 +6,7 @@ mysql=3306
 redis=6379
 elastic=9200
 front=80
+
 tradebase=9091
 order=9191
 query=9192
@@ -13,10 +14,14 @@ clear=9291
 tmdb=9292
 match=9391
 kline=9491
+
 security=9088
 digital=9089
 serviceimpl=9090
+
 sms=9189
 scheduler=9289
+index=9389
+
 websocket=9988
 qmarket=30007

@@ -16,7 +16,7 @@ DB_NAME="digital"
 
 WALLET_URL="http://127.0.0.1:3000/api/BTC/testnet"
 
-SERVICE_LIST="registry zookeeper kafka mysql redis consul"
+SERVICE_LIST="registry zookeeper kafka mysql redis consul index front"
 for SERVICE in ${SERVICE_LIST}; do
     source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
         echo "service list file missing: ${SERVICE}.sh" >&2
@@ -76,6 +76,18 @@ for SVR_NAME in ${!CONSUL_LIST[@]}; do
     COUNT=$((COUNT+1))
 done
 
+FRONT_HOST=
+IDX=$((RANDOM % ${#FRONT_LIST[@]}))
+COUNT=0
+for SVR_NAME in ${!FRONT_LIST[@]}; do
+    if [[ ${COUNT} -eq ${IDX} ]]; then
+        FRONT_HOST=${FRONT_LIST[$SVR_NAME]}
+        break
+    fi
+
+    COUNT=$((COUNT+1))
+done
+
 KAFKA_SERVERS=
 for SVR_NAME in ${!KAFKA_LIST[@]}; do
     KAFKA_SERVERS="${KAFKA_SERVERS},${SVR_NAME}:${KAFKA_PORT}"
@@ -110,6 +122,7 @@ docker run -d \
     registry:5000/service/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/service-${NAME}-${VERSION}.jar \
+        --server.port=${INDEX_PORT} \
         --logging.level.com.quantdo.market.service.impl=${LOG_LEVEL:=warning} \
         --logging.level.com.quantdo.market.service.ws=${LOG_LEVEL:=warning} \
         --spring.cloud.consul.host=${CONSUL_HOST} \
@@ -121,4 +134,5 @@ docker run -d \
         --jedis.pool.host="${REDIS_HOST}" \
         --jedis.pool.port="${REDIS_PORT}" \
         --com.quantdo.trade.data-exchange.command.producer.bootstrap.servers="${KAFKA_SERVERS}" \
-        --com.quantdo.trade.data-exchange.monitor.consumer.bootstrap.servers="${KAFKA_SERVERS}"
+        --com.quantdo.trade.data-exchange.monitor.consumer.bootstrap.servers="${KAFKA_SERVERS}" \
+        --rest.kline.url="http://${FRONT_HOST}:${FRONT_PORT}/statistics?symbol=" \
