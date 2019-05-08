@@ -12,6 +12,9 @@ logFileName=market
 # 单个日志文件的大小,500M
 LogFileRollSize=524288000
 
+# 日志级别,从0~4开始依次对应TRACE、DEBUG、INFO、WARNING、ERROR
+LogLevel=2
+
 #监控端口
 monitorlistenip=${LISTEN_ADDR:=0.0.0.0}
 monitorlistenport=${MONITOR_PORT:=8888}

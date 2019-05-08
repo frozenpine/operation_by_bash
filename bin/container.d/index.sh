@@ -136,3 +136,4 @@ docker run -d \
         --com.quantdo.trade.data-exchange.command.producer.bootstrap.servers="${KAFKA_SERVERS}" \
         --com.quantdo.trade.data-exchange.monitor.consumer.bootstrap.servers="${KAFKA_SERVERS}" \
         --rest.kline.url="http://${FRONT_HOST}:${FRONT_PORT}/statistics?symbol=" \
+        --com.quantdo.trade.data-exchange.monitor.consumer.com.quantdo.trade.content.json=MATCH-JSON-SS-INCREMENT,INSTRUMENT-POSITION \

@@ -11,11 +11,11 @@ for SERVICE in ${SERVICE_LIST}; do
     }
 done
 
-make_dir -b "${DATA_BASE:=/opt}/${NAME}" data conf/conf.d log cache || exit 1
+make_dir -b "${DATA_BASE:=/opt}/nginx" data conf/conf.d log cache || exit 1
 
-if [[ ! -f "${DATA_BASE:=/opt}/${NAME}/conf/nginx.conf" ]]; then
+if [[ ! -f "${DATA_BASE:=/opt}/nginx/conf/nginx.conf" ]]; then
     warning "nginx.conf missing, copy from template."
-    ${SUDO} cp "${TEMPLATE_BASE}/nginx/nginx.conf" "${DATA_BASE:=/opt}/${NAME}/conf/nginx.conf"
+    ${SUDO} cp "${TEMPLATE_BASE}/nginx/nginx.conf" "${DATA_BASE:=/opt}/nginx/conf/nginx.conf"
 
     [[ $? -ne 0 ]] && {
         error "make nginx.conf failed."

@@ -20,7 +20,7 @@ MODULE_LIST=(marketserver)
 ENTRYPOINT="${DATA_BASE:=/opt}/market/entrypoint.sh"
 MARKET_BASE="${DATA_BASE:=/opt}/market"
 
-SERVICE_LIST="kafka front qmarket websocket"
+SERVICE_LIST="kafka front websocket kline"
 for SERVICE in ${SERVICE_LIST}; do
     source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
         echo "service list file missing: ${SERVICE}.sh" >&2

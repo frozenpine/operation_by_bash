@@ -67,5 +67,3 @@ docker run -d \
         --com.quantdo.trade.consul.port=${CONSUL_PORT} \
         --com.quantdo.trade.front.order.kafka.producer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.data-exchange.monitor.consumer.bootstrap.servers=${KAFKA_SERVERS} \
-        # --com.quantdo.trade.handle.manager.producer.acks=all \
-        # --com.quantdo.trade.handle.manager.producer.max.in.flight.requests.per.connection=1
