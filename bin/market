@@ -135,17 +135,17 @@ function _deploy() {
             cp "${MODULE_BASE}/template.sh" ./
         popd >/dev/null
 
-        QMARKET_HOST=
-        IDX=$((RANDOM % ${#QMARKET_LIST[@]}))
-        COUNT=0
-        for SVR_NAME in ${!QMARKET_LIST[@]}; do
-            if [[ ${COUNT} -eq ${IDX} ]]; then
-                QMARKET_HOST=${QMARKET_LIST[$SVR_NAME]}
-                break
-            fi
+        # QMARKET_HOST=
+        # IDX=$((RANDOM % ${#QMARKET_LIST[@]}))
+        # COUNT=0
+        # for SVR_NAME in ${!QMARKET_LIST[@]}; do
+        #     if [[ ${COUNT} -eq ${IDX} ]]; then
+        #         QMARKET_HOST=${QMARKET_LIST[$SVR_NAME]}
+        #         break
+        #     fi
 
-            COUNT=$((COUNT+1))
-        done
+        #     COUNT=$((COUNT+1))
+        # done
 
         WEBSOCKET_HOST=
         IDX=$((RANDOM % ${#WEBSOCKET_LIST[@]}))
