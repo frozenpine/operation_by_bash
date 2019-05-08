@@ -102,10 +102,18 @@ server {
             local to = tonumber(ngx.var.arg_to)
             local symbol = ngx.var.arg_symbol
             local resolution = ngx.var.arg_resolution
+            local trimResolution = 60
 
-            f1, f2 = math.modf(from / 60)
-            t1, t2 = math.modf(to / 10)
-            return string.format("symbol=%s&resolution=%s&from=%d&to=%d", symbol, resolution, f1 * 60, t1 * 10)
+            if (string.sub(resolution, -1)=="D")
+            then
+                trimResolution = 3600 * 24
+            else
+                trimResolution = tonumber(resolution) * 60
+            end
+
+            f1 = math.modf(from / trimResolution)
+            t1 = math.modf(to / 10)
+            return string.format("symbol=%s&resolution=%s&from=%d&to=%d", symbol, resolution, f1*trimResolution, t1*10)
         ';
 
         proxy_cache kline_cache;
