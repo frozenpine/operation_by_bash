@@ -77,6 +77,8 @@ server {
     gzip_min_length 256;
     gzip_types text/plain text/css application/json application/x-javascript application/javascript text/xml application/xml application/xml+rss text/javascript application/vnd.ms-fontobject application/x-font-ttf font/opentype image/svg+xml image/x-icon;
 
+    error_log /var/log/nginx/trade.error.log debug;
+
     location / {
         root   /var/lib/nginx/quant-coin;
         index  index.html index.htm;
@@ -127,8 +129,8 @@ server {
                 trimResolution = tonumber(resolution) * 60
             end
 
-            f1 = math.modf(from / trimResolution)
-            t1 = math.modf(to / 10)
+            local f1 = math.modf(from / trimResolution)
+            local t1 = math.modf(to / 10)
             return string.format("symbol=%s&resolution=%s&from=%d&to=%d", symbol, resolution, f1*trimResolution, t1*10)
         ';
 
@@ -141,11 +143,11 @@ server {
         proxy_hide_header       expires;
         proxy_hide_header       Set-Cookie;
         
-        proxy_cache_revalidate  on;
+        # proxy_cache_revalidate  on;
         proxy_cache_min_uses    1;
         proxy_cache_use_stale   error timeout updating http_500 http_502
                                 http_503 http_504;
-        # proxy_cache_background_update on;
+        proxy_cache_background_update on;
         proxy_cache_lock        on;
         proxy_cache_bypass      \$http_caizche_purge;
 
