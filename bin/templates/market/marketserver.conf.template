@@ -54,4 +54,4 @@ QueryPositionURL=${TRADE_FRONT}/api/v1/positionx
 QueryTradeURL=${TRADE_FRONT}/api/v1/trade?reverse=true
 
 #获取全量instrument接口
-GetInstrumentDataURL=${TRADE_FRONT}/api/v1/full/instrument
+GetInstrumentDataURL=${TRADE_FRONT}/api/v1/instrument
