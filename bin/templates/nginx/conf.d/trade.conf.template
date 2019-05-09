@@ -49,7 +49,12 @@ done
 proxy_cache_path /var/lib/nginx/caches levels=1:2 keys_zone=kline_cache:20m max_size=20g inactive=3d use_temp_path=off;
 
 log_format  proxy   '\$remote_addr - \$remote_user [\$time_local] to \$upstream_addr: "\$request", '
-                    'cache: \$upstream_cache_status, '
+                    'status: \$status, body_bytes_send: \$body_bytes_sent, '
+                    'header: ("\$http_referer" "\$http_user_agent" "\$http_x_forwarded_for"), '
+                    'upstream_response_time: \$upstream_response_time';
+
+log_format  proxy_cache   '\$remote_addr - \$remote_user [\$time_local] to \$upstream_addr: "\$request", '
+                    'cache: \$upstream_cache_status, args: \$args, '
                     'status: \$status, body_bytes_send: \$body_bytes_sent, '
                     'header: ("\$http_referer" "\$http_user_agent" "\$http_x_forwarded_for"), '
                     'upstream_response_time: \$upstream_response_time';
@@ -66,9 +71,9 @@ server {
 
     gzip_vary on;
     gzip_proxied any;
-    # gzip_comp_level 6;
-    # gzip_buffers 16 8k;
-    # gzip_http_version 1.1;
+    gzip_comp_level 6;
+    gzip_buffers 16 8k;
+    gzip_http_version 1.1;
     gzip_min_length 256;
     gzip_types text/plain text/css application/json application/x-javascript application/javascript text/xml application/xml application/xml+rss text/javascript application/vnd.ms-fontobject application/x-font-ttf font/opentype image/svg+xml image/x-icon;
 
@@ -106,7 +111,7 @@ server {
     }
 
     location ^~ /history {
-        access_log  /var/log/nginx/trade.access.log  proxy;
+        access_log  /var/log/nginx/trade.access.log  proxy_cache;
 
         set_by_lua \$args '
             local from = tonumber(ngx.var.arg_from)
@@ -127,13 +132,22 @@ server {
             return string.format("symbol=%s&resolution=%s&from=%d&to=%d", symbol, resolution, f1*trimResolution, t1*10)
         ';
 
-        proxy_cache kline_cache;
-        proxy_cache_revalidate on;
-        proxy_cache_min_uses 1;
-        proxy_cache_use_stale error timeout updating http_500 http_502
-                              http_503 http_504;
-        proxy_cache_background_update on;
-        proxy_cache_lock on;
+        proxy_cache             kline_cache;
+        proxy_cache_key         \$args;
+        
+        proxy_ignore_headers    X-Accel-Expires Expires Cache-Control;
+        proxy_ignore_headers    Set-Cookie;
+        proxy_hide_header       cache-control;
+        proxy_hide_header       expires;
+        proxy_hide_header       Set-Cookie;
+        
+        proxy_cache_revalidate  on;
+        proxy_cache_min_uses    1;
+        proxy_cache_use_stale   error timeout updating http_500 http_502
+                                http_503 http_504;
+        # proxy_cache_background_update on;
+        proxy_cache_lock        on;
+        proxy_cache_bypass      \$http_caizche_purge;
 
         proxy_http_version 1.1;
 
