@@ -136,6 +136,7 @@ server {
 
         proxy_cache             kline_cache;
         proxy_cache_key         \$args;
+        proxy_cache_valid       200 3d;
         
         proxy_ignore_headers    X-Accel-Expires Expires Cache-Control;
         proxy_ignore_headers    Set-Cookie;
@@ -162,7 +163,7 @@ server {
         proxy_set_header X-Forwarded-SERVER \$HOST;
         proxy_set_header Request-Url \$request_uri;
 
-        add_header  Nginx-Cache "$upstream_cache_status";
+        add_header  Nginx-Cache "\$upstream_cache_status";
     }
 
     location ^~ /api/v1/full/instrument {
