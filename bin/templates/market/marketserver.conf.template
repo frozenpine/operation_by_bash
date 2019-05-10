@@ -32,6 +32,9 @@ KafkaTopicOther=${KFK_NOTIFY_TOPIC:=NOTIFY-CLIENT}
 # instrument topic名称
 KafkaTopicInstrument=${KFK_INSTRUMENT_TOPIC:=INSTRUMENT}
 
+# 获取全量合约和指数的时间间隔，单位为秒(默认半小时)
+RequestInstrumentAllInterval=1800
+
 # websocket 配置
 #是否开启websocket前置
 EnableWsSend=true
