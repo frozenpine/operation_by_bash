@@ -19,6 +19,12 @@ LogLevel=2
 monitorlistenip=${LISTEN_ADDR:=0.0.0.0}
 monitorlistenport=${MONITOR_PORT:=8888}
 monitortoken=123
+#监控邮箱
+monitormailserver=smtp.163.com
+monitormailport=25
+monitormailuser=testformybook@163.com
+monitormailpassword=2019hhxxttxs
+monitormailto=slgeng@115bit.com;zhangyl@115bit.com;yinkangxi@115bit.com
 
 # kafka 配置
 KafkaGroupID=marketserver${ID}
