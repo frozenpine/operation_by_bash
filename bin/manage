@@ -233,8 +233,11 @@ case ${COMMAND} in
                 COUNT=$((COUNT+1))
             done
 
-            curl -XDELETE "http://${ELASTIC_HOST}:${ELASTIC_PORT}/order*"
-            curl -XDELETE "http://${ELASTIC_HOST}:${ELASTIC_PORT}/trade*"
+            for index in order trade; do
+                info "clean [${index}] from elastic: http://${ELASTIC_HOST}:${ELASTIC_PORT}"
+                curl -XDELETE "http://${ELASTIC_HOST}:${ELASTIC_PORT}/${index}*"
+                echo
+            done
         else
             allssh -g${MANAGE_GROUP} container stop -crf $*
         fi
