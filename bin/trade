@@ -217,7 +217,7 @@ case ${COMMAND} in
         _status $*
     ;;
     destory)
-        _stop -crf $*
+        _stop -cr $*
     ;;
     logs)
         _logs $*
