@@ -101,7 +101,7 @@ ERR=0
 
 for CONTAINER in $*; do
     "${STATUS_COMMAND}" ${CONTAINER} &>/dev/null
-    if [[ $? -ne 0 && ${REMOVE} -ne 1 ]]; then
+    if [[ $? -ne 0 ]]; then
         warning "docker container[${CONTAINER}] already stopped."
         ERR=$((ERR+1))
         continue
