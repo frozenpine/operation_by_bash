@@ -147,6 +147,23 @@ function _status() {
     fi
 }
 
+function _back_log() {
+    if [[ ! -d "log" ]]; then
+        warning "log dir not exists in current path: `pwd`"
+        return 1
+    fi
+
+    local _archive_file="log_`date '+%Y%m%d%H%M%S'`.tar.gz"
+
+    tar -czvf "${_archive_file}" log --remove
+    if [[ $? -ne 0 ]]; then
+        error "backup log files failed: `pwd`/${_archive_file}"
+        return 1
+    fi
+
+    ls -l "${_archive_file}"
+}
+
 function _start() {
     if [[ $# -lt 1 ]]; then
         error "module name missing in start."
@@ -268,6 +285,15 @@ function _stop() {
         info "${_module_name}[$_pid] stopped."
         rm -f "${_pid_file}" >/dev/null
         rm -f "${_module_name}.ini" >/dev/null
+
+        info "start to backup up log files..."
+        _back_log
+        if [[ $? -ne 0 ]]; then
+            error "backup log files failed."
+            exit 1
+        else
+            info "all log files backuped."
+        fi
     popd >/dev/null
 }
 
