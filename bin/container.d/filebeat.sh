@@ -10,11 +10,15 @@ for SERVICE in ${SERVICE_LIST}; do
     }
 done
 
-ELASTIC_SERVERS=
-for SVR_NAME in ${!ELASTIC_LIST[@]}; do
-    ELASTIC_SERVERS="${ELASTIC_SERVERS},\"http://${SVR_NAME}:${ELASTIC_PORT}\""
-done
-ELASTIC_SERVERS=${ELASTIC_SERVERS:1}
+if [[ x"LOG_ES" == "x"]]; then
+    ELASTIC_SERVERS=
+    for SVR_NAME in ${!ELASTIC_LIST[@]}; do
+        ELASTIC_SERVERS="${ELASTIC_SERVERS},\"http://${SVR_NAME}:${ELASTIC_PORT}\""
+    done
+    ELASTIC_SERVERS=${ELASTIC_SERVERS:1}
+else
+    ELASTIC_SERVERS="${LOG_ES}"
+fi
 
 CONTAINER_BASE="${DATA_BASE:=/opt}/${NAME}"
 make_dir -b "${CONTAINER_BASE}" conf || exit 1
