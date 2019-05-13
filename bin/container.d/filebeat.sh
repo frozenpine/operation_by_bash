@@ -10,7 +10,7 @@ for SERVICE in ${SERVICE_LIST}; do
     }
 done
 
-if [[ x"LOG_ES" == "x"]]; then
+if [[ x"LOG_ES" == "x" ]]; then
     ELASTIC_SERVERS=
     for SVR_NAME in ${!ELASTIC_LIST[@]}; do
         ELASTIC_SERVERS="${ELASTIC_SERVERS},\"http://${SVR_NAME}:${ELASTIC_PORT}\""
