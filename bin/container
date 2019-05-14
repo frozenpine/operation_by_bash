@@ -84,7 +84,7 @@ case $ACTION in
     ;;
     stop)
         # source "${SCRIPT_STOP}" $*
-        for CONTAINER in $*
+        for CONTAINER in $*; do
             stop_container ${CONTAINER}
         done
         # [[ $? -ne 0 ]] && exit 1

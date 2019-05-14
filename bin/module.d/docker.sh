@@ -44,15 +44,14 @@ function start_container() {
         exit 1
     fi
 
-    local _wait=1
-
+    local _WAIT=1
     local OPTIND FLAG
     while getopts :w: FLAG; do
         case $FLAG in
             w)
-                _wait=${OPTARG}
+                _WAIT=${OPTARG}
 
-                if [[ ! ${_wait} =~ [0-9]+ ]]; then
+                if [[ ! ${_WAIT} =~ [0-9]+ ]]; then
                     error "wait args must be a positive integer."
                     exit 1
                 fi
@@ -65,43 +64,40 @@ function start_container() {
     done
     shift $((OPTIND-1))
 
-    local _name=$1
-    local _result
+    local _CONTAINER_NAME=$1
     
-    check_container ${_name}
-    _result=$?
-
-    case ${_status} in
+    check_container ${_CONTAINER_NAME} &>/dev/null
+    case $? in
         0)
-            warning "container[${_name}] is already started."
+            warning "container[${_CONTAINER_NAME}] is already started."
             return 1
         ;;
         1)
-            info "starting container[${_name}]..."
+            info "starting container[${_CONTAINER_NAME}]..."
             
-            docker start ${_name}
+            docker start ${_CONTAINER_NAME}
             
             if [[ $? -ne 0 ]]; then
-                error "starting container[${_name}] failed."
+                error "starting container[${_CONTAINER_NAME}] failed."
                 return 2
             fi
         ;;
         255)
-            local _start_script=`find "${CONTAINER_BASE}" -type f -name "${_name}.sh"`
+            local _start_script=`find "${CONTAINER_BASE}" -type f -name "${_CONTAINER_NAME}.sh"`
             
             if [[ ! -f "${_start_script}" ]]; then
                 error "no start script found for ${_container}"
                 return 255
             fi
 
-            info "creating container[${_name}]..."
+            info "creating container[${_CONTAINER_NAME}]..."
 
             # shift container name
             shift
             source "${_start_script}" $*
 
             if [[ $? -ne 0 ]]; then
-                error "creating container[${_name}] failed."
+                error "creating container[${_CONTAINER_NAME}] failed."
                 return 2
             fi
         ;;
@@ -110,8 +106,8 @@ function start_container() {
         ;;
     esac
 
-    sleep ${_wait}
-    check_container ${_name} || return 2
+    sleep ${_WAIT}
+    check_container ${_CONTAINER_NAME} || return 2
 }
 
 # stop, remove container & clean it's data volumes
@@ -128,22 +124,26 @@ function stop_container() {
         exit 1
     fi
 
-    local _remove=0
-    local _force=0
-    local _clean=0
+    local _CONTAINER_NAME=$1
+
+    check_container ${_CONTAINER_NAME} >/dev/null || return 1
+
+    local _REMOVE_CONTAINER=0
+    local _KILL=0
+    local _CLEAN_VOLUME=0
     local _skip_back=0
 
     local OPTIND FLAG
     while getopts :frcs FLAG; do
         case $FLAG in
             r)
-                _remove=1
+                _REMOVE_CONTAINER=1
             ;;
             f)
-                _force=1
+                _KILL=1
             ;;
             c)
-                _clean=1
+                _CLEAN_VOLUME=1
             ;;
             s)
                 _skip_back=1
@@ -156,40 +156,38 @@ function stop_container() {
     done
     shift $((OPTIND-1))
 
-    local _name=$1
-
-    case "${_force}${_remove}" in
+    case "${_KILL}${_REMOVE_CONTAINER}" in
         "11")
             docker rm -vf $1
 
             if [[ $? -ne 0 ]]; then
-                error "failed to kill & remove container[${_name}]"
+                error "failed to kill & remove container[${_CONTAINER_NAME}]"
                 return 1
             fi
         ;;
         "01")
             docker stop $1
             if [[ $? -ne 0 ]]; then
-                error "failed to stop container[${_name}]"
+                error "failed to stop container[${_CONTAINER_NAME}]"
                 return 1
             fi
             docker rm -v $1
             if [[ $? -ne 0 ]]; then
-                error "failed to remove container[${_name}]"
+                error "failed to remove container[${_CONTAINER_NAME}]"
                 return 1
             fi
         ;;
         "10")
             docker kill $1
             if [[ $? -ne 0 ]]; then
-                error "failed to kill container[${_name}]"
+                error "failed to kill container[${_CONTAINER_NAME}]"
                 return 1
             fi
         ;;
         "00")
             docker stop $1
             if [[ $? -ne 0 ]]; then
-                error "failed to stop container[${_name}]"
+                error "failed to stop container[${_CONTAINER_NAME}]"
                 return 1
             fi
         ;;
@@ -199,50 +197,47 @@ function stop_container() {
         ;;
     esac
 
-    if [[ ${_clean} -eq 1 ]]; then
-        local _data_dir="${DATA_BASE:=/opt}/$1"
-        local _back_base="${DATA_BASE:=/opt}/backup"
-        local _back_file="${_back_base}/$1_`date '+%Y%m%d%H%M%S'`.tar.gz"
+    if [[ ${_CLEAN_VOLUME} -eq 1 ]]; then
+        local _DATA_DIR="${DATA_BASE:=/opt}/$1"
+        local _BACK_BASE="${DATA_BASE:=/opt}/backup"
+        local _BACK_FILE="${_BACK_BASE}/$1_`date '+%Y%m%d%H%M%S'`.tar.gz"
 
         if [[ ${_skip_back} -ne 1 ]]; then
-            info "backing up container[$1] data dir: ${_data_dir}"
-            if [[ ! -d "${_back_base}" ]]; then
-                ${SUDO} mkdir -p "${_back_base}"
+            info "backing up container[$_CONTAINER_NAME] data dir: ${_DATA_DIR}"
+            if [[ ! -d "${_BACK_BASE}" ]]; then
+                ${SUDO} mkdir -p "${_BACK_BASE}"
             fi
-            if [[ ! -d "${_data_dir}" ]]; then
-                warning "data dir not exist for container[${_name}]."
+            if [[ ! -d "${_DATA_DIR}" ]]; then
+                warning "data dir not exist for container[${_CONTAINER_NAME}]."
             else
-                pushd "${_data_dir}" >/dev/null
-                    ${SUDO} tar -czvf "${_back_file}" ./
-                    ${SUDO} ls -l "${_back_file}"
+                pushd "${_DATA_DIR}" >/dev/null
+                    ${SUDO} tar -czvf "${_BACK_FILE}" ./
+                    ${SUDO} ls -l "${_BACK_FILE}"
                 popd >/dev/null
             fi
         fi
 
-        if [[ -d "${_data_dir}" ]]; then
-            info "cleaning container[${_name}] data dir: ${_data_dir}"
-            ${SUDO} rm -rf "${_data_dir}"
+        if [[ -d "${_DATA_DIR}" ]]; then
+            info "cleaning container[${_CONTAINER_NAME}] data dir: ${_DATA_DIR}"
+            ${SUDO} rm -rf "${_DATA_DIR}"
         fi
     fi
 }
 
 function _build() {
-    local _MODULE
-    local _VERSION
-
     cat | sed '/^[ '"\t"']*$/d' | (\
-        while read FILE_NAME; do
-            [[ ${FILE_NAME} =~ ${BUILD_NAME}-([a-zA-Z-]+)-([SNAPSHOT0-9.-]+).jar ]] || {
-                error "invalid jar file name: ${FILE_NAME}"
+        while read _FILE_NAME; do
+            [[ ${_FILE_NAME} =~ ${BUILD_NAME}-([a-zA-Z-]+)-([SNAPSHOT0-9.-]+).jar ]] || {
+                error "invalid jar file name: ${_FILE_NAME}"
                 continue
             }
 
-            _MODULE=${BASH_REMATCH[1]}
-            _VERSION=${BASH_REMATCH[2]}
+            local _MODULE=${BASH_REMATCH[1]}
+            local _VERSION=${BASH_REMATCH[2]}
             
-            SIG_FILE="${BUILD_DIR}/${FILE_NAME}.md5"
+            SIG_FILE="${BUILD_DIR}/${_FILE_NAME}.md5"
 
-            NEW_SIG=`gen_md5 -p "${BUILD_DIR}/${FILE_NAME}"`
+            NEW_SIG=`gen_md5 -p "${BUILD_DIR}/${_FILE_NAME}"`
             if [[ ${FORCE} -eq 0 && -f "${SIG_FILE}" && `cat "${SIG_FILE}"` == ${NEW_SIG} ]]; then
                 warning "module[${_MODULE}] with version[${_VERSION}] not modified, skip building."
                 continue
@@ -262,7 +257,7 @@ function _build() {
                 fi
 
                 ${SUDO} rm -f *.jar &>/dev/null
-                ${SUDO} cp "${BUILD_DIR}/${FILE_NAME}" ./ &>/dev/null
+                ${SUDO} cp "${BUILD_DIR}/${_FILE_NAME}" ./ &>/dev/null
                 find "${BUILD_DIR}" -type f -name "*.sh" -exec ${SUDO} cp {} . \; &>/dev/null
                 ${SUDO} chmod u+x *.sh &>/dev/null
 
