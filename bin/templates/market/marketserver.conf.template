@@ -20,6 +20,8 @@ monitorlistenip=${LISTEN_ADDR:=0.0.0.0}
 monitorlistenport=${MONITOR_PORT:=8888}
 monitortoken=123
 #监控邮箱
+# 为了区分收到的告警邮件是哪个服务发出来的，部署时，请将这个配置项设置成一个唯一值
+monitorservername=`uname -n`
 monitormailserver=smtp.163.com
 monitormailport=25
 monitormailuser=testformybook@163.com
