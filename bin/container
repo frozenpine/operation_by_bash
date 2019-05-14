@@ -63,14 +63,23 @@ case $ACTION in
     ;;
     start)
         _ARGS=()
-        for _ARG in $*; do
-            if [[ ${_ARG} =~ -[a-zA-Z] ]]; then
-                _ARGS=(${_ARGS[@]} ${_ARG})
-            else
-                break
-            fi
+        while getopts :w: FLAG; do
+            case $FLAG in
+                w)
+                    if [[ ! ${OPTARG} =~ [0-9]+ ]]; then
+                        error "wait args must be a positive integer."
+                        exit 1
+                    fi
+
+                    _ARGS=(${_ARGS[@]} -w ${OPTARG})
+                ;;
+                *)
+                    error "invalid start container args: $*"
+                    exit 1
+                ;;
+            esac
         done
-        shift $((${#_ARGS[@]}))
+        shift $((OPTIND-1))
 
         for CONTAINER in $*; do
             start_container ${_ARGS[@]} ${CONTAINER}
@@ -78,14 +87,27 @@ case $ACTION in
     ;;
     stop)
         _ARGS=()
-        for _ARG in $*; do
-            if [[ ${_ARG} =~ -[a-zA-Z] ]]; then
-                _ARGS=(${_ARGS[@]} ${_ARG})
-            else
-                break
-            fi
+        while getopts :frcs FLAG; do
+            case $FLAG in
+                r)
+                    _ARGS=(${_ARGS[@]} -r)
+                ;;
+                f)
+                    _ARGS=(${_ARGS[@]} -f)
+                ;;
+                c)
+                    _ARGS=(${_ARGS[@]} -c)
+                ;;
+                s)
+                    _ARGS=(${_ARGS[@]} -s)
+                ;;
+                *)
+                    error "invalid args in stop container: $*"
+                    exit 1
+                ;;
+            esac
         done
-        shift $((${#_ARGS[@]}))
+        shift $((OPTIND-1))
 
         for CONTAINER in $*; do
             stop_container ${_ARGS[@]} ${CONTAINER}
