@@ -170,7 +170,7 @@ function stop_container() {
 
     case "${_KILL}${_REMOVE_CONTAINER}" in
         "11")
-            docker rm -vf $1
+            docker rm -vf ${_CONTAINER_NAME}
 
             if [[ $? -ne 0 ]]; then
                 error "failed to kill & remove container[${_CONTAINER_NAME}]"
@@ -178,26 +178,26 @@ function stop_container() {
             fi
         ;;
         "01")
-            docker stop $1
+            docker stop ${_CONTAINER_NAME}
             if [[ $? -ne 0 ]]; then
                 error "failed to stop container[${_CONTAINER_NAME}]"
                 return 1
             fi
-            docker rm -v $1
+            docker rm -v ${_CONTAINER_NAME}
             if [[ $? -ne 0 ]]; then
                 error "failed to remove container[${_CONTAINER_NAME}]"
                 return 1
             fi
         ;;
         "10")
-            docker kill $1
+            docker kill ${_CONTAINER_NAME}
             if [[ $? -ne 0 ]]; then
                 error "failed to kill container[${_CONTAINER_NAME}]"
                 return 1
             fi
         ;;
         "00")
-            docker stop $1
+            docker stop ${_CONTAINER_NAME}
             if [[ $? -ne 0 ]]; then
                 error "failed to stop container[${_CONTAINER_NAME}]"
                 return 1
@@ -212,7 +212,7 @@ function stop_container() {
     if [[ ${_CLEAN_VOLUME} -eq 1 ]]; then
         local _DATA_DIR="${DATA_BASE:=/opt}/${_CONTAINER_NAME}"
         local _BACK_BASE="${DATA_BASE:=/opt}/backup"
-        local _BACK_FILE="${_BACK_BASE}/$1_`date '+%Y%m%d%H%M%S'`.tar.gz"
+        local _BACK_FILE="${_BACK_BASE}/${_CONTAINER_NAME}_`date '+%Y%m%d%H%M%S'`.tar.gz"
 
         if [[ ! -d "${_DATA_DIR}" ]]; then
             warning "no data dir found."
