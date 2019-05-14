@@ -12,18 +12,6 @@ FUNC_FILE_SENTRY="${MODULE_BASE}/sentry.sh"
 FUNC_FILE_DOCKER="${MODULE_BASE}/docker.sh"
 import_functions
 
-# SCRIPT_START="${MODULE_BASE}/start-container.sh"
-# SCRIPT_STOP="${MODULE_BASE}/stop-container.sh"
-# SCRIPT_CHECK="${MODULE_BASE}/check-container.sh"
-
-for SCRIPT in ${!SCRIPT_@}; do
-    SCRIPT_FILE_PATH=$(eval echo \$$SCRIPT)
-    if [[ ! -f "${SCRIPT_FILE_PATH}" ]]; then
-        error script file not exist.
-        exit 1
-    fi
-done
-
 HELP_COMMANDS["start"]="Start an container by name."
 HELP_COMMANDS["stop"]="Stop an container by name."
 HELP_COMMANDS["status"]="Check container status by name."
@@ -69,38 +57,48 @@ shift
 
 case $ACTION in
     status)
-        # source "${SCRIPT_CHECK}" $*
         for CONTAINER in $*; do
             check_container ${CONTAINER}
         done
-        # [[ $? -ne 0 ]] && exit 1
     ;;
     start)
-        # source "${SCRIPT_START}" $*
-        for CONTAINER in $*; do
-            start_container ${CONTAINER}
+        _ARGS=()
+        for _ARG in $*; do
+            if [[ ${_ARG} =~ -[a-zA-Z] ]]; then
+                _ARGS=(${_ARGS[@]} ${_ARG})
+            else
+                break
+            fi
         done
-        # [[ $? -ne 0 ]] && exit 1
+        shift $((${#_ARGS[@]}))
+
+        for CONTAINER in $*; do
+            start_container ${_ARGS[@]} ${CONTAINER}
+        done
     ;;
     stop)
-        # source "${SCRIPT_STOP}" $*
-        for CONTAINER in $*; do
-            stop_container ${CONTAINER}
+        _ARGS=()
+        for _ARG in $*; do
+            if [[ ${_ARG} =~ -[a-zA-Z] ]]; then
+                _ARGS=(${_ARGS[@]} ${_ARG})
+            else
+                break
+            fi
         done
-        # [[ $? -ne 0 ]] && exit 1
+        shift $((${#_ARGS[@]}))
+
+        for CONTAINER in $*; do
+            stop_container ${_ARGS[@]} ${CONTAINER}
+        done
     ;;
     restart)
-        # source "${SCRIPT_STOP}" $*
         for CONTAINER in $*; do
             stop_container ${CONTAINER}
-            [[ $? -ne 0 ]] && continue
             
-            shift $(($#-1))
+            [[ $? -ne 0 ]] && continue
 
-            # source "${SCRIPT_START}" $*
             start_container ${CONTAINER}
         done
-        # [[ $? -ne 0 ]] && exit 1
     ;;
     logs)
         docker logs $*
