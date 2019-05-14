@@ -154,7 +154,19 @@ function stop_container() {
 
     local _CONTAINER_NAME=$1
 
-    check_container ${_CONTAINER_NAME} >/dev/null || return 1
+    check_container ${_CONTAINER_NAME} >/dev/null
+    case $? in
+        1)
+            if [[ ${_REMOVE_CONTAINER} -ne 1 ]]; then
+                return 1
+            fi
+        ;;
+        255)
+            if [[ ${_CLEAN_VOLUME} -ne 1 ]]; then
+                return 1
+            fi
+        ;;
+    esac
 
     case "${_KILL}${_REMOVE_CONTAINER}" in
         "11")
@@ -198,9 +210,14 @@ function stop_container() {
     esac
 
     if [[ ${_CLEAN_VOLUME} -eq 1 ]]; then
-        local _DATA_DIR="${DATA_BASE:=/opt}/$1"
+        local _DATA_DIR="${DATA_BASE:=/opt}/${_CONTAINER_NAME}"
         local _BACK_BASE="${DATA_BASE:=/opt}/backup"
         local _BACK_FILE="${_BACK_BASE}/$1_`date '+%Y%m%d%H%M%S'`.tar.gz"
+
+        if [[ ! -d "${_DATA_DIR}" ]]; then
+            warning "no data dir found."
+            return
+        fi
 
         if [[ ${_skip_back} -ne 1 ]]; then
             info "backing up container[$_CONTAINER_NAME] data dir: ${_DATA_DIR}"
