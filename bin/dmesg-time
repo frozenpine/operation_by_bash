@@ -1,0 +1,21 @@
+#!/bin/bash
+
+[[ -L $0 ]] && SCRIPT_FILE=`readlink -fn $0` || SCRIPT_FILE=$0
+pushd `dirname "${SCRIPT_FILE}"` >/dev/null
+BASE_DIR=`pwd`
+popd >/dev/null
+
+source "${BASE_DIR}/module.d/common.sh"
+check_env || exit 1
+
+if [[ $# -lt 1 ]]; then
+    error "no dmesg timestamp."
+    exit 1
+fi
+
+if [[ ! $1 =~ [0-9]+\.[0-9]+ ]]; then
+    error "invalid dmesg timestamp format."
+    exit 1
+fi
+
+date -d "1970-01-01 UTC `echo "$(date +%s)-$(cat /proc/uptime|cut -f 1 -d' ')+$1"|bc ` seconds"
