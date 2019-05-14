@@ -70,29 +70,37 @@ shift
 case $ACTION in
     status)
         # source "${SCRIPT_CHECK}" $*
-        check_container $*
-        [[ $? -ne 0 ]] && exit 1
+        for CONTAINER in $*; do
+            check_container ${CONTAINER}
+        done
+        # [[ $? -ne 0 ]] && exit 1
     ;;
     start)
         # source "${SCRIPT_START}" $*
-        start_container $*
-        [[ $? -ne 0 ]] && exit 1
+        for CONTAINER in $*; do
+            start_container ${CONTAINER}
+        done
+        # [[ $? -ne 0 ]] && exit 1
     ;;
     stop)
         # source "${SCRIPT_STOP}" $*
-        stop_container $*
-        [[ $? -ne 0 ]] && exit 1
+        for CONTAINER in $*
+            stop_container ${CONTAINER}
+        done
+        # [[ $? -ne 0 ]] && exit 1
     ;;
     restart)
         # source "${SCRIPT_STOP}" $*
-        stop_container $*
-        [[ $? -ne 0 ]] && exit 1
-        
-        shift $(($#-1))
+        for CONTAINER in $*; do
+            stop_container ${CONTAINER}
+            [[ $? -ne 0 ]] && continue
+            
+            shift $(($#-1))
 
-        # source "${SCRIPT_START}" $*
-        start_container $*
-        [[ $? -ne 0 ]] && exit 1
+            # source "${SCRIPT_START}" $*
+            start_container ${CONTAINER}
+        done
+        # [[ $? -ne 0 ]] && exit 1
     ;;
     logs)
         docker logs $*

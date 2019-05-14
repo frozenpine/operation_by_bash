@@ -9,21 +9,23 @@ function check_container() {
         exit 1
     fi
 
-    local _name=$1
+    local _CONTAINER_NAME=$1
 
-    COUNT=`docker ps --filter=status=running | awk -vNAME=${_name} 'FNR!=1{ if($NF==NAME)print}' | wc -l`
+    COUNT=`docker ps --filter=status=running | \
+        awk -vNAME=${_CONTAINER_NAME} 'FNR!=1{ if($NF==NAME)print}' | \
+        wc -l`
     
     if [[ $COUNT -eq 1 ]]; then
-        info "container[${_name}] is running."
+        info "container[${_CONTAINER_NAME}] is running."
         return
     fi
 
-    docker ps -a | grep ${CONTAINER} &>/dev/null
+    docker ps -a | grep ${_CONTAINER_NAME} &>/dev/null
     if [[ $? -ne 0 ]]; then
-        error "container[${CONTAINER}] missing."
+        error "container[${_CONTAINER_NAME}] missing."
         return 255
     else
-        warning "container[${CONTAINER}] not running."
+        warning "container[${_CONTAINER_NAME}] not running."
         return 1
     fi
 }
