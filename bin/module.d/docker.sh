@@ -170,7 +170,8 @@ function stop_container() {
 
     case "${_KILL}${_REMOVE_CONTAINER}" in
         "11")
-            docker rm -vf ${_CONTAINER_NAME}
+            info "killing & removing container:[${_CONTAINER_NAME}]"
+            docker rm -vf ${_CONTAINER_NAME} &>/dev/null
 
             if [[ $? -ne 0 ]]; then
                 error "failed to kill & remove container[${_CONTAINER_NAME}]"
@@ -178,26 +179,29 @@ function stop_container() {
             fi
         ;;
         "01")
-            docker stop ${_CONTAINER_NAME}
+            info "stopping & removing container:[${_CONTAINER_NAME}]"
+            docker stop ${_CONTAINER_NAME} &>/dev/null
             if [[ $? -ne 0 ]]; then
                 error "failed to stop container[${_CONTAINER_NAME}]"
                 return 1
             fi
-            docker rm -v ${_CONTAINER_NAME}
+            docker rm -v ${_CONTAINER_NAME} &>/dev/null
             if [[ $? -ne 0 ]]; then
                 error "failed to remove container[${_CONTAINER_NAME}]"
                 return 1
             fi
         ;;
         "10")
-            docker kill ${_CONTAINER_NAME}
+            info "killing container:[${_CONTAINER_NAME}]"
+            docker kill ${_CONTAINER_NAME} &>/dev/null
             if [[ $? -ne 0 ]]; then
                 error "failed to kill container[${_CONTAINER_NAME}]"
                 return 1
             fi
         ;;
         "00")
-            docker stop ${_CONTAINER_NAME}
+            info "stopping container:[${_CONTAINER_NAME}]"
+            docker stop ${_CONTAINER_NAME} &>/dev/null
             if [[ $? -ne 0 ]]; then
                 error "failed to stop container[${_CONTAINER_NAME}]"
                 return 1
