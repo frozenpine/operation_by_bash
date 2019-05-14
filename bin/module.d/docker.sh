@@ -224,6 +224,65 @@ function stop_container() {
     fi
 }
 
+function _build() {
+    local _MODULE
+    local _VERSION
+
+    cat | sed '/^[ '"\t"']*$/d' | (\
+        while read FILE_NAME; do
+            [[ ${FILE_NAME} =~ ${BUILD_NAME}-([a-zA-Z-]+)-([SNAPSHOT0-9.-]+).jar ]] || {
+                error "invalid jar file name: ${FILE_NAME}"
+                continue
+            }
+
+            _MODULE=${BASH_REMATCH[1]}
+            _VERSION=${BASH_REMATCH[2]}
+            
+            SIG_FILE="${BUILD_DIR}/${FILE_NAME}.md5"
+
+            NEW_SIG=`gen_md5 -p "${BUILD_DIR}/${FILE_NAME}"`
+            if [[ ${FORCE} -eq 0 && -f "${SIG_FILE}" && `cat "${SIG_FILE}"` == ${NEW_SIG} ]]; then
+                warning "module[${_MODULE}] with version[${_VERSION}] not modified, skip building."
+                continue
+            fi
+
+            echo -n ${NEW_SIG} >"${SIG_FILE}"
+            
+            [[ ! -d build ]] && ${SUDO} mkdir build
+            pushd build >/dev/null
+                TEMP_DOCKERFILE=`mktemp`
+                template "${BUILD_DIR}/dockerfile.template" "${TEMP_DOCKERFILE}"
+                $SUDO mv "${TEMP_DOCKERFILE}" ./dockerfile
+
+                if [[ -d "../${_MODULE}_conf" ]]; then
+                    ${SUDO} rm -rf ./config
+                    ${SUDO} cp -r "../${_MODULE}_conf" ./config
+                fi
+
+                ${SUDO} rm -f *.jar &>/dev/null
+                ${SUDO} cp "${BUILD_DIR}/${FILE_NAME}" ./ &>/dev/null
+                find "${BUILD_DIR}" -type f -name "*.sh" -exec ${SUDO} cp {} . \; &>/dev/null
+                ${SUDO} chmod u+x *.sh &>/dev/null
+
+                _IMAGE_NAME="registry:5000/${BUILD_NAME}/${_MODULE}:${_VERSION}"
+                eval "${DRY_RUN} docker build . -t ${_IMAGE_NAME}"
+
+                if [[ $? -eq 0 && ${PUSH_REGISTRY} -eq 1 ]]; then
+                    eval "${DRY_RUN} docker push ${_IMAGE_NAME}"
+                    [[ ${CLEAN_LOCAL} -eq 1 ]] && eval "${DRY_RUN} docker rmi ${_IMAGE_NAME}"
+                fi
+            popd >/dev/null
+
+            "${BASE_DIR}/allssh" "echo \"docker rmi -f ${_IMAGE_NAME}\" | tee >(eval \`cat\`)"
+        done
+    )
+}
+
+# build & push docker image to registry
+# args:   -b project_name   project name
+#         -c                whether to clean local temp image
+#         -p                whether to push image to registry
+#         -f                build image forcely, w/o checking jar md5
 function build_image() {
     if [[ $# -lt 1 ]]; then
         error "module name missing in build image."
@@ -256,11 +315,6 @@ function build_image() {
                 BUILD_NAME=${OPTARG}
                 BUILD_DIR="${BUILD_BASE}/${BUILD_NAME}"
             ;;
-            h)
-                help_message
-                _extra_help
-                exit
-            ;;
             *)
                 error "invalid args: $*"
                 exit 1
@@ -268,4 +322,47 @@ function build_image() {
         esac
     done
     shift $((OPTIND-1))
+
+    if [[ -z ${BUILD_NAME} ]]; then
+        error "missing module name."
+        exit 1
+    fi
+
+    if [[ $# -ne 1 ]]; then
+        error "invalid args: $*"
+        exit 1
+    fi
+
+    if [[ $1 == "all" ]]; then
+        PATTERN="${BUILD_NAME}-*.jar"
+    else
+        PATTERN="${BUILD_NAME}-$1-*.jar"
+    fi
+
+    if [[ ! -d "${BUILD_DIR}" ]]; then
+        error "invalid BUILD_NAME"
+        exit 1
+    fi
+
+    cd "${BUILD_DIR}"
+
+    ORIGIN_TEMPLATE_FILE="${TEMPLATE_BASE}/dockerfile/${BUILD_NAME}.template"
+    if [[ ! -f "${ORIGIN_TEMPLATE_FILE}" ]]; then
+        error "dockerfile template missing."
+        exit 1
+    fi
+
+    $SUDO cp -f "${ORIGIN_TEMPLATE_FILE}" ./dockerfile.template
+
+    TEMPLATE_CONF_DIR="${TEMPLATE_BASE}/${BUILD_NAME}"
+    if [[ -d "${TEMPLATE_CONF_DIR}" ]]; then
+        ${SUDO} cp -r "${TEMPLATE_CONF_DIR}"/* ./
+    fi
+
+    ls ${PATTERN} &>/dev/null
+    if [[ $? -ne 0 ]]; then
+        error "invalid module name: $1"
+        exit 1
+    fi
+    find . -maxdepth 1 -type f -name "${PATTERN}" -exec basename {} \; | _build
 }

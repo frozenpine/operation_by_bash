@@ -9,11 +9,12 @@ source "${BASE_DIR}/module.d/common.sh"
 check_env || exit 1
 FUNC_FILE_CONFIG="${MODULE_BASE}/config.sh"
 FUNC_FILE_SENTRY="${MODULE_BASE}/sentry.sh"
+FUNC_FILE_DOCKER="${MODULE_BASE}/docker.sh"
 import_functions
 
-SCRIPT_START="${MODULE_BASE}/start-container.sh"
-SCRIPT_STOP="${MODULE_BASE}/stop-container.sh"
-SCRIPT_CHECK="${MODULE_BASE}/check-container.sh"
+# SCRIPT_START="${MODULE_BASE}/start-container.sh"
+# SCRIPT_STOP="${MODULE_BASE}/stop-container.sh"
+# SCRIPT_CHECK="${MODULE_BASE}/check-container.sh"
 
 for SCRIPT in ${!SCRIPT_@}; do
     SCRIPT_FILE_PATH=$(eval echo \$$SCRIPT)
@@ -68,22 +69,29 @@ shift
 
 case $ACTION in
     status)
-        source "${SCRIPT_CHECK}" $*
+        # source "${SCRIPT_CHECK}" $*
+        check_container $*
         [[ $? -ne 0 ]] && exit 1
     ;;
     start)
-        source "${SCRIPT_START}" $*
+        # source "${SCRIPT_START}" $*
+        start_container $*
         [[ $? -ne 0 ]] && exit 1
     ;;
     stop)
-        source "${SCRIPT_STOP}" $*
+        # source "${SCRIPT_STOP}" $*
+        stop_container $*
         [[ $? -ne 0 ]] && exit 1
     ;;
     restart)
-        source "${SCRIPT_STOP}" $*
+        # source "${SCRIPT_STOP}" $*
+        stop_container $*
         [[ $? -ne 0 ]] && exit 1
+        
         shift $(($#-1))
-        source "${SCRIPT_START}" $*
+
+        # source "${SCRIPT_START}" $*
+        start_container $*
         [[ $? -ne 0 ]] && exit 1
     ;;
     logs)
