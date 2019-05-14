@@ -124,10 +124,6 @@ function stop_container() {
         exit 1
     fi
 
-    local _CONTAINER_NAME=$1
-
-    check_container ${_CONTAINER_NAME} >/dev/null || return 1
-
     local _REMOVE_CONTAINER=0
     local _KILL=0
     local _CLEAN_VOLUME=0
@@ -155,6 +151,10 @@ function stop_container() {
         esac
     done
     shift $((OPTIND-1))
+
+    local _CONTAINER_NAME=$1
+
+    check_container ${_CONTAINER_NAME} >/dev/null || return 1
 
     case "${_KILL}${_REMOVE_CONTAINER}" in
         "11")
