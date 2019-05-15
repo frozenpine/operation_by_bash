@@ -917,7 +917,7 @@ CREATE TABLE `t_warn_garbage_user_set` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID自增长序列',
   `prompt_flag` varchar(1) DEFAULT NULL COMMENT '定义类型 1 垃圾委托 2 垃圾用户  ',
   `amount` int(10) DEFAULT NULL COMMENT '定义垃圾用户的委托数量',
-  `value` decimal(13,10) DEFAULT NULL COMMENT '价值',
+  `value` decimal(30,10) DEFAULT NULL COMMENT '价值',
   `operate_time` bigint(20) DEFAULT NULL COMMENT '操作时间',
   `operator_id` varchar(20) DEFAULT NULL COMMENT '操作员',
   PRIMARY KEY (`id`)
@@ -989,7 +989,7 @@ CREATE TABLE `t_verify_transfer` (
   `transfer_in_account_id` bigint(20) NOT NULL COMMENT '转入资金账号',
   `currency` varchar(10) NOT NULL COMMENT '币种',
   `transfer` decimal(30,10) DEFAULT NULL COMMENT '划转数量',
-
+  `frozen_id` varchar(50) DEFAULT NULL COMMENT '交易业务id',
   `operate_time` bigint(20) DEFAULT NULL COMMENT '操作时间',
   `operator_id` varchar(20) DEFAULT NULL COMMENT '操作员',
   `transfer_status` varchar(3) DEFAULT NULL COMMENT '划转结果 0 申请划转 1 通知转出资金账号冻结成功 2 通知转出资金账号冻结失败 3 通知转入资金账号成功 4 通知转入资金账号失败  5 通知转出资金账号回退成功 6 通知转出资金账号回退失败  7通知转出资金账号清空冻结成功 8通知转出资金账号清空冻结失败',
@@ -1007,7 +1007,7 @@ CREATE TABLE `t_verify_erase_account` (
   `erase_in_account_id` bigint(20) NOT NULL COMMENT '转入资金账号',
   `currency` varchar(10) NOT NULL COMMENT '币种',
   `erase` decimal(30,10) DEFAULT NULL COMMENT '平账数量',
-
+  `frozen_id` varchar(50) DEFAULT NULL COMMENT '交易业务id',
   `operate_time` bigint(20) DEFAULT NULL COMMENT '操作时间',
   `operator_id` varchar(20) DEFAULT NULL COMMENT '操作员',
   `erase_status` varchar(3) DEFAULT NULL COMMENT '平账结果 0 申请划转 1 通知转出资金账号冻结成功 2 通知转出资金账号冻结失败 3 通知转入资金账号成功 4 通知转入资金账号失败  5 通知转出资金账号回退成功 6 通知转出资金账号回退失败  7通知转出资金账号清空冻结成功 8通知转出资金账号清空冻结失败',
@@ -1049,9 +1049,6 @@ CREATE TABLE `t_verify_account` (
   `settlement_id` bigint(20) NOT NULL COMMENT '结算编号',
   `commission` decimal(30,10) NOT NULL COMMENT '佣金',
   `withdraw_fee` decimal(30,10) DEFAULT NULL COMMENT '提现手续费(比特币网络费用)',
-  `kafka_partition` int(11) NOT NULL,
-  `kafka_offset` bigint(20) DEFAULT NULL,
-  `kafka_checkpoint` bigint(20) DEFAULT NULL,
   `update_time` bigint(30) DEFAULT NULL COMMENT '更新时间',
   `insert_time` bigint(30) DEFAULT NULL COMMENT '插入时间',
   PRIMARY KEY (`account_id`,`currency`,`verify_date`)
