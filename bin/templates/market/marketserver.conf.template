@@ -44,15 +44,12 @@ KafkaTopicInstrument=${KFK_INSTRUMENT_TOPIC:=INSTRUMENT}
 RequestInstrumentAllInterval=1800
 
 # websocket 配置
-#是否开启websocket前置
-EnableWsSend=true
-WsThreadNum=1
 #websocket侦听地址 
 WsHost=${LISTEN_ADDR:=0.0.0.0}
 #websocket的端口号
 WsPort=${WS_PORT:=9988}
 #客户端连接成功后的欢迎语
-WelcomeMsg={"info":"Welcome to the JS Realtime API.","version":"2019-03-26T18:43:09.000Z","timestamp":"2019-03-28T06:05:15.309Z","docs":"https://www.js.com/app/wsAPI","limit":{"remaining":39}}
+WelcomeMsg={"info":"Welcome to the 365MEX Realtime API.","version":"2019-03-26T18:43:09.000Z","timestamp":"2019-03-28T06:05:15.309Z","docs":"https://www.365MEX.com/app/wsAPI","limit":{"remaining":39}}
 #apikey和signature校验地址
 CheckSignatureURL=${TRADE_FRONT}/api/v1/signature
 #当前订单查询接口
