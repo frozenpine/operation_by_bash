@@ -265,13 +265,16 @@ function _stop() {
         _pid=`cat "${_pid_file}"`
         info "stopping ${_module_base}[${_pid}]..."
         while true; do
-            if [[ ${_stop_count} -le 5 ]]; then
+            if [[ ${_stop_count} -eq 1 ]]; then
                 kill ${_pid} &>/dev/null
-            else
-                warning "${_module_name}[${_pid}] stopping failed in ${_stop_count} times, killing force."
+            fi
+
+            if [[ ${_stop_count} -gt 5 ]]; then
+                warning "${_module_name}[${_pid}] stopping failed in $((_stop_count-1)) times, killing forcely."
                 kill -9 ${_pid} &>/dev/null
                 info "${_module_name}[${_pid}] ${_stop_count} times checking..."
             fi
+            
             sleep 3
             
             kill -0 ${_pid} &>/dev/null
