@@ -95,6 +95,7 @@ docker run -d \
         -jar /${NAME}/digital-${NAME}-${VERSION}.jar \
         --server.port="${DIGITAL_PORT}" \
         --spring.redis.host="${REDIS_HOST}" \
+        --spring.redis.port="${REDIS_PORT}" \
         --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?characterEncoding=utf-8" \
         --spring.datasource.username="${DB_USER:=$DEFAULT_DB_USER}" \
         --spring.datasource.password="${DB_PASS:=$DEFAULT_DB_PASS}" \
