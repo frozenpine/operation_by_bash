@@ -18,9 +18,9 @@ UNLOCK TABLES;
 /*Data for the table `t_risk_withdraw_limit` */
 
 LOCK TABLES `t_risk_withdraw_limit` WRITE;
-TRUNCATE t_risk_withdraw_limit;
-insert  into `t_risk_withdraw_limit`(`forbid_out`,`operate_time`,`operator_id`) values ('1',1553242793638,'admin');
-
+/*!40000 ALTER TABLE `t_risk_withdraw_limit` DISABLE KEYS */;
+INSERT INTO `t_risk_withdraw_limit` VALUES (2,'1',1553242793638,'admin');
+/*!40000 ALTER TABLE `t_risk_withdraw_limit` ENABLE KEYS */;
 UNLOCK TABLES;
 
 /*Data for the table `t_identification_type` */
@@ -63,9 +63,9 @@ UNLOCK TABLES;
 /*Data for the table `t_warn_insurance_fund` */
 
 LOCK TABLES `t_warn_insurance_fund` WRITE;
-TRUNCATE t_warn_insurance_fund;
-insert  into `t_warn_insurance_fund`(`id`,`risk_flag`,`time_value`,`peek_value`,`warn_level`,`warn_type`,`interval_time`,`accounts`,`operator_id`,`operate_time`,`notice_status`,`old_id`) values (4,'261024',NULL,NULL,'1','2',5,'sub@quantdo.com.cn','admin',1545896347124,'0',NULL),(5,'261025','2','1000000000.0000000000','1','2',5,'sub@quantdo.com.cn','admin',1545896347124,'0',NULL),(6,'261026',NULL,'1000000000.0000000000','1','2',5,'sub@quantdo.com.cn','admin',1545896347124,'0',NULL),(7,'261027',NULL,'500000000.0000000000','1','2',5,'sub@quantdo.com.cn','admin',1545896347124,'0',NULL);
-
+/*!40000 ALTER TABLE `t_warn_insurance_fund` DISABLE KEYS */;
+INSERT INTO `t_warn_insurance_fund` VALUES (4,'261024',NULL,NULL,'1','2',5,'sub@quantdo.com.cn','admin',1545896347124,'0',NULL),(5,'261025',2,1000000000.0000000000,'1','2',5,'sub@quantdo.com.cn','admin',1545896347124,'0',NULL),(6,'261026',NULL,1000000000.0000000000,'1','2',5,'sub@quantdo.com.cn','admin',1545896347124,'0',NULL),(7,'261027',NULL,500000000.0000000000,'1','2',5,'sub@quantdo.com.cn','admin',1545896347124,'0',NULL);
+/*!40000 ALTER TABLE `t_warn_insurance_fund` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
@@ -102,17 +102,17 @@ UNLOCK TABLES;
 /*Data for the table `t_underlying` */
 
 LOCK TABLES `t_underlying` WRITE;
-
-insert  into `t_underlying`(`id`,`underlying_id`,`underlying_name`,`underlying_type`,`oper_id`,`oper_time`,`recheck_oper_id`,`recheck_oper_time`) values (1,'XBT-USD','比特币','1','ADMIN',1545807237,'ADMIN',1545807237);
-
+/*!40000 ALTER TABLE `t_underlying` DISABLE KEYS */;
+INSERT INTO `t_underlying` VALUES (1,'XBT-USD','比特币','1','ADMIN',1545807237,'ADMIN',1545807237);
+/*!40000 ALTER TABLE `t_underlying` ENABLE KEYS */;
 UNLOCK TABLES;
 
 /*Data for the table `t_underlying_detail` */
 
 LOCK TABLES `t_underlying_detail` WRITE;
-
-insert  into `t_underlying_detail`(`id`,`underlying_id`,`exch_id`,`product_id`,`weight`) values (1,'XBT-USD','KRAKEN','XBT-USD','0.3333'),(4,'XBT-USD','COINBASE','BTC-USD','0.3333'),(7,'XBT-USD','BITSTAMP','btcusd','0.3333'),(13,'XBT-USD','BITMEX','.BXBT','0.3333');
-
+/*!40000 ALTER TABLE `t_underlying_detail` DISABLE KEYS */;
+INSERT INTO `t_underlying_detail` VALUES (1,'XBT-USD','KRAKEN','XBT-USD',0.3333),(4,'XBT-USD','COINBASE','BTC-USD',0.3333),(7,'XBT-USD','BITSTAMP','btcusd',0.3333),(13,'XBT-USD','BITMEX','.BXBT',0.3333);
+/*!40000 ALTER TABLE `t_underlying_detail` ENABLE KEYS */;
 UNLOCK TABLES;
 
 /*   交易所状态  */
@@ -145,12 +145,12 @@ insert into `t_api_key` (`user_id`, `key_id`, `key_type`, `key_name`, `cidr`, `k
 insert into `t_api_key` (`user_id`, `key_id`, `key_type`, `key_name`, `cidr`, `key_right`, `secret_key`, `is_active`, `operate_time`, `operator_id`) values('6789776272','Qz88v8QkG7T5Skm2JgGd','1','系统默认Key',NULL,'0','R5qE1b4gk0Xf5WSRUc53Z9xN606591vii3RgBWCSgbfR1DPP6I78r5qCox2upyB5Zj5N773THNa30xanb2108r2pBeVcWfBQgPK','1','1556872440055',NULL);
 
 -- 委托事前风控参数设置
-
 LOCK TABLES `t_order_prompt` WRITE;
-TRUNCATE t_order_prompt;
-insert  into `t_order_prompt`(`id`,`direction`,`prompt_flag`,`prompt_value`,`operator_id`,`operate_time`,`notice_status`) values (1,'buy','1','0.005','admin',1545896347124,'0'),(2,'buy','2','0.030','admin',1545896347124,'0'),(3,'buy','3','0.030','admin',1545896347124,'0'),(4,'sell','1','0.005','admin',1545896347124,'0'),(5,'sell','2','0.030','admin',1545896347124,'0'),(6,'sell','3','0.030',NULL,1545896347124,'0');
-
+/*!40000 ALTER TABLE `t_order_prompt` DISABLE KEYS */;
+INSERT INTO `t_order_prompt` VALUES (1,'buy','1',0.00100000,'admin',1545896347124,'0',NULL),(2,'buy','2',0.05000000,'admin',1545896347124,'0',NULL),(3,'buy','3',0.05000000,'admin',1545896347124,'0',NULL),(4,'sell','1',0.00100000,'admin',1545896347124,'0',NULL),(5,'sell','2',0.05000000,'admin',1545896347124,'0',NULL),(6,'sell','3',0.05000000,NULL,1545896347124,'0',NULL);
+/*!40000 ALTER TABLE `t_order_prompt` ENABLE KEYS */;
 UNLOCK TABLES;
+
 --  垃圾委托用户参数设置
 
 LOCK TABLES `t_warn_garbage_user_set` WRITE;
@@ -161,22 +161,54 @@ UNLOCK TABLES;
 -- 一期 刷进去的 数据    二期 品种，合约自动生成时候不可以刷
 
 -- 品种及相关刷库
-insert into `t_product` (`product_id`, `product_name`, `underlying_id`, `product_type`, `currency`, `trade_mode`, `quote_currency`, `clear_currency`, `deliv_series_num`, `cycle_type`, `product_status`, `operate_time`, `operator_id`, `recheck_operate_time`, `recheck_operator_id`, `match_rule`, `price_limit_before_fuse`, `price_mode`, `market_id`)
-    values('XBT','BTC比特币','XBT-USD','1','XBT','1','XBT','XBT','1','1','1','1550645616397','admin','1550645616397','admin','1','21','1','1');
-insert into `t_deliv_fee_set` (notice_status,`product_id`, `instrument_id`, `user_group_id`, `fee_mode`, `deliv_fee_rate`, `deliv_fee_amt`, `operate_time`, `operator_id`) values('0','XBT',NULL,NULL,'1','0.0200000000','0.0000000000','1553049611369',NULL);
+LOCK TABLES `t_product` WRITE;
+/*!40000 ALTER TABLE `t_product` DISABLE KEYS */;
+INSERT INTO `t_product` VALUES (2,'XBT','BTC比特币','XBT-USD','1','XBT','1','XBT','XBT',1,'1','1',1550645616397,'admin',1550645616397,'admin','1',21.000000,'1','1');
+/*!40000 ALTER TABLE `t_product` ENABLE KEYS */;
+UNLOCK TABLES;
 
-insert  into `t_trade_fee_set`(`id`,`product_id`,`instrument_id`,`user_group_id`,`fee_mode`,`maker_fee_rate`,`taker_fee_rate`,`maker_fee_amt`,`taker_fee_amt`,`operate_time`,`operator_id`,`old_id`,`notice_status`) values (115,'XBT',NULL,NULL,'1','-0.00025','0.000750000000','0.0000000000','0.0000000000',1555590039518,NULL,NULL,'0');
-insert  into `t_risk_limit`(`id`,`product_id`,`instrument_id`,`level`,`base_risk_limit`,`step_risk_limit`,`step_times`,`base_maint_margin`,`base_init_margin`,`operator_id`,`operate_time`,`old_id`,`notice_status`) values (11,'XBT',NULL,NULL,'20000000000','10000000000',10,'0.00050000','0.00100000','admin',1555980569597,NULL,'0');
+LOCK TABLES `t_deliv_fee_set` WRITE;
+/*!40000 ALTER TABLE `t_deliv_fee_set` DISABLE KEYS */;
+INSERT INTO `t_deliv_fee_set` VALUES (2,'XBT',NULL,NULL,'1',0.0200000000,0.0000000000,1553049611369,NULL,NULL,'0');
+/*!40000 ALTER TABLE `t_deliv_fee_set` ENABLE KEYS */;
+UNLOCK TABLES;
 
-insert  into `t_risk_leverage_point_detail`(`id`,`product_id`,`risk_limit`,`leverage`) values (1,'XBT','20000000000','1.00'),(2,'XBT','20000000000','2.00'),(3,'XBT','20000000000','3.00'),(4,'XBT','20000000000','5.00'),(5,'XBT','20000000000','10.00'),(6,'XBT','20000000000','25.00'),(7,'XBT','20000000000','50.00'),(8,'XBT','20000000000','100.00'),(13,'XBT','30000000000','1.00'),(14,'XBT','30000000000','2.00'),(15,'XBT','30000000000','3.00'),(16,'XBT','30000000000','5.00'),(17,'XBT','30000000000','10.00'),(18,'XBT','30000000000','25.00'),(19,'XBT','30000000000','50.00'),(20,'XBT','30000000000','66.60'),(21,'XBT','40000000000','1.00'),(22,'XBT','40000000000','2.00'),(23,'XBT','40000000000','3.00'),(24,'XBT','40000000000','5.00'),(25,'XBT','40000000000','10.00'),(26,'XBT','40000000000','25.00'),(27,'XBT','40000000000','35.00'),(28,'XBT','40000000000','50.00'),(29,'XBT','50000000000','1.00'),(30,'XBT','50000000000','2.00'),(31,'XBT','50000000000','3.00'),(32,'XBT','50000000000','5.00'),(33,'XBT','50000000000','10.00'),(34,'XBT','50000000000','25.00'),(35,'XBT','50000000000','33.30'),(36,'XBT','50000000000','40.00'),(37,'XBT','60000000000','1.00'),(38,'XBT','60000000000','2.00'),(39,'XBT','60000000000','3.00'),(40,'XBT','60000000000','5.00'),(41,'XBT','60000000000','10.00'),(42,'XBT','60000000000','25.00'),(43,'XBT','60000000000','33.30'),(44,'XBT','70000000000','1.00'),(45,'XBT','70000000000','2.00'),(46,'XBT','70000000000','3.00'),(47,'XBT','70000000000','5.00'),(48,'XBT','70000000000','10.00'),(49,'XBT','70000000000','15.00'),(50,'XBT','70000000000','20.00'),(51,'XBT','70000000000','25.00'),(52,'XBT','70000000000','28.50'),(53,'XBT','80000000000','1.00'),(54,'XBT','80000000000','2.00'),(55,'XBT','80000000000','3.00'),(56,'XBT','80000000000','5.00'),(57,'XBT','80000000000','10.00'),(58,'XBT','80000000000','15.00'),(59,'XBT','80000000000','20.00'),(60,'XBT','80000000000','25.00'),(61,'XBT','90000000000','1.00'),(62,'XBT','90000000000','2.00'),(63,'XBT','90000000000','3.00'),(64,'XBT','90000000000','4.00'),(65,'XBT','90000000000','5.00'),(66,'XBT','90000000000','10.00'),(67,'XBT','90000000000','15.00'),(68,'XBT','90000000000','20.00'),(69,'XBT','90000000000','22.20'),(70,'XBT','100000000000','1.00'),(71,'XBT','100000000000','2.00'),(72,'XBT','100000000000','3.00'),(73,'XBT','100000000000','4.00'),(74,'XBT','100000000000','5.00'),(75,'XBT','100000000000','10.00'),(76,'XBT','100000000000','15.00'),(77,'XBT','100000000000','20.00'),(78,'XBT','110000000000','1.00'),(79,'XBT','110000000000','2.00'),(80,'XBT','110000000000','3.00'),(81,'XBT','110000000000','4.00'),(82,'XBT','110000000000','5.00'),(83,'XBT','110000000000','10.00'),(84,'XBT','110000000000','15.00'),(85,'XBT','110000000000','18.10');
+LOCK TABLES `t_trade_fee_set` WRITE;
+/*!40000 ALTER TABLE `t_trade_fee_set` DISABLE KEYS */;
+INSERT INTO `t_trade_fee_set` VALUES (115,'XBT',NULL,NULL,'1',-0.0002500000,0.0007500000,0.0000000000,0.0000000000,1555590039518,NULL,NULL,'0');
+/*!40000 ALTER TABLE `t_trade_fee_set` ENABLE KEYS */;
+UNLOCK TABLES;
+
+LOCK TABLES `t_risk_limit` WRITE;
+/*!40000 ALTER TABLE `t_risk_limit` DISABLE KEYS */;
+INSERT INTO `t_risk_limit` VALUES (11,'XBT',NULL,NULL,20000000000,10000000000,9,0.00500000,0.01000000,'admin',1555980569597,NULL,'0');
+/*!40000 ALTER TABLE `t_risk_limit` ENABLE KEYS */;
+UNLOCK TABLES;
+
+LOCK TABLES `t_risk_leverage_point_detail` WRITE;
+/*!40000 ALTER TABLE `t_risk_leverage_point_detail` DISABLE KEYS */;
+INSERT INTO `t_risk_leverage_point_detail` VALUES (1,'XBT',20000000000,1.00),(2,'XBT',20000000000,2.00),(3,'XBT',20000000000,3.00),(4,'XBT',20000000000,5.00),(5,'XBT',20000000000,10.00),(6,'XBT',20000000000,25.00),(7,'XBT',20000000000,50.00),(8,'XBT',20000000000,100.00),(13,'XBT',30000000000,1.00),(14,'XBT',30000000000,2.00),(15,'XBT',30000000000,3.00),(16,'XBT',30000000000,5.00),(17,'XBT',30000000000,10.00),(18,'XBT',30000000000,25.00),(19,'XBT',30000000000,50.00),(20,'XBT',30000000000,66.60),(21,'XBT',40000000000,1.00),(22,'XBT',40000000000,2.00),(23,'XBT',40000000000,3.00),(24,'XBT',40000000000,5.00),(25,'XBT',40000000000,10.00),(26,'XBT',40000000000,25.00),(27,'XBT',40000000000,35.00),(28,'XBT',40000000000,50.00),(29,'XBT',50000000000,1.00),(30,'XBT',50000000000,2.00),(31,'XBT',50000000000,3.00),(32,'XBT',50000000000,5.00),(33,'XBT',50000000000,10.00),(34,'XBT',50000000000,25.00),(35,'XBT',50000000000,33.30),(36,'XBT',50000000000,40.00),(37,'XBT',60000000000,1.00),(38,'XBT',60000000000,2.00),(39,'XBT',60000000000,3.00),(40,'XBT',60000000000,5.00),(41,'XBT',60000000000,10.00),(42,'XBT',60000000000,25.00),(43,'XBT',60000000000,33.30),(44,'XBT',70000000000,1.00),(45,'XBT',70000000000,2.00),(46,'XBT',70000000000,3.00),(47,'XBT',70000000000,5.00),(48,'XBT',70000000000,10.00),(49,'XBT',70000000000,15.00),(50,'XBT',70000000000,20.00),(51,'XBT',70000000000,25.00),(52,'XBT',70000000000,28.50),(53,'XBT',80000000000,1.00),(54,'XBT',80000000000,2.00),(55,'XBT',80000000000,3.00),(56,'XBT',80000000000,5.00),(57,'XBT',80000000000,10.00),(58,'XBT',80000000000,15.00),(59,'XBT',80000000000,20.00),(60,'XBT',80000000000,25.00),(61,'XBT',90000000000,1.00),(62,'XBT',90000000000,2.00),(63,'XBT',90000000000,3.00),(64,'XBT',90000000000,4.00),(65,'XBT',90000000000,5.00),(66,'XBT',90000000000,10.00),(67,'XBT',90000000000,15.00),(68,'XBT',90000000000,20.00),(69,'XBT',90000000000,22.20),(70,'XBT',100000000000,1.00),(71,'XBT',100000000000,2.00),(72,'XBT',100000000000,3.00),(73,'XBT',100000000000,4.00),(74,'XBT',100000000000,5.00),(75,'XBT',100000000000,10.00),(76,'XBT',100000000000,15.00),(77,'XBT',100000000000,20.00),(78,'XBT',110000000000,1.00),(79,'XBT',110000000000,2.00),(80,'XBT',110000000000,3.00),(81,'XBT',110000000000,4.00),(82,'XBT',110000000000,5.00),(83,'XBT',110000000000,10.00),(84,'XBT',110000000000,15.00),(85,'XBT',110000000000,18.10);
+/*!40000 ALTER TABLE `t_risk_leverage_point_detail` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 -- 合约及相关刷库
 
-insert  into `t_instrument`(`instrumentid`,`instrument_name`,`product_id`,`product_type`,`underlying_id`,`cycle_type`,`contract_size`,`tick`,`trade_mode`,`reverse`,`quote_currency`,`clear_currency`,`price_source`,`max_order_price`,`funding_times`,`create_date`,`open_date`,`open_date_expr`,`volume_multiple`,`end_trading_day`,`instrument_status`,`end_trading_day_expr`,`expire_date`,`expire_date_expr`,`start_deliv_date`,`start_deliv_date_expr`,`end_deliv_date`,`end_deliv_date_expr`,`open_year_month`,`deliv_year_month`,`option_series_id`,`option_type`,`strike_price`,`is_auto`,`is_confirm_needed`,`no_trade_days`,`qty_unit`,`basis_rate`,`quote_rate`,`basis_price_type`,`basis_price`,`position_type`,`deliv_mode`,`deliv_type`,`exec_type`,`trading_day_type`,`oper_id`,`oper_time`,`recheck_oper_id`,`recheck_oper_time`,`min_order_volume`,`max_order_volume`)
- values ('XBTUSD','比特币永续','XBT','1','XBT-USD','3','1.0000000000','0.50000000','1','1','USD','XBT','1','10000.0000000000',3,'20190227','20190227','20991227',-100000000,'20991227','0','20991227','20991227','20991227','20991227','20991227','20991227','20991227','1902','12','XBTUSDP','1','3500.0000000000','0','1',1,1,'0.0600000000','0.0200000000','1','3500.0000000000','1','1','1','1','2','admin',1550645616397,'admin',1550645616397,1,10000000);
+LOCK TABLES `t_instrument` WRITE;
+/*!40000 ALTER TABLE `t_instrument` DISABLE KEYS */;
+INSERT INTO `t_instrument` VALUES (2,'XBTUSD','比特币永续','XBT','1','XBT-USD','3',1.0000000000,0.5000000000,'1','1','USD','XBT','1',10000.0000000000,3,'20190227','20190227','20991227',-100000000,'20991227','0','20991227','20991227','20991227','20991227','20991227','20991227','20991227','1902','12','XBTUSDP','1',3500.0000000000,'0','1',1,1,0.0003000000,0.0006000000,'1',3500.0000000000,'1','1','1','1','2','admin',1550645616397,'admin',1550645616397,1,10000000);
+/*!40000 ALTER TABLE `t_instrument` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
-insert  into `t_risk_mandatory_reduction_set`(`id`,`product_id`,`instrument_id`,`reduction_price_ladder`,`max_market_fluctuate_tolerate`,`max_order_time_tolerate`,`amount`,`interval`,`compulsion_status`,`operate_time`,`operator_id`,`old_id`,`notice_status`) values (2,'XBT','XBTUSD','1.0000000000','200.000000',3600,10000,1,'0',1555590607402,'admin',NULL,'0');
+LOCK TABLES `t_risk_mandatory_reduction_set` WRITE;
+/*!40000 ALTER TABLE `t_risk_mandatory_reduction_set` DISABLE KEYS */;
+INSERT INTO `t_risk_mandatory_reduction_set` VALUES (2,'XBT','XBTUSD',1.0000000000,200.000000,3600,10000,1,'0',1555590607402,'admin',NULL,'0');
+/*!40000 ALTER TABLE `t_risk_mandatory_reduction_set` ENABLE KEYS */;
+UNLOCK TABLES;
 
-insert  into `t_price_band_detail`(`id`,`instrumentid`,`start_price_type`,`basis_price_type`,`ref_price_type`,`round_mode`,`value_mode`,`upper_value`,`lower_value`,`operator_id`,`operate_time`,`recheck_oper_id`,`recheck_oper_time`) values (1,'XBTUSD','4','4','4','2','1','1.0000000000','1.0000000000','admin',1551439903064,'admin',1551439903064);
+LOCK TABLES `t_price_band_detail` WRITE;
+/*!40000 ALTER TABLE `t_price_band_detail` DISABLE KEYS */;
+INSERT INTO `t_price_band_detail` VALUES (1,'XBTUSD','4','4','4','2','1',5.0000000000,0.9000000000,'admin',1551439903064,'admin',1551439903064);
+/*!40000 ALTER TABLE `t_price_band_detail` ENABLE KEYS */;
+UNLOCK TABLES;
