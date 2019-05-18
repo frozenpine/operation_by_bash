@@ -164,6 +164,30 @@ function _back_log() {
     ls -l "${_archive_file}"
 }
 
+function _archive_logs() {
+    if [[ $# lt 1 ]]; then
+        error "pid file not specified in archive logs"
+        exit 1
+    fi
+
+    local _PID_FILE=$1
+    shift
+
+    while true; do
+        kill -0 `cat ${_PID_FILE}` || break
+
+        for _LOG_FILE in ls *.log; do
+            lsof "${_LOG_FILE}" >&/dev/null
+            # if file not opened by any process, lsof will return 1
+            if [[ $? -eq 1 ]]; then
+                gzip "${_LOG_FILE}"
+            fi
+        done
+
+        sleep $((60*5))
+    done
+}
+
 function _start() {
     if [[ $# -lt 1 ]]; then
         error "module name missing in start."
@@ -231,6 +255,9 @@ function _start() {
             rm -f "${_pid_file}"
             exit 1
         fi
+
+        export -f _archive_logs
+        nohup bash -c _archive_logs &
 
         if [[ ${DEAMON} -ne 1 ]]; then
             info "watching pid[${_pid}]"
