@@ -28,9 +28,8 @@ filebeat.config:
     path: \${path.config}/modules.d/*.yml
     reload.enabled: true
 
-logging:
-  level: warning
-  to_files: false
+logging.level: warning
+logging.to_files: false
 
 processors:
 - add_cloud_metadata: ~
