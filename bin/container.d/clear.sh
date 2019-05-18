@@ -72,6 +72,7 @@ docker run -d \
         --com.quantdo.trade.consul.port=${CONSUL_PORT} \
         --com.quantdo.trade.handle.producer.properties.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.handle.producer.properties.max.request.size=100000000 \
+        --com.quantdo.trade.handle.producer.properties.request.timeout.ms=450000 \
         --com.quantdo.trade.handle.consumer.properties.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.handle.snapshot-topic=${CLEAR_SNAPSHOT_TOPIC} \
         --com.quantdo.trade.handle.checkpoint-topic=${CLEAR_CHECKPOINT_TOPIC} \
