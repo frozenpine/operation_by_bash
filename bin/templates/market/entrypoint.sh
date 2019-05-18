@@ -165,7 +165,7 @@ function _back_log() {
 }
 
 function _archive_logs() {
-    if [[ $# lt 1 ]]; then
+    if [[ $# -lt 1 ]]; then
         error "pid file not specified in archive logs"
         exit 1
     fi
