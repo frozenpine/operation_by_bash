@@ -148,7 +148,7 @@ function _status() {
 }
 
 function _back_log() {
-    if [[ ! -d "log" ]]; then
+    if [[ ! -d "logs" ]]; then
         warning "log dir not exists in current path: `pwd`"
         return 1
     fi
@@ -256,8 +256,10 @@ function _start() {
             exit 1
         fi
 
-        export -f _archive_logs
-        nohup bash -c _archive_logs &
+        pushd logs >/dev/null
+            export -f _archive_logs
+            nohup bash -c _archive_logs "${_pid_file}" &
+        popd >/dev/null
 
         if [[ ${DEAMON} -ne 1 ]]; then
             info "watching pid[${_pid}]"
