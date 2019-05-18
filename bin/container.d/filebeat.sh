@@ -63,5 +63,5 @@ docker run -d \
     --restart always \
     --net="host" \
     -v "${CONTAINER_BASE}/conf/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro" \
-    -v "${DATA_BASE:=/opt}:/opt:ro" \
+    -v "${DATA_BASE:=/opt}:${DATA_BASE:=/opt}:ro" \
     registry:5000/${NAME}:${VERSION}
