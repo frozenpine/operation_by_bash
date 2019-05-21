@@ -14,6 +14,7 @@ order
 mgmt
 sms
 sched
+backorder
 
 [node03:172.31.24.114]
 consul

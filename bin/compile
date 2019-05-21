@@ -15,7 +15,7 @@ COMPILE_BASE="${DATA_BASE:=/opt}/build"
 
 declare -A JAVA_MODULE_DEFINE
 JAVA_MODULE_DEFINE["digital"]="digital-rest digital-serviceimpl"
-JAVA_MODULE_DEFINE["trade-system"]="trade-clear-database trade-clear-memory trade-match trade-order trade-query trade-kline"
+JAVA_MODULE_DEFINE["trade-system"]="trade-clear-database trade-clear-memory trade-match trade-order trade-query trade-kline trade-back-order"
 JAVA_MODULE_DEFINE["service-management"]="exchange-index-server scheduler-server sms-mail-server trade-base"
 
 declare -A PUB_MAPPER
@@ -27,6 +27,7 @@ PUB_MAPPER["trade-match"]=trade-match
 PUB_MAPPER["trade-order"]=trade-order
 PUB_MAPPER["trade-query"]=trade-query
 PUB_MAPPER["trade-kline"]=trade-kline
+PUB_MAPPER["trade-back-order"]=trade-backorder
 PUB_MAPPER["exchange-index-server"]=service-index
 PUB_MAPPER["scheduler-server"]=service-scheduler
 PUB_MAPPER["sms-mail-server"]=service-sms

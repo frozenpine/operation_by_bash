@@ -21,7 +21,7 @@ done
 
 GROUP=
 
-MODULE_LIST=(clear match scheduler order query tradebase index sms tmdb kline)
+MODULE_LIST=(clear match scheduler order query tradebase index sms tmdb kline backorder)
 
 HELP_ARGS["D"]="optional,Dry run command for test."
 

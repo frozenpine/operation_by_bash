@@ -155,7 +155,8 @@ UNLOCK TABLES;
 
 LOCK TABLES `t_warn_garbage_user_set` WRITE;
 TRUNCATE t_warn_garbage_user_set;
-insert  into `t_warn_garbage_user_set`(`id`,`prompt_flag`,`amount`,`value`,`operate_time`,`operator_id`) values (1,'1',NULL,'0.0250000000',1545896347124,'admin'),(2,'2',20,'0.0250000000',1545896347124,'admin');
+insert  into `t_warn_garbage_user_set`(`id`,`amount`,`value`,`cognizance_time`,`relieve_time`,`operate_time`,`operator_id`) values (2,20,'21012.0000000000',30,1,1545896347124,'admin');
+
 UNLOCK TABLES;
 
 -- 一期 刷进去的 数据    二期 品种，合约自动生成时候不可以刷

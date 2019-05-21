@@ -49,6 +49,9 @@ ssh://sms
 [tmdb]
 ssh://tmdb
 
+[backorder]
+ssh://backorder
+
 [scheduler]
 ssh://sched
 
