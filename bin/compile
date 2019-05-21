@@ -342,6 +342,8 @@ EOF
             find ${module}/src/main/resources -type f -name "*.properties" | while read FILE; do
                 ${SUDO} sed -i '/spring.redis.password/ d; /jedis.pool.password/ d' ${FILE}
 
+                ${SUDO} sed -i 's/cache.type.*$/cache.type = 1/' ${FILE}
+
                 case ${ENVIRONMENT} in
                     test)
                         ${SUDO} sed -i '/test.configuration/ d; $ a test.configuration = true' ${FILE}
