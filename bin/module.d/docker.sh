@@ -20,7 +20,7 @@ function check_container() {
         return
     fi
 
-    docker ps -a | grep ${_CONTAINER_NAME} &>/dev/null
+    docker ps -a | grep "${_CONTAINER_NAME}:" &>/dev/null
     if [[ $? -ne 0 ]]; then
         error "container[${_CONTAINER_NAME}] missing."
         return 255
