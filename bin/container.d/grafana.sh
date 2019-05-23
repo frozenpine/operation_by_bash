@@ -1,4 +1,4 @@
-VERSION="5.4.3"
+VERSION="6.2.0"
 NAME=grafana
 USER=${NAME}
 ADMIN_PASSWD="quantdo123456"

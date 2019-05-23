@@ -49,7 +49,8 @@ docker run -d \
         --auto-increment-offset=${SERVER_ID} \
         --relay-log=mysql-relay-bin \
         --sync-binlog=1 \
-        --sql-mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'
+        --sql-mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' \
+        --max-connections=1024
 
 docker run -d \
     --name ${NAME}-exporter \

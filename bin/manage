@@ -219,6 +219,7 @@ case ${COMMAND} in
     destory)
         if [[ $# -lt 1 ]]; then
             allssh -g${MANAGE_GROUP} container stop -cr rest security serviceimpl
+            
             db truncate all
 
             ELASTIC_HOST=
