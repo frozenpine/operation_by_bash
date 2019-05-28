@@ -14,7 +14,7 @@ SENTRY_DSN=`get_sentry_dsn ${NAME}`
 
 DB_NAME="clear"
 
-SERVICE_LIST="registry zookeeper kafka mysql elastic consul query"
+SERVICE_LIST="registry zookeeper kafka mysql elastic redis consul query"
 for SERVICE in ${SERVICE_LIST}; do
     source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
         echo "service list file missing: ${SERVICE}.sh" >&2
@@ -74,6 +74,18 @@ for SVR_NAME in ${!ELASTIC_LIST[@]}; do
 done
 ELASTIC_SERVERS=${ELASTIC_SERVERS:1}
 
+REDIS_HOST=
+IDX=$((RANDOM % ${#REDIS_LIST[@]}))
+COUNT=0
+for SVR_NAME in ${!REDIS_LIST[@]}; do
+    if [[ ${COUNT} -eq ${IDX} ]]; then
+        REDIS_HOST=${REDIS_LIST[$SVR_NAME]}
+        break
+    fi
+
+    COUNT=$((COUNT+1))
+done
+
 CONTAINER_BASE="${DATA_BASE:=/opt}/${NAME}"
 find_user ${USER}
 if [[ $? -ne 0 ]]; then
@@ -107,3 +119,5 @@ docker run -d \
         --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?useUnicode=true&characterEncoding=utf-8&connectionCollation=utf8_general_ci&useSSL=false&serverTimezone=Asia/Shanghai" \
         --spring.datasource.username=${DB_USER:=$DEFAULT_DB_USER} \
         --spring.datasource.password=${DB_PASS:=$DEFAULT_DB_PASS} \
+        --redis.host=${REDIS_HOST} \
+        --redis.port=${REDIS_PORT} \
