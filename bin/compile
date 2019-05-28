@@ -12,6 +12,7 @@ FUNC_FILE_TEMPLATE="${MODULE_BASE}/template.sh"
 import_functions
 
 COMPILE_BASE="${DATA_BASE:=/opt}/build"
+HTTP_PUBLISH_BASE="${DATA_BASE:=/opt}/publish"
 
 declare -A JAVA_MODULE_DEFINE
 JAVA_MODULE_DEFINE["digital"]="digital-rest digital-serviceimpl"
@@ -242,6 +243,10 @@ function _npm_compile() {
             exit 1
         fi
 
+        local _http_pub_dir="${HTTP_PUBLISH_BASE}/${_project_base_name}/`date '+%Y%m%d%H%M%S'`"
+        ${SUDO} mkdir -p "${_http_pub_dir}"
+        ${SUDO} cp "${_tar_file}" "${_http_pub_dir}/"
+
         local _nginx_data_base="${DATA_BASE:=/opt}/nginx/data"
         local _project_pub_dir="${_nginx_data_base}/${PUB_MAPPER[$_project_base_name]}"
 
@@ -382,6 +387,9 @@ EOF
 
         local _project_version=`sed -n '/<version>.*<\/version>/ s/'"[[:space:]]"'*<version>\(.*\)<\/version>/\1/p;' pom.xml | head -1`
 
+        local _http_pub_dir="${HTTP_PUBLISH_BASE}/${_project_base_name}/`date '+%Y%m%d%H%M%S'`-${COMMIT_ID}"
+        ${SUDO} mkdir -p "${_http_pub_dir}"
+        
         for module in ${JAVA_MODULE_DEFINE[$_project_base_name]}; do
             if [[ x"${PUB_MAPPER[$module]}" == "x" ]]; then
                 error "no publish mapper for ${_project_base_name}[${module}]"
@@ -392,6 +400,7 @@ EOF
             local _docker_hub_base="${DATA_BASE:=/opt}/docker-hub"
             local _docker_hub_prj_name=`echo ${PUB_MAPPER[$module]} | cut -d'-' -f1`
             local _publish_file="${_docker_hub_base}/${_docker_hub_prj_name}/${_publish_name}"
+            
 
             info "publishing ${_project_base_name} ${module}[${COMMIT_ID}] to ${_publish_file}"
 
@@ -400,6 +409,7 @@ EOF
             fi
             
             ${SUDO} cp -f ${module}/target/*.jar "${_publish_file}"
+            ${SUDO} cp -f ${module}/target/*.jar "${_http_pub_dir}/${_publish_name}"
             if [[ $? -ne 0 ]]; then
                 error "publishing ${_project_base_name} ${module}[${COMMIT_ID}] failed."
                 exit 1
@@ -463,6 +473,8 @@ EOF
         local _publish_base_dir="${DATA_BASE:=/opt}/${_project_base_dir}"
         local _publish_dir="${_publish_base_dir}/${_publish_name}"
         local _publish_file_name="${_publish_dir}/${_publish_name}"
+        local _http_publish_dir="${HTTP_PUBLISH_BASE}/${_project_base_dir}/`date '+%Y%m%d%H%M%S'`-${COMMIT_ID}"
+        ${SUDO} mkdir -p "${_http_publish_dir}"
 
         info "publishing ${_project_base_name} ${_publish_name}[${COMMIT_ID}] to ${_publish_file}"
 
@@ -479,12 +491,14 @@ EOF
             error "publishing ${_project_base_name} ${_publish_name} libraries failed."
             exit 1
         fi
+        ${SUDO} tar -czvf "${_http_publish_dir}/libs.tar.gz" ${_library_dir}/*
 
         ${SUDO} cp -f "${_publish_name}" "${_publish_file_name}"
         if [[ $? -ne 0 ]]; then
             error "publishing ${_project_base_name} ${_publish_name}[${COMMIT_ID}] failed."
             exit 1
         fi
+        ${SUDO} cp -f "${_publish_name}" "${_http_publish_dir}/${_publish_name}"
 
         market deploy
     popd >/dev/null
