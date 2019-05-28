@@ -3,7 +3,7 @@ NAME=elasticsearch
 SHORT_NAME=elastic
 USER=${SHORT_NAME}
 
-CLUSTER_NAME=Js
+CLUSTER_NAME=${ES_CLUSTER_NAME:=Js}
 
 SERVICE_LIST="registry elastic"
 

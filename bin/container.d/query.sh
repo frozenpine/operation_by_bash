@@ -102,6 +102,7 @@ docker run -d \
         --com.quantdo.trade.data-exchange.monitor.consumer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.consul.host=${CONSUL_HOST} \
         --com.quantdo.trade.consul.port=${CONSUL_PORT} \
+        --spring.data.elasticsearch.cluster-name=${ES_CLUSTER_NAME:=Js} \
         --spring.data.elasticsearch.cluster-nodes=${ELASTIC_SERVERS} \
         --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?useUnicode=true&characterEncoding=utf-8&connectionCollation=utf8_general_ci&useSSL=false&serverTimezone=Asia/Shanghai" \
         --spring.datasource.username=${DB_USER:=$DEFAULT_DB_USER} \

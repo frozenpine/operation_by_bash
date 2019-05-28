@@ -61,6 +61,7 @@ docker run -d \
         --logging.level.com.quantdo.trade=${LOG_LEVEL:=info} \
         --server.address=${SELF_IP} \
         --server.port=${TMES_PORT} \
+        --spring.data.elasticsearch.cluster-name=${ES_CLUSTER_NAME:=Js} \
         --spring.data.elasticsearch.cluster-nodes=${ELASTIC_SERVERS} \
         --com.quantdo.trade.sink.properties.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.sink.source-topic=${SINK_TOPIC:=DBTOPIC} \
