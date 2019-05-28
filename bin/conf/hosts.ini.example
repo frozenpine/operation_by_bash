@@ -66,3 +66,6 @@ ssh://ws
 
 [kline]
 ssh://kline
+
+[tmes]
+ssh://tmes
