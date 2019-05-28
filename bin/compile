@@ -342,7 +342,7 @@ EOF
             esac
 
             find ${module}/src/main/resources -type f -name "*.properties" | while read FILE; do
-                ${SUDO} sed -i '/spring.redis.password/ d; /jedis.pool.password/ d' ${FILE}
+                ${SUDO} sed -i '/spring.redis.password/ d; /jedis.pool.password/ d; /redis.password/ d;' ${FILE}
 
                 ${SUDO} sed -i 's/cache.type.*$/cache.type = 1/' ${FILE}
 
