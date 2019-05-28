@@ -53,3 +53,5 @@ docker run -d \
         --logging.level.com.quantdo.trade=${LOG_LEVEL:=info} \
         --com.quantdo.trade.match.consumer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.match.producer.bootstrap.servers=${KAFKA_SERVERS} \
+        --com.quantdo.trade.match.producer.buffer.memory=100000000 \
+        --com.quantdo.trade.match.producer.max.request.size=100000000 \
