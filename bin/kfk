@@ -65,32 +65,6 @@ for SVR_NAME in ${!KAFKA_LIST[@]}; do
 done
 KAFKA_SERVERS=${KAFKA_SERVERS:1}
 
-function _create_topic() {
-    cat <<EOF >"${TOPIC_LIST_FILE}"
-# TOPIC_NAME PARTIONS REPLICAS
-# if want to define replicas without partions, use "null" in partions column
-MATCH
-MATCH-SS
-MATCH-SS-INCREMENT
-MATCH-JSON-SS
-MATCH-JSON-SS-INCREMENT
-
-${INDEX_TOPIC}
-
-BACK-ORDER
-SS-BOOK-ORDER
-
-CLEAR                   # 30
-${CLEAR_CHECKPOINT_TOPIC}                # 30
-${CLEAR_SNAPSHOT_TOPIC}           # 30
-
-NOTIFY
-NOTIFY-CLIENT
-
-ACCESS
-EOF
-}
-
 function _topic() {
     eval "${DRY_RUN} ${TOPIC_SCRIPT} --zookeeper ${ZK_SERVERS} $*" 2> >(grep -Ev "SLF4J: |No Log4j 2" >&2)
 }
@@ -133,8 +107,8 @@ function _init() {
     shift $((OPTIND-1))
 
     if [[ ! -f "${TOPIC_LIST_FILE}" ]]; then
-        warning "no topic list specified by args or topic file, auto creating."
-        _create_topic
+        error "no topic list specified by args or topic file, auto creating."
+        exit 1
     fi
 
     info "reading kafka topics from file."
