@@ -12,7 +12,7 @@ JVM_OPTS=${TRADE_ORDER_JVM}
 
 SENTRY_DSN=`get_sentry_dsn ${NAME}`
 
-SERVICE_LIST="registry zookeeper kafka consul order"
+SERVICE_LIST="registry zookeeper kafka consul redis order"
 
 for SERVICE in ${SERVICE_LIST}; do
     source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
@@ -27,6 +27,18 @@ COUNT=0
 for SVR_NAME in ${!CONSUL_LIST[@]}; do
     if [[ ${COUNT} -eq ${IDX} ]]; then
         CONSUL_HOST=${CONSUL_LIST[$SVR_NAME]}
+        break
+    fi
+
+    COUNT=$((COUNT+1))
+done
+
+REDIS_HOST=
+IDX=$((RANDOM % ${#REDIS_LIST[@]}))
+COUNT=0
+for SVR_NAME in ${!REDIS_LIST[@]}; do
+    if [[ ${COUNT} -eq ${IDX} ]]; then
+        REDIS_HOST=${REDIS_LIST[$SVR_NAME]}
         break
     fi
 
@@ -67,3 +79,5 @@ docker run -d \
         --com.quantdo.trade.consul.port=${CONSUL_PORT} \
         --com.quantdo.trade.front.order.kafka.producer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.data-exchange.monitor.consumer.bootstrap.servers=${KAFKA_SERVERS} \
+        --redis.host=${REDIS_HOST} \
+        --redis.port=${REDIS_PORT} \
