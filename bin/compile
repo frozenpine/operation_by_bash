@@ -408,7 +408,7 @@ EOF
             fi
 
             if [[ ${PUBLISH} =~ http|all ]]; then
-                ${SUDO} cp -f ${module}/target/*.jar "${_http_pub_dir}/${_publish_name}"
+                ${SUDO} tar -czvf "${_http_pub_dir}/${PUB_MAPPER[$module]}-${_project_version}.tar.gz" ${module}/target/*.jar ${module}/target/classes/application.properties
             fi
 
             if [[ ${PUBLISH} =~ docker|all ]]; then
@@ -500,7 +500,7 @@ EOF
 
             ${SUDO} tar -czvf "${_http_publish_dir}/libs.tar.gz" ${_library_dir}/*
 
-            ${SUDO} cp -f "${_publish_name}" "${_http_publish_dir}/${_publish_name}"
+            ${SUDO} tar -czvf "${_http_publish_dir}/${_publish_name}.tar.gz" ${_publish_name}*
         fi
 
         if [[ ${PUBLISH} =~ remote|all ]]; then
