@@ -39,13 +39,13 @@ PUB_MAPPER["webadmin-front"]=quant-coinMS
 
 MAVEN_MIRROR_PORT=8181
 UPDATE_GIT=0
-PUBLISH=0
+PUBLISH=
 BRANCH=master
 COMMIT_ID=
 FORCE=0
 
 HELP_ARGS["u"]="optional,Pull lastest update from master@github."
-HELP_ARGS["p"]="optional,Publish new build to nginx or docker registry."
+HELP_ARGS["p:"]="optional,Publish new build to remote server, http download or docker registry."
 HELP_ARGS["f"]="optional,Compile project forcelly, without check pre-build."
 HELP_ARGS["C:npm|mvn"]="optional,Specify compiler type for project, and ignore all others."
 HELP_ARGS["e:test|prod"]="optional,Specify running envirionment manually, if auto detection failed."
@@ -234,7 +234,8 @@ function _npm_compile() {
         cd build && tar -czvf "${_tar_file}" . --exclude "*.tar.gz" &>/dev/null
         ls -l --color=auto "${_tar_file}"
 
-        if [[ ${PUBLISH} -ne 1 ]]; then
+        if [[ x"${PUBLISH}" == "x" ]]; then
+            info "build finished & no publish destination specified, exit."
             return
         fi
 
@@ -243,29 +244,36 @@ function _npm_compile() {
             exit 1
         fi
 
-        local _http_pub_dir="${HTTP_PUBLISH_BASE}/${_project_base_name}/`date '+%Y%m%d%H%M%S'`"
-        ${SUDO} mkdir -p "${_http_pub_dir}"
-        ${SUDO} cp "${_tar_file}" "${_http_pub_dir}/"
+        if [[ ${PUBLISH} =~ http|all ]]; then
+            local _http_pub_dir="${HTTP_PUBLISH_BASE}/${_project_base_name}/`date '+%Y%m%d%H%M%S'`"
 
-        local _nginx_data_base="${DATA_BASE:=/opt}/nginx/data"
-        local _project_pub_dir="${_nginx_data_base}/${PUB_MAPPER[$_project_base_name]}"
+            info "publishing ${_project_base_name}[${COMMIT_ID}] to ${_http_pub_dir}"
 
-        info "publishing ${_project_base_name}[${COMMIT_ID}] to ${_project_pub_dir}"
-
-        if [[ ! -d "${_project_pub_dir}" ]]; then
-            mkdir -p "${_project_pub_dir}"
-        fi
-        
-        # aleady cd build on tar build files
-        ${SUDO} tar -xzvf "${_tar_file}" -C "${_project_pub_dir}"
-        if [[ $? -ne 0 ]]; then
-            error "publishing ${_project_base_name}[${COMMIT_ID}] failed."
-            exit 1
+            ${SUDO} mkdir -p "${_http_pub_dir}"
+            ${SUDO} cp "${_tar_file}" "${_http_pub_dir}/"
         fi
 
-        echo -n "{\"version\": \"${COMMIT_ID}\"}" > "${_project_pub_dir}/version"
+        if [[ ${PUBLISH} =~ remote|all ]]; then
+            local _nginx_data_base="${DATA_BASE:=/opt}/nginx/data"
+            local _project_pub_dir="${_nginx_data_base}/${PUB_MAPPER[$_project_base_name]}"
 
-        nginx-pub data ${PUB_MAPPER[$_project_base_name]}
+            info "publishing ${_project_base_name}[${COMMIT_ID}] to ${_project_pub_dir}"
+
+            if [[ ! -d "${_project_pub_dir}" ]]; then
+                mkdir -p "${_project_pub_dir}"
+            fi
+            
+            # aleady cd build on tar build files
+            ${SUDO} tar -xzvf "${_tar_file}" -C "${_project_pub_dir}"
+            if [[ $? -ne 0 ]]; then
+                error "publishing ${_project_base_name}[${COMMIT_ID}] failed."
+                exit 1
+            fi
+
+            echo -n "{\"version\": \"${COMMIT_ID}\"}" > "${_project_pub_dir}/version"
+
+            nginx-pub data ${PUB_MAPPER[$_project_base_name]}
+        fi
     popd &>/dev/null
 }
 
@@ -381,14 +389,17 @@ EOF
             exit 1
         fi
 
-        if [[ ${PUBLISH} -ne 1 ]]; then
+        if [[ x"${PUBLISH}" == "x" ]]; then
+            info "build finished & no publish destination specified, exit."
             return
         fi
 
         local _project_version=`sed -n '/<version>.*<\/version>/ s/'"[[:space:]]"'*<version>\(.*\)<\/version>/\1/p;' pom.xml | head -1`
 
-        local _http_pub_dir="${HTTP_PUBLISH_BASE}/${_project_base_name}/`date '+%Y%m%d%H%M%S'`-${COMMIT_ID}"
-        ${SUDO} mkdir -p "${_http_pub_dir}"
+        if [[ ${PUBLISH} =~ http|all ]]; then
+            local _http_pub_dir="${HTTP_PUBLISH_BASE}/${_project_base_name}/`date '+%Y%m%d%H%M%S'`-${COMMIT_ID}"
+            ${SUDO} mkdir -p "${_http_pub_dir}"
+        fi
         
         for module in ${JAVA_MODULE_DEFINE[$_project_base_name]}; do
             if [[ x"${PUB_MAPPER[$module]}" == "x" ]]; then
@@ -396,27 +407,35 @@ EOF
                 exit 1
             fi
 
-            local _publish_name="${PUB_MAPPER[$module]}-${_project_version}.jar"
-            local _docker_hub_base="${DATA_BASE:=/opt}/docker-hub"
-            local _docker_hub_prj_name=`echo ${PUB_MAPPER[$module]} | cut -d'-' -f1`
-            local _publish_file="${_docker_hub_base}/${_docker_hub_prj_name}/${_publish_name}"
-            
-
-            info "publishing ${_project_base_name} ${module}[${COMMIT_ID}] to ${_publish_file}"
-
-            if [[ ! -d "${_docker_hub_base}/${_docker_hub_prj_name}" ]]; then
-                mkdir -p "${_docker_hub_base}/${_docker_hub_prj_name}"
+            if [[ ${PUBLISH} =~ http|all ]]; then
+                ${SUDO} cp -f ${module}/target/*.jar "${_http_pub_dir}/${_publish_name}"
             fi
-            
-            ${SUDO} cp -f ${module}/target/*.jar "${_publish_file}"
-            ${SUDO} cp -f ${module}/target/*.jar "${_http_pub_dir}/${_publish_name}"
-            if [[ $? -ne 0 ]]; then
-                error "publishing ${_project_base_name} ${module}[${COMMIT_ID}] failed."
-                exit 1
+
+            if [[ ${PUBLISH} =~ docker|all ]]; then
+                local _publish_name="${PUB_MAPPER[$module]}-${_project_version}.jar"
+                local _docker_hub_base="${DATA_BASE:=/opt}/docker-hub"
+                local _docker_hub_prj_name=`echo ${PUB_MAPPER[$module]} | cut -d'-' -f1`
+                local _publish_file="${_docker_hub_base}/${_docker_hub_prj_name}/${_publish_name}"
+                
+
+                info "publishing ${_project_base_name} ${module}[${COMMIT_ID}] to ${_publish_file}"
+
+                if [[ ! -d "${_docker_hub_base}/${_docker_hub_prj_name}" ]]; then
+                    mkdir -p "${_docker_hub_base}/${_docker_hub_prj_name}"
+                fi
+                
+                ${SUDO} cp -f ${module}/target/*.jar "${_publish_file}"
+                
+                if [[ $? -ne 0 ]]; then
+                    error "publishing ${_project_base_name} ${module}[${COMMIT_ID}] failed."
+                    exit 1
+                fi
             fi
         done
 
-        build-image -cp -b${_docker_hub_prj_name} all
+        if [[ ${PUBLISH} =~ docker|all ]]; then
+            build-image -cp -b${_docker_hub_prj_name} all
+        fi
     popd >/dev/null
 }
 
@@ -465,52 +484,65 @@ EOF
             exit 1
         fi
 
-        if [[ ${PUBLISH} -ne 1 ]]; then
+        if [[ x"${PUBLISH}" == "x" ]]; then
+            info "build finished & no publish destination specified, exit."
             return
         fi
 
         local _publish_name=`find . -maxdepth 1 -executable -type f -exec basename {} \;`
-        local _publish_base_dir="${DATA_BASE:=/opt}/${_project_base_dir}"
-        local _publish_dir="${_publish_base_dir}/${_publish_name}"
-        local _publish_file_name="${_publish_dir}/${_publish_name}"
-        local _http_publish_dir="${HTTP_PUBLISH_BASE}/${_project_base_dir}/`date '+%Y%m%d%H%M%S'`-${COMMIT_ID}"
-        ${SUDO} mkdir -p "${_http_publish_dir}"
 
-        info "publishing ${_project_base_name} ${_publish_name}[${COMMIT_ID}] to ${_publish_file}"
+        if [[ ${PUBLISH} =~ http|all ]]; then
+            local _http_publish_dir="${HTTP_PUBLISH_BASE}/${_project_base_dir}/`date '+%Y%m%d%H%M%S'`-${COMMIT_ID}"
 
-        if [[ ! -d "${_publish_dir}" ]]; then
-            mkdir -p "${_publish_dir}"
+            info "publishing ${_project_base_name}[${COMMIT_ID}] to ${_http_publish_dir}"
+            
+            ${SUDO} mkdir -p "${_http_publish_dir}"
+
+            ${SUDO} tar -czvf "${_http_publish_dir}/libs.tar.gz" ${_library_dir}/*
+
+            ${SUDO} cp -f "${_publish_name}" "${_http_publish_dir}/${_publish_name}"
         fi
 
-        if [[ ! -d "${_publish_base_dir}/libs" ]]; then
-            mkdir -p "${_publish_base_dir}/libs"
-        fi
+        if [[ ${PUBLISH} =~ remote|all ]]; then
+            local _publish_base_dir="${DATA_BASE:=/opt}/${_project_base_dir}"
+            local _publish_dir="${_publish_base_dir}/${_publish_name}"
+            local _publish_file_name="${_publish_dir}/${_publish_name}"
 
-        ${SUDO} cp -f ${_library_dir}/* "${_publish_base_dir}/libs/"
-        if [[ $? -ne 0 ]]; then
-            error "publishing ${_project_base_name} ${_publish_name} libraries failed."
-            exit 1
-        fi
-        ${SUDO} tar -czvf "${_http_publish_dir}/libs.tar.gz" ${_library_dir}/*
+            info "publishing ${_project_base_name} ${_publish_name}[${COMMIT_ID}] to ${_publish_file}"
 
-        ${SUDO} cp -f "${_publish_name}" "${_publish_file_name}"
-        if [[ $? -ne 0 ]]; then
-            error "publishing ${_project_base_name} ${_publish_name}[${COMMIT_ID}] failed."
-            exit 1
-        fi
-        ${SUDO} cp -f "${_publish_name}" "${_http_publish_dir}/${_publish_name}"
+            if [[ ! -d "${_publish_dir}" ]]; then
+                mkdir -p "${_publish_dir}"
+            fi
 
-        market deploy
+            if [[ ! -d "${_publish_base_dir}/libs" ]]; then
+                mkdir -p "${_publish_base_dir}/libs"
+            fi
+
+            ${SUDO} cp -f ${_library_dir}/* "${_publish_base_dir}/libs/"
+            if [[ $? -ne 0 ]]; then
+                error "publishing ${_project_base_name} ${_publish_name} libraries failed."
+                exit 1
+            fi
+        
+
+            ${SUDO} cp -f "${_publish_name}" "${_publish_file_name}"
+            if [[ $? -ne 0 ]]; then
+                error "publishing ${_project_base_name} ${_publish_name}[${COMMIT_ID}] failed."
+                exit 1
+            fi
+
+            market deploy
+        fi
     popd >/dev/null
 }
 
-while getopts :b:c:C:e:upfh FLAG; do
+while getopts :b:c:C:e:p:ufh FLAG; do
     case $FLAG in
         u)
             UPDATE_GIT=1
         ;;
         p)
-            PUBLISH=1
+            PUBLISH=${OPTARG}
         ;;
         b)
             BRANCH=${OPTARG}
