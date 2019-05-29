@@ -408,7 +408,7 @@ EOF
             fi
 
             if [[ ${PUBLISH} =~ http|all ]]; then
-                ${SUDO} tar -czvf "${_http_pub_dir}/${PUB_MAPPER[$module]}-${_project_version}.tar.gz" ${module}/target/*.jar ${module}/target/classes/application.properties
+                ${SUDO} tar -czvf "${_http_pub_dir}/${PUB_MAPPER[$module]}-${_project_version}.tar.gz" ${module}/target/*.jar ${module}/target/classes/application*
             fi
 
             if [[ ${PUBLISH} =~ docker|all ]]; then
