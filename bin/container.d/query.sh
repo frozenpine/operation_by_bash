@@ -111,7 +111,6 @@ docker run -d \
         --logging.level.com.quantdo.trade=${LOG_LEVEL:=info} \
         --server.port=${QUERY_PORT} \
         --com.quantdo.trade.web.signature.monitor.properties.bootstrap.servers=${KAFKA_SERVERS} \
-        --com.quantdo.trade.data-exchange.monitor.consumer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.consul.host=${CONSUL_HOST} \
         --com.quantdo.trade.consul.port=${CONSUL_PORT} \
         --spring.data.elasticsearch.cluster-name=${ES_CLUSTER_NAME:=Js} \
