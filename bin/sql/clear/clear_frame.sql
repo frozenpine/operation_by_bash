@@ -1,29 +1,70 @@
 /*
-Navicat MySQL Data Transfer
-
-Source Server         : 192.168.1.22
-Source Server Version : 50725
-Source Host           : 192.168.1.22:3306
-Source Database       : clear
-
-Target Server Type    : MYSQL
-Target Server Version : 50725
-File Encoding         : 65001
-
-Date: 2019-04-29 13:51:46
+SQLyog Ultimate v11.24 (32 bit)
+MySQL - 5.7.25 : Database - clear
+*********************************************************************
 */
 
+
+/*!40101 SET NAMES utf8 */;
+
+/*!40101 SET SQL_MODE=''*/;
+
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 CREATE DATABASE /*!32312 IF NOT EXISTS*/`clear` /*!40100 DEFAULT CHARACTER SET utf8 */;
 
 USE `clear`;
 
-SET FOREIGN_KEY_CHECKS=0;
+/*Table structure for table `t_account` */
 
--- ----------------------------
--- Table structure for t_account
--- ----------------------------
 DROP TABLE IF EXISTS `t_account`;
+
 CREATE TABLE `t_account` (
+  `account_id` bigint(20) NOT NULL COMMENT '资金账号',
+  `currency` varchar(10) NOT NULL COMMENT '币种',
+  `client_id` varchar(30) NOT NULL COMMENT '用户代码',
+  `prev_wallet_balance` decimal(30,10) NOT NULL COMMENT '上日钱包余额',
+  `wallet_balance` decimal(30,10) NOT NULL COMMENT '钱包余额',
+  `availilable` decimal(30,10) NOT NULL COMMENT '可用余额',
+  `margin_balance` decimal(30,10) NOT NULL COMMENT '保证金余额',
+  `frozen_margin` decimal(30,10) NOT NULL COMMENT '委托冻结保证金',
+  `frozen_available` decimal(30,10) NOT NULL DEFAULT '0.0000000000',
+  `current_margin` decimal(30,10) DEFAULT NULL COMMENT '占用保证金(持仓保证金)',
+  `affiliate_payout` decimal(30,10) DEFAULT NULL,
+  `fee` decimal(30,10) DEFAULT NULL COMMENT '成交手续费',
+  `withdraw` decimal(30,10) DEFAULT NULL COMMENT '出金',
+  `deposit` decimal(30,10) DEFAULT NULL COMMENT '入金',
+  `capital_fee` decimal(30,10) DEFAULT NULL COMMENT '资金费用',
+  `realised_pnl` decimal(30,10) NOT NULL COMMENT '已实现盈亏',
+  `unrealised_pnl` decimal(30,10) NOT NULL COMMENT '未实现盈亏',
+  `no_filed_cnt` bigint(20) DEFAULT NULL,
+  `sell_vol_sum` bigint(20) DEFAULT NULL,
+  `buy_vol_sum` bigint(20) DEFAULT NULL,
+  `sell_cost` decimal(30,10) DEFAULT NULL,
+  `buy_cost` decimal(30,10) DEFAULT NULL,
+  `transfer` decimal(30,10) DEFAULT NULL COMMENT '今日转账',
+  `trading_day` varchar(30) NOT NULL,
+  `commission` decimal(30,10) NOT NULL COMMENT '交易手续费',
+  `withdraw_fee` decimal(30,10) DEFAULT NULL COMMENT '提现手续费(比特币网络费用)',
+  `transfer_account` decimal(30,10) DEFAULT NULL COMMENT '（同用户资金账号间）划转',
+  `transfer_clinet` decimal(30,10) DEFAULT NULL COMMENT '（不同用户间）今日转账',
+  `largess` decimal(30,10) DEFAULT NULL COMMENT '赠币',
+  `compensation` decimal(10,0) DEFAULT NULL COMMENT '补偿',
+  `kafka_partition` int(11) NOT NULL,
+  `kafka_offset` bigint(20) DEFAULT NULL,
+  `update_time` bigint(30) DEFAULT NULL COMMENT '更新时间',
+  `insert_time` bigint(30) DEFAULT NULL COMMENT '插入时间',
+  PRIMARY KEY (`account_id`,`currency`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Table structure for table `t_account_snap` */
+
+DROP TABLE IF EXISTS `t_account_snap`;
+
+CREATE TABLE `t_account_snap` (
+  `trading_day` varchar(30) NOT NULL COMMENT '交易日',
   `account_id` bigint(20) NOT NULL COMMENT '资金账号',
   `currency` varchar(10) NOT NULL COMMENT '币种',
   `client_id` varchar(30) NOT NULL COMMENT '用户代码',
@@ -46,37 +87,26 @@ CREATE TABLE `t_account` (
   `sell_cost` decimal(30,10) DEFAULT NULL,
   `buy_cost` decimal(30,10) DEFAULT NULL,
   `transfer` decimal(30,10) DEFAULT NULL COMMENT '今日转账',
-  `trading_day` varchar(30) NOT NULL,
   `settlement_id` bigint(20) NOT NULL COMMENT '结算编号',
   `commission` decimal(30,10) NOT NULL COMMENT '佣金',
+  `withdraw_fee` decimal(30,10) DEFAULT NULL COMMENT '提现手续费(比特币网络费用)',
+  `fee` decimal(30,0) DEFAULT NULL COMMENT '成交手续费',
   `kafka_partition` int(11) NOT NULL,
   `kafka_offset` bigint(20) DEFAULT NULL,
   `update_time` bigint(30) DEFAULT NULL COMMENT '更新时间',
   `insert_time` bigint(30) DEFAULT NULL COMMENT '插入时间',
-  PRIMARY KEY (`account_id`,`currency`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`account_id`,`currency`,`trading_day`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='日终结算资金快照表';
 
--- ----------------------------
--- Table structure for t_checkpoint
--- ----------------------------
-DROP TABLE IF EXISTS `t_checkpoint`;
-CREATE TABLE `t_checkpoint` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `partition` int(11) DEFAULT NULL,
-  `checkpoint` bigint(20) DEFAULT NULL,
-  `offset` bigint(20) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1155 DEFAULT CHARSET=utf8 COMMENT='快照表';
+/*Table structure for table `t_order_history` */
 
--- ----------------------------
--- Table structure for t_order_history
--- ----------------------------
 DROP TABLE IF EXISTS `t_order_history`;
+
 CREATE TABLE `t_order_history` (
   `order_id` bigint(20) NOT NULL COMMENT '订单编号',
   `order_local_id` varchar(50) DEFAULT NULL COMMENT '本地报单编号',
   `client_id` varchar(30) NOT NULL COMMENT '客户代码',
-  `bound_price` char(10) DEFAULT NULL COMMENT '约束价格',
+  `bound_price` decimal(30,10) DEFAULT NULL COMMENT '约束价格',
   `stop_px` decimal(30,10) DEFAULT NULL COMMENT '止损价格',
   `open_volume` bigint(20) DEFAULT NULL,
   `each_fee` decimal(30,10) DEFAULT NULL COMMENT '每手冻结手续费',
@@ -127,90 +157,87 @@ CREATE TABLE `t_order_history` (
   PRIMARY KEY (`order_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='已完成订单';
 
--- ----------------------------
--- Table structure for t_position
--- ----------------------------
-DROP TABLE IF EXISTS `t_position`;
-CREATE TABLE `t_position`
-(
-    `client_id`             varchar(30)     NOT NULL COMMENT '用户代码',
-    `instrument_id`         varchar(30)     NOT NULL COMMENT '合约代码',
-    `direction`             varchar(4)      NOT NULL COMMENT '持仓多空方向',
-    `position_margin_type`  varchar(30)              DEFAULT NULL,
-    `currency`              varchar(10)     NOT NULL COMMENT '币种',
-    `leverage_rate`         decimal(30, 10)          DEFAULT NULL,
-    `underlying`            varchar(30)              DEFAULT NULL,
-    `quote_currency`        varchar(5)               DEFAULT NULL,
-    `commission`            decimal(30, 10)          DEFAULT NULL COMMENT '费率',
-    `position`              bigint(20)      NOT NULL COMMENT '持仓',
-    `position_avg_price`    decimal(30, 10)          DEFAULT NULL,
-    `open_cost`             decimal(30, 10) NOT NULL COMMENT '开仓成本',
-    `position_cost`         decimal(30, 10) NOT NULL COMMENT '持仓成本',
-    `current_comm`          decimal(30, 10) NOT NULL COMMENT '当前费用',
-    `cross_margin`          tinyint(4)      NOT NULL DEFAULT '0' COMMENT '是否使用全仓保证金',
-    `position_margin`       decimal(30, 10)          DEFAULT NULL,
-    `leverage`              decimal(10, 2)           DEFAULT NULL COMMENT '杠杆',
-    `risk_limit`            decimal(30, 10)          DEFAULT NULL COMMENT '风险限额',
-    `init_margin_rate`      decimal(30, 10)          DEFAULT NULL COMMENT '起始保证金率',
-    `maint_margin_rate`     decimal(30, 10)          DEFAULT NULL COMMENT '维持保证金率',
-    `init_margin`           decimal(30, 10)          DEFAULT NULL COMMENT '起始保证金',
-    `maint_margin`          decimal(30, 10)          DEFAULT NULL COMMENT '维持保证金',
-    `deleverage_percentile` decimal(30, 10)          DEFAULT NULL COMMENT '自动减仓风险度',
-    `rebalanced_pnl`        decimal(30, 10)          DEFAULT NULL COMMENT '已划入账户的盈亏',
-    `prev_realised_pnl`     decimal(30, 10)          DEFAULT NULL COMMENT '上一次平仓已划入账户的盈亏',
-    `current_cost`          decimal(30, 10)          DEFAULT NULL COMMENT '当前仓位价值',
-    `realised_cost`         decimal(30, 10) NOT NULL DEFAULT '0.0000000000' COMMENT '已平仓所获得的资金',
-    `unrealised_cost`       decimal(30, 10)          DEFAULT NULL COMMENT 'current_cost-realised_cost',
-    `realised_pnl`          decimal(30, 10)          DEFAULT NULL COMMENT '当日已实现盈亏',
-    `unrealised_pnl`        decimal(30, 10)          DEFAULT NULL COMMENT '未实现盈亏',
-    `bankrupt_price`        decimal(30, 10)          DEFAULT NULL COMMENT '破产价格',
-    `liquidation_price`     decimal(30, 10)          DEFAULT NULL COMMENT '强平价格',
-    `gross_open_cost`       decimal(30, 10)          DEFAULT NULL COMMENT '所有开仓委托单的价值',
-    `gross_exec_cost`       decimal(30, 10)          DEFAULT NULL COMMENT '成交总额',
-    `prev_close_price`      decimal(30, 10)          DEFAULT NULL COMMENT '上次平仓价格',
-    `open_time`             bigint(20)               DEFAULT NULL COMMENT '开仓时间',
-    `open_order_buy_qty`    bigint(20)               DEFAULT NULL COMMENT '买委托数量',
-    `open_order_buy_cost`   decimal(30, 10)          DEFAULT NULL COMMENT '买委托价值',
-    `open_order_sell_qty`   bigint(20)               DEFAULT NULL COMMENT '卖委托数量',
-    `open_order_sell_cost`  decimal(30, 10)          DEFAULT NULL COMMENT '卖委托价值',
-    `order_cost`            decimal(30, 10)          DEFAULT NULL,
-    `exec_buy_qty`          bigint(20)               DEFAULT NULL COMMENT '买成交数量',
-    `exec_buy_cost`         decimal(30, 10)          DEFAULT NULL COMMENT '买成交金额',
-    `exec_sell_qty`         bigint(20)               DEFAULT NULL COMMENT '卖成交数量',
-    `exec_sell_cost`        decimal(30, 10)          DEFAULT NULL COMMENT '卖成交金额',
-    `exec_cost`             decimal(30, 10)          DEFAULT NULL COMMENT '成交金额',
-    `exec_qty`              bigint(20)               DEFAULT NULL COMMENT '成交数量',
-    `exec_comm`             decimal(30, 10)          DEFAULT NULL COMMENT '成交费用',
-    `mark_price`            decimal(30, 10)          DEFAULT NULL COMMENT '标记价格',
-    `mark_value`            decimal(30, 10)          DEFAULT NULL COMMENT '标记价值',
-    `mark_cost`             decimal(30, 10)          DEFAULT NULL,
-    `home_notional`         decimal(30, 10)          DEFAULT NULL COMMENT '本地货币价值',
-    `is_open`               tinyint(4)               DEFAULT NULL COMMENT '完全平仓后为false',
-    `foreign_notional`      decimal(30, 10)          DEFAULT NULL COMMENT '外地货币价值',
-    `last_trade_id`         char(32)                 DEFAULT NULL COMMENT '最后一笔影响持仓的成交编号',
-    `long_bankrupt`         decimal(30, 10)          DEFAULT NULL COMMENT '多头破产价值',
-    `short_bankrupt`        decimal(30, 10)          DEFAULT NULL COMMENT '空头破产价值',
-    `kafka_partition`       int(11)         NOT NULL,
-    `partition_offset`      bigint(20)               DEFAULT NULL,
-    `insert_time`           bigint(20)               DEFAULT NULL,
-    `update_time`           bigint(20)               DEFAULT NULL COMMENT '更新时间戳',
-    `closeable_volume`      bigint(20)               DEFAULT NULL,
-    `order_fee`             decimal(30, 10)          DEFAULT NULL,
-    `close_fee`             decimal(30, 10)          DEFAULT NULL,
-    `capital_fee`           decimal(30, 10)          DEFAULT NULL,
-    `pos_cross`             decimal(30, 10)          DEFAULT NULL,
-    `pos_loss`              decimal(30, 10)          DEFAULT NULL,
-    `transfer`              decimal(30, 10)          DEFAULT NULL,
-    `kafka_offset`          bigint(20)               DEFAULT NULL,
-    `frozen_margin`         decimal(30, 10)          DEFAULT NULL,
-    PRIMARY KEY (`client_id`, `instrument_id`)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT ='持仓';
+/*Table structure for table `t_position` */
 
--- ----------------------------
--- Table structure for t_settlement
--- ----------------------------
+DROP TABLE IF EXISTS `t_position`;
+
+CREATE TABLE `t_position` (
+  `client_id` varchar(30) NOT NULL COMMENT '用户代码',
+  `instrument_id` varchar(30) NOT NULL COMMENT '合约代码',
+  `direction` varchar(4) NOT NULL COMMENT '持仓多空方向',
+  `position_margin_type` varchar(30) DEFAULT NULL,
+  `currency` varchar(10) NOT NULL COMMENT '币种',
+  `underlying` varchar(30) DEFAULT NULL,
+  `quote_currency` varchar(5) DEFAULT NULL,
+  `commission` decimal(30,10) DEFAULT NULL COMMENT '费率',
+  `position` bigint(20) NOT NULL COMMENT '持仓',
+  `position_avg_price` decimal(30,10) DEFAULT NULL,
+  `open_cost` decimal(30,10) NOT NULL COMMENT '开仓成本',
+  `position_cost` decimal(30,10) NOT NULL COMMENT '持仓成本',
+  `current_comm` decimal(30,10) NOT NULL COMMENT '当前费用',
+  `cross_margin` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否使用全仓保证金',
+  `position_margin` decimal(30,10) DEFAULT NULL,
+  `leverage` decimal(10,2) DEFAULT NULL COMMENT '杠杆',
+  `risk_limit` decimal(30,10) DEFAULT NULL COMMENT '风险限额',
+  `init_margin_rate` decimal(30,10) DEFAULT NULL COMMENT '起始保证金率',
+  `maint_margin_rate` decimal(30,10) DEFAULT NULL COMMENT '维持保证金率',
+  `init_margin` decimal(30,10) DEFAULT NULL COMMENT '起始保证金',
+  `maint_margin` decimal(30,10) DEFAULT NULL COMMENT '维持保证金',
+  `deleverage_percentile` decimal(30,10) DEFAULT NULL COMMENT '自动减仓排序',
+  `rebalanced_pnl` decimal(30,10) DEFAULT NULL COMMENT '已划入账户的盈亏',
+  `prev_realised_pnl` decimal(30,10) DEFAULT NULL COMMENT '上一次平仓已划入账户的盈亏',
+  `current_cost` decimal(30,10) DEFAULT NULL COMMENT '当前仓位价值',
+  `realised_cost` decimal(30,10) DEFAULT '0.0000000000' COMMENT '已平仓所获得的资金',
+  `unrealised_cost` decimal(30,10) DEFAULT NULL COMMENT 'current_cost-realised_cost',
+  `realised_pnl` decimal(30,10) DEFAULT NULL COMMENT '当日已实现盈亏',
+  `unrealised_pnl` decimal(30,10) DEFAULT NULL COMMENT '未实现盈亏',
+  `bankrupt_price` decimal(30,10) DEFAULT NULL COMMENT '破产价格',
+  `liquidation_price` decimal(30,10) DEFAULT NULL COMMENT '强平价格',
+  `gross_open_cost` decimal(30,10) DEFAULT NULL COMMENT '所有开仓委托单的价值',
+  `gross_exec_cost` decimal(30,10) DEFAULT NULL COMMENT '成交总额',
+  `prev_close_price` decimal(30,10) DEFAULT NULL COMMENT '上次平仓价格',
+  `open_time` bigint(20) DEFAULT NULL COMMENT '开仓时间',
+  `open_order_buy_qty` bigint(20) DEFAULT NULL COMMENT '买委托数量',
+  `open_order_buy_cost` decimal(30,10) DEFAULT NULL COMMENT '买委托价值',
+  `open_order_sell_qty` bigint(20) DEFAULT NULL COMMENT '卖委托数量',
+  `open_order_sell_cost` decimal(30,10) DEFAULT NULL COMMENT '卖委托价值',
+  `order_cost` decimal(30,10) DEFAULT NULL,
+  `exec_buy_qty` bigint(20) DEFAULT NULL COMMENT '买成交数量',
+  `exec_buy_cost` decimal(30,10) DEFAULT NULL COMMENT '买成交金额',
+  `exec_sell_qty` bigint(20) DEFAULT NULL COMMENT '卖成交数量',
+  `exec_sell_cost` decimal(30,10) DEFAULT NULL COMMENT '卖成交金额',
+  `exec_cost` decimal(30,10) DEFAULT NULL COMMENT '成交金额',
+  `exec_qty` bigint(20) DEFAULT NULL COMMENT '成交数量',
+  `exec_comm` decimal(30,10) DEFAULT NULL COMMENT '成交费用',
+  `mark_price` decimal(30,10) DEFAULT NULL COMMENT '标记价格',
+  `mark_value` decimal(30,10) DEFAULT NULL COMMENT '标记价值',
+  `mark_cost` decimal(30,10) DEFAULT NULL,
+  `home_notional` decimal(30,10) DEFAULT NULL COMMENT '本地货币价值',
+  `is_open` tinyint(4) DEFAULT NULL COMMENT '完全平仓后为false',
+  `foreign_notional` decimal(30,10) DEFAULT NULL COMMENT '外地货币价值',
+  `last_trade_id` char(32) DEFAULT NULL COMMENT '最后一笔影响持仓的成交编号',
+  `long_bankrupt` decimal(30,10) DEFAULT NULL COMMENT '多头破产价值',
+  `short_bankrupt` decimal(30,10) DEFAULT NULL COMMENT '空头破产价值',
+  `kafka_partition` int(11) NOT NULL,
+  `partition_offset` bigint(20) DEFAULT NULL,
+  `insert_time` bigint(20) DEFAULT NULL,
+  `update_time` bigint(20) DEFAULT NULL COMMENT '更新时间戳',
+  `closeable_volume` bigint(20) DEFAULT NULL,
+  `order_fee` decimal(30,10) DEFAULT NULL,
+  `close_fee` decimal(30,10) DEFAULT NULL,
+  `capital_fee` decimal(30,10) DEFAULT NULL,
+  `pos_cross` decimal(30,10) DEFAULT NULL,
+  `pos_loss` decimal(30,10) DEFAULT NULL,
+  `transfer` decimal(30,10) DEFAULT NULL,
+  `kafka_offset` bigint(20) DEFAULT NULL,
+  `frozen_margin` decimal(30,10) DEFAULT NULL,
+  PRIMARY KEY (`client_id`,`instrument_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='持仓';
+
+/*Table structure for table `t_settlement` */
+
 DROP TABLE IF EXISTS `t_settlement`;
+
 CREATE TABLE `t_settlement` (
   `account_id` bigint(20) NOT NULL COMMENT '资金账号',
   `currency` varchar(10) NOT NULL COMMENT '币种',
@@ -240,34 +267,34 @@ CREATE TABLE `t_settlement` (
   PRIMARY KEY (`account_id`,`currency`,`client_id`,`settlement_day`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- ----------------------------
--- Table structure for t_statement
--- ----------------------------
-DROP TABLE IF EXISTS `t_statement`;
-CREATE TABLE `t_statement` (
-  `statement_id` varchar(50) NOT NULL COMMENT '流水编号',
-  `account_id` bigint(20) NOT NULL COMMENT '资金账号',
-  `client_id` varchar(30) NOT NULL COMMENT '用户代码',
-  `wallet_balance` decimal(30,0) DEFAULT '0' COMMENT '钱包余额',
-  `currency` varchar(10) NOT NULL COMMENT '币种',
-  `statement_type` int(11) NOT NULL COMMENT '流水类型',
-  `amount` decimal(30,10) NOT NULL COMMENT '流水金额',
-  `net_fee` decimal(30,30) DEFAULT NULL COMMENT '比特币网络费用',
-  `address` varchar(50) DEFAULT NULL COMMENT '地址',
-  `status` int(2) NOT NULL DEFAULT '0' COMMENT '0:完成  1:等待 2:撤销 3:无状态',
-  `remark` varchar(255) DEFAULT NULL COMMENT '备注',
-  `kafka_partition` bigint(20) NOT NULL,
-  `kafka_offset` bigint(20) NOT NULL,
-  `trading_day` varchar(8) DEFAULT NULL COMMENT '交易日',
-  `is_show` int(2) NOT NULL DEFAULT '0' COMMENT '是否显示  0：显示  1：不显示',
-  `insert_time` bigint(20) NOT NULL COMMENT '创建时间',
-  PRIMARY KEY (`statement_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='资金流水';
+/*Table structure for table `t_statement` */
 
--- ----------------------------
--- Table structure for t_trade
--- ----------------------------
+DROP TABLE IF EXISTS `t_statement`;
+
+CREATE TABLE `t_statement` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '自增主键',
+  `client_id` varchar(36) NOT NULL COMMENT '用户Id',
+  `account_id` bigint(20) NOT NULL COMMENT '用户资金账号Id',
+  `currency` varchar(10) NOT NULL COMMENT '币种',
+  `money_type` int(11) NOT NULL COMMENT '资金类型',
+  `wallet_balance` decimal(30,10) DEFAULT NULL,
+  `amount` decimal(36,18) NOT NULL COMMENT '金额',
+  `address` varchar(50) DEFAULT NULL COMMENT '业务源',
+  `opposite_client_id` varchar(36) DEFAULT NULL COMMENT '对手方用户Id',
+  `opposite_account_id` bigint(20) DEFAULT NULL COMMENT '对手方用户资金账号Id',
+  `command_id` varchar(36) DEFAULT NULL COMMENT '如果是外部交互，填充命令Id，如果是内部交易引起，填交易id',
+  `remark` varchar(128) DEFAULT NULL COMMENT '备注',
+  `settlement_id` bigint(20) DEFAULT NULL COMMENT '数据标签',
+  `kafka_offset` bigint(20) NOT NULL,
+  `kafka_partition` bigint(20) NOT NULL,
+  `created_at` bigint(20) NOT NULL COMMENT '插入时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10524 DEFAULT CHARSET=utf8;
+
+/*Table structure for table `t_trade` */
+
 DROP TABLE IF EXISTS `t_trade`;
+
 CREATE TABLE `t_trade` (
   `trade_id` char(36) NOT NULL COMMENT 'trade id',
   `client_id` varchar(30) NOT NULL COMMENT '客户代码',
@@ -282,7 +309,6 @@ CREATE TABLE `t_trade` (
   `volume` bigint(20) NOT NULL COMMENT '数量',
   `side` varchar(10) DEFAULT '' COMMENT 'Taker/Maker',
   `order_kind` varchar(10) DEFAULT '' COMMENT '成交里的委托类型',
-  `match_id` varchar(36) DEFAULT '' COMMENT '撮合ID',
   `close_profit` decimal(30,10) DEFAULT NULL COMMENT '平仓盈亏',
   `exec_comm` decimal(30,10) DEFAULT NULL COMMENT '成交手续费',
   `trade_time` bigint(20) NOT NULL COMMENT '成交时间',
@@ -299,6 +325,11 @@ CREATE TABLE `t_trade` (
   `kafka_partition` bigint(20) NOT NULL,
   `kafka_offset` bigint(20) NOT NULL,
   `insert_time` bigint(20) NOT NULL,
-  `loopIndex` BIGINT(20) NOT NULL DEFAULT 0,
+  `loopIndex` bigint(20) NOT NULL DEFAULT '0',
   PRIMARY KEY (`order_id`,`trade_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='成交';
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
