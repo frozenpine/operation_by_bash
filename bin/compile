@@ -245,7 +245,7 @@ function _npm_compile() {
         fi
 
         if [[ ${PUBLISH} =~ http|all ]]; then
-            local _http_pub_dir="${HTTP_PUBLISH_BASE}/${_project_base_name}/`date '+%Y%m%d%H%M%S'`"
+            local _http_pub_dir="${HTTP_PUBLISH_BASE}/${_project_base_name}/${BRANCH}-`date '+%Y%m%d%H%M%S'`"
 
             info "publishing ${_project_base_name}[${COMMIT_ID}] to ${_http_pub_dir}"
 
@@ -397,7 +397,7 @@ EOF
         local _project_version=`sed -n '/<version>.*<\/version>/ s/'"[[:space:]]"'*<version>\(.*\)<\/version>/\1/p;' pom.xml | head -1`
 
         if [[ ${PUBLISH} =~ http|all ]]; then
-            local _http_pub_dir="${HTTP_PUBLISH_BASE}/${_project_base_name}/`date '+%Y%m%d%H%M%S'`-${COMMIT_ID}"
+            local _http_pub_dir="${HTTP_PUBLISH_BASE}/${_project_base_name}/${BRANCH}-`date '+%Y%m%d%H%M%S'`-${COMMIT_ID}"
             ${SUDO} mkdir -p "${_http_pub_dir}"
         fi
         
@@ -492,7 +492,7 @@ EOF
         local _publish_name=`find . -maxdepth 1 -executable -type f -exec basename {} \;`
 
         if [[ ${PUBLISH} =~ http|all ]]; then
-            local _http_publish_dir="${HTTP_PUBLISH_BASE}/${_project_base_dir}/`date '+%Y%m%d%H%M%S'`-${COMMIT_ID}"
+            local _http_publish_dir="${HTTP_PUBLISH_BASE}/${_project_base_dir}/${BRANCH}-`date '+%Y%m%d%H%M%S'`-${COMMIT_ID}"
 
             info "publishing ${_project_base_name}[${COMMIT_ID}] to ${_http_publish_dir}"
             
