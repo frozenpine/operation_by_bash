@@ -42,8 +42,9 @@ docker run -d \
         --collation-server=utf8mb4_unicode_ci \
         --server-id=${SERVER_ID} \
         --log-bin=mysql-bin \
-        --back-log=7 \
+        --back-log=3 \
         --binlog-format=row \
+        --expire-logs-days=3 \
         --max-binlog-size=1G \
         --auto-increment-increment=2 \
         --auto-increment-offset=${SERVER_ID} \
