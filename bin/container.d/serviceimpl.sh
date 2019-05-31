@@ -117,4 +117,5 @@ docker run -d \
         --dubbo.registry.address="${ZK_SERVERS}" \
         --dubbo.provider.host="${SELF_IP}" \
         --dubbo.registry.file="/${NAME}/data/dubbo/dubbo-registry.properties" \
-        --dubbo.provider.timeout=180000
+        --dubbo.provider.timeout=180000 \
+        --dubbo.application.qos.port=22222
