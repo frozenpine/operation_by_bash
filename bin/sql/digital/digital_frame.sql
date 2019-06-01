@@ -234,6 +234,7 @@ CREATE TABLE `t_garbage_user` (
   `user_id` varchar(20) DEFAULT NULL COMMENT '用户代码',
   `old_id` bigint(20) DEFAULT NULL COMMENT '原Id',
   `notice_status` varchar(3) DEFAULT NULL COMMENT '通知交易状态 0 指令已生效 1 新增指令发送中 2 修改指令发送中 3 删除指令发送中 4 交易返回失败回退原始值',
+  `operate_time` bigint(20) DEFAULT NULL COMMENT '操作时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8 COMMENT='垃圾用户';
 
