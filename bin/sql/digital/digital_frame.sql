@@ -920,6 +920,8 @@ CREATE TABLE `t_warn_garbage_user_set` (
   `prompt_flag` varchar(1) DEFAULT NULL COMMENT '定义类型 1 垃圾委托 2 垃圾用户  ',
   `amount` int(10) DEFAULT NULL COMMENT '定义垃圾用户的委托数量',
   `value` decimal(30,10) DEFAULT NULL COMMENT '价值',
+  `cognizance_time` bigint(10) DEFAULT NULL COMMENT '定义垃圾用户的时间段（分钟）',
+  `relieve_time` bigint(10) DEFAULT NULL COMMENT '解除垃圾用户时间（小时）',
   `operate_time` bigint(20) DEFAULT NULL COMMENT '操作时间',
   `operator_id` varchar(20) DEFAULT NULL COMMENT '操作员',
   PRIMARY KEY (`id`)

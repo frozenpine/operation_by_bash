@@ -135,7 +135,7 @@ function _show_me_the_money() {
         COUNT=$((COUNT+1))
     done
 
-    mysql -h${MYSQL_HOST} -u${DB_USER} -p${DB_PASS} ${DB_NAME} -N -e 'select user_id from t_trade_user;' | \
+    mysql -h${MYSQL_HOST} -u${DB_USER} -p${DB_PASS} ${DB_NAME} -N -e 'select user_id from t_trade_user where user_type is NULL;' | \
         while read USER_ID; do
             _RESULT=`curl -XPOST "${TRADE_HOST}/api/v1/user/depositNotice1" -H'Content-type: application/json' -d"{\"userId\":\"${USER_ID}\",\"address\":\"2NBMEXVRa4RXoYaeokm7U2Cc6w5dSA4cXSk\",\"amount\":180000000000,\"withdrawFee\":1000,\"transactionId\":\"102101\",\"transactionType\":\"1\",\"transactionStatus\":\"2\",\"currency\":\"XBT\"}" 2>/dev/null`
             if [[ $? -ne 0 ]]; then
