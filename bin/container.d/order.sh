@@ -66,9 +66,9 @@ docker run -d \
     --name ${NAME} \
     --restart no \
     --network host \
-    --user `grep ${USER} /etc/passwd | cut -d':' -f3` \
+    --user `grep ^${USER} /etc/passwd | cut -d':' -f3` \
     -e SENTRY_DSN="${SENTRY_DSN}" \
-    -e LOG_LEVEL_ROOT=${LOG_LEVEL:=info} \
+    -e LOG_LEVEL_ROOT=${LOG_LEVEL:=info}
     -v "${CONTAINER_BASE}/log":/${NAME}/logs \
     registry:5000/trade$1/${NAME}:${VERSION} \
         ${JVM_OPTS} \
