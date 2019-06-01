@@ -176,7 +176,7 @@ function _archive_logs() {
     while true; do
         kill -0 `cat ${_PID_FILE}` || break
 
-        for _LOG_FILE in ls *.log; do
+        for _LOG_FILE in `ls *.log`; do
             lsof "${_LOG_FILE}" >&/dev/null
             # if file not opened by any process, lsof will return 1
             if [[ $? -eq 1 ]]; then
