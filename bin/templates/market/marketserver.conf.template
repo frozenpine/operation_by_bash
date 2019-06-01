@@ -48,6 +48,14 @@ RequestInstrumentAllInterval=1800
 WsHost=${LISTEN_ADDR:=0.0.0.0}
 #websocket的端口号
 WsPort=${WS_PORT:=9988}
+
+# 是否开启心跳包
+EnableHeartbeat=true
+# 心跳包检测时间间隔，单位秒
+HeartbeatCheckInterval=5
+# 客户端与服务之间没有数据来往允许的最大时间间隔，超过这个时间，将关闭与该客户端的连接，单位为秒
+MaxClientDataInterval=15
+
 #客户端连接成功后的欢迎语
 WelcomeMsg={"info":"Welcome to the 365MEX Realtime API.","version":"2019-03-26T18:43:09.000Z","timestamp":"2019-03-28T06:05:15.309Z","docs":"https://www.365MEX.com/app/wsAPI","limit":{"remaining":39}}
 #apikey和signature校验地址
