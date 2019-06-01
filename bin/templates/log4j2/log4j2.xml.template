@@ -39,7 +39,7 @@
     <loggers>
         <root level="INFO">
             <!--<appender-ref ref="Console" />-->
-            <AppenderRef ref="RollingFile" level="\${env:LOG_LEVEL_ROOT}"/>
+            <appender-ref ref="RollingFile" level="\${env:LOG_LEVEL_ROOT}"/>
 `check_env_true SENTRY_ENABLE && cat<<EOF
             <!-- Note that the Sentry logging threshold is overridden to the WARN level -->
             <appender-ref ref="Sentry" level="WARN" />
