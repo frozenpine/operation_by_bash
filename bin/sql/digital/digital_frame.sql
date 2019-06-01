@@ -107,7 +107,7 @@ DROP TABLE IF EXISTS `t_black_list`;
 CREATE TABLE `t_black_list` (
   `telephone` varchar(20) DEFAULT NULL COMMENT '电话号码',
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID自增长序列',
-  `country_code` varchar(10) DEFAULT NULL COMMENT '国家代码',
+  `country_code` varchar(4) DEFAULT NULL COMMENT '国家代码',
   `email` varchar(50) DEFAULT NULL COMMENT '电子邮件',
   `identification_type` varchar(2) DEFAULT NULL COMMENT '证件类型',
   `identification_id` varchar(50) DEFAULT NULL COMMENT '证件代码',
@@ -217,7 +217,7 @@ DROP TABLE IF EXISTS `t_dict`;
 CREATE TABLE `t_dict` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键id',
   `dict_class` varchar(30) NOT NULL DEFAULT '' COMMENT '字典项 ',
-  `dict_value` varchar(10) NOT NULL COMMENT '字典值 ',
+  `dict_value` varchar(4) NOT NULL COMMENT '字典值 ',
   `dict_name_cn` varchar(50) DEFAULT NULL COMMENT '中文描述',
   `dict_name_en` varchar(50) DEFAULT NULL COMMENT '英文描述',
   PRIMARY KEY (`id`)
@@ -234,7 +234,6 @@ CREATE TABLE `t_garbage_user` (
   `user_id` varchar(20) DEFAULT NULL COMMENT '用户代码',
   `old_id` bigint(20) DEFAULT NULL COMMENT '原Id',
   `notice_status` varchar(3) DEFAULT NULL COMMENT '通知交易状态 0 指令已生效 1 新增指令发送中 2 修改指令发送中 3 删除指令发送中 4 交易返回失败回退原始值',
-  `operate_time` BIGINT(20) DEFAULT NULL COMMENT '操作时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8 COMMENT='垃圾用户';
 
@@ -590,6 +589,7 @@ CREATE TABLE `t_risk_mandatory_reduction_set` (
   `reduction_price_ladder` decimal(13,10) NOT NULL COMMENT '强平价格阶梯',
   `max_market_fluctuate_tolerate` decimal(19,6) NOT NULL COMMENT '行情波动最大容忍值',
   `max_order_time_tolerate` bigint(10) NOT NULL COMMENT '挂单时间最大容忍值',
+  `max_tick_tolerate` decimal(19,6) NOT NULL COMMENT '最大容忍度tick值',
   `amount` int(10) DEFAULT NULL COMMENT '每笔下单量',
   `interval` bigint(10) NOT NULL COMMENT '下单时间间隔',
   `compulsion_status` varchar(1) NOT NULL COMMENT '自动减仓状态:0,关闭 1 开启',
@@ -910,17 +910,15 @@ CREATE TABLE `t_wallet_user_address` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8 COMMENT='用户充值地址';
 
-
 /*Table structure for table `t_warn_garbage_user_set` */
 
 DROP TABLE IF EXISTS `t_warn_garbage_user_set`;
 
 CREATE TABLE `t_warn_garbage_user_set` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID自增长序列',
+  `prompt_flag` varchar(1) DEFAULT NULL COMMENT '定义类型 1 垃圾委托 2 垃圾用户  ',
   `amount` int(10) DEFAULT NULL COMMENT '定义垃圾用户的委托数量',
-  `value` decimal(30,10) DEFAULT NULL COMMENT '定义垃圾用户的价值',
-  `cognizance_time` bigint(10) DEFAULT NULL COMMENT '定义垃圾用户的时间段（分钟）',
-  `relieve_time` bigint(10) DEFAULT NULL COMMENT '解除垃圾用户时间（小时）',
+  `value` decimal(30,10) DEFAULT NULL COMMENT '价值',
   `operate_time` bigint(20) DEFAULT NULL COMMENT '操作时间',
   `operator_id` varchar(20) DEFAULT NULL COMMENT '操作员',
   PRIMARY KEY (`id`)
