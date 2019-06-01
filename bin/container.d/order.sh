@@ -68,7 +68,7 @@ docker run -d \
     --network host \
     --user `grep ^${USER} /etc/passwd | cut -d':' -f3` \
     -e SENTRY_DSN="${SENTRY_DSN}" \
-    -e LOG_LEVEL_ROOT=${LOG_LEVEL:=info}
+    -e LOG_LEVEL_ROOT=${LOG_LEVEL:=info} \
     -v "${CONTAINER_BASE}/log":/${NAME}/logs \
     registry:5000/trade$1/${NAME}:${VERSION} \
         ${JVM_OPTS} \
@@ -79,5 +79,5 @@ docker run -d \
         --com.quantdo.trade.consul.port=${CONSUL_PORT} \
         --com.quantdo.trade.front.order.kafka.producer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.web.signature.monitor.properties.bootstrap.servers=${KAFKA_SERVERS} \
-        --redis.host=${REDIS_HOST} \
-        --redis.port=${REDIS_PORT} \
+        --spring.redis.host=${REDIS_HOST} \
+        --spring.redis.port=${REDIS_PORT} \
