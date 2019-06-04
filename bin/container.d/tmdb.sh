@@ -87,7 +87,7 @@ docker run -d \
         --spring.datasource.username=${DB_USER:=$DEFAULT_DB_USER} \
         --spring.datasource.password=${DB_PASS:=$DEFAULT_DB_PASS} \
         --com.quantdo.trade.sink.properties.bootstrap.servers=${KAFKA_SERVERS} \
-        --com.quantdo.trade.sink.source-topic=${SINK_TOPIC:=DBTOPIC} \
+        --com.quantdo.trade.sink.source-topic=${SINK_TOPIC:=SINK} \
         --com.quantdo.trade.sink.properties.fetch.max.wait.ms=10 \
         --com.quantdo.trade.sink.properties.heartbeat.interval.ms=10000 \
         --com.quantdo.trade.sink.properties.session.timeout.ms=30000 \

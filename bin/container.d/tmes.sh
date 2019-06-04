@@ -64,7 +64,7 @@ docker run -d \
         --spring.data.elasticsearch.cluster-name=${ES_CLUSTER_NAME:=Js} \
         --spring.data.elasticsearch.cluster-nodes=${ELASTIC_SERVERS} \
         --com.quantdo.trade.sink.properties.bootstrap.servers=${KAFKA_SERVERS} \
-        --com.quantdo.trade.sink.source-topic=${SINK_TOPIC:=DBTOPIC} \
+        --com.quantdo.trade.sink.source-topic=${SINK_TOPIC:=SINK} \
         --com.quantdo.trade.sink.properties.fetch.max.wait.ms=10 \
         --com.quantdo.trade.sink.properties.heartbeat.interval.ms=10000 \
         --com.quantdo.trade.sink.properties.session.timeout.ms=30000 \
