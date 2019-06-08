@@ -74,7 +74,7 @@ done
 
 for CMD in ${DANGEROUS[@]}; do
     if [[ ${COMMAND} == ${CMD} || ${COMMAND} =~ ^${CMD}( )+ ]]; then
-        confirm "\`${COLOR[yellow]}$1${COLOR[nc]}\` command is ${COLOR[red]}dangeours${COLOR[nc]} to remote site, confirm?"
+        confirm "\`${COLOR[yellow]}${COMMAND}${COLOR[nc]}\` command is ${COLOR[red]}dangeours${COLOR[nc]} to remote site, confirm?"
         if [[ $? -eq 0 ]]; then
             break
         else
