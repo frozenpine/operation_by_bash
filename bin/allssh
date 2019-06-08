@@ -61,18 +61,15 @@ else
     COMMAND=$1
 fi
 
-CMD=$'\n' read -d'' -r -a DANGEROUS <"${CONF_BASE}/.dangerous"
-CMD=$'\n' read -d'' -r -a IGNORE <"${CONF_BASE}/.ignore"
-
-for CMD in ${IGNORE[@]}; do
+while read CMD; do
     if [[ ${COMMAND} == ${CMD} || ${COMMAND} =~ ^${CMD}( )+ ]]; then
         echo -e "${COLOR[red]}Command \`$1\` not supported by this script.${COLOR[nc]}" >&2
         error skip $*
         exit 1
     fi
-done
+done <"${CONF_BASE}/.ignore"
 
-for CMD in ${DANGEROUS[@]}; do
+while read CMD; do
     if [[ ${COMMAND} == ${CMD} || ${COMMAND} =~ ^${CMD}( )+ ]]; then
         confirm "\`${COLOR[yellow]}${COMMAND}${COLOR[nc]}\` command is ${COLOR[red]}dangeours${COLOR[nc]} to remote site, confirm?"
         if [[ $? -eq 0 ]]; then
@@ -82,7 +79,7 @@ for CMD in ${DANGEROUS[@]}; do
             exit 1
         fi
     fi
-done
+done <"${CONF_BASE}/.dangerous"
 
 host_list | while read HOST_CONF; do
     parse_ssh ${HOST_CONF}
