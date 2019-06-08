@@ -1,3 +1,10 @@
+/*
+SQLyog Ultimate v11.24 (32 bit)
+MySQL - 5.7.25 : Database - send
+*********************************************************************
+*/
+
+
 /*!40101 SET NAMES utf8 */;
 
 /*!40101 SET SQL_MODE=''*/;
@@ -54,7 +61,7 @@ DROP TABLE IF EXISTS `t_sms_sign`;
 
 CREATE TABLE `t_sms_sign` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '自增长序列号',
-  `sign_id` varchar(20) NOT NULL,
+  `sign_id` varchar(100) NOT NULL,
   `sign_name` varchar(20) NOT NULL,
   `remark` varchar(300) DEFAULT NULL,
   `operate_date` bigint(20) DEFAULT NULL,
@@ -62,6 +69,10 @@ CREATE TABLE `t_sms_sign` (
   `operate_id` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`id`,`sign_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='短信签名';
+
+insert  into `t_sms_sign`(`id`,`sign_id`,`sign_name`,`remark`,`operate_date`,`update_date`,`operate_id`) values (1,'189809','365MEX','注册登录验证',1547375715000,1547375715000,'admin');
+
+UNLOCK TABLES;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
