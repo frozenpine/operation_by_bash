@@ -50,11 +50,22 @@ while getopts :u:H:p:g:Dh FLAG; do
 done
 shift $((OPTIND - 1))
 
+if [[ $# -lt 1 ]]; then
+    error please input commands to execute.
+    exit 1
+fi
+
+if [[ $1 == "sudo" ]]; then
+    COMMAND=$2
+else
+    COMMAND=$1
+fi
+
 CMD=$'\n' read -d'' -r -a DANGEROUS <"${CONF_BASE}/.dangerous"
 CMD=$'\n' read -d'' -r -a IGNORE <"${CONF_BASE}/.ignore"
 
 for CMD in ${IGNORE[@]}; do
-    if [[ $1 == ${CMD} || $1 =~ ^${CMD}( )+ ]]; then
+    if [[ ${COMMAND} == ${CMD} || ${COMMAND} =~ ^${CMD}( )+ ]]; then
         echo -e "${COLOR[red]}Command \`$1\` not supported by this script.${COLOR[nc]}" >&2
         error skip $*
         exit 1
@@ -62,7 +73,7 @@ for CMD in ${IGNORE[@]}; do
 done
 
 for CMD in ${DANGEROUS[@]}; do
-    if [[ $1 == ${CMD} || $1 =~ ^${CMD}( )+ ]]; then
+    if [[ ${COMMAND} == ${CMD} || ${COMMAND} =~ ^${CMD}( )+ ]]; then
         confirm "\`${COLOR[yellow]}$1${COLOR[nc]}\` command is ${COLOR[red]}dangeours${COLOR[nc]} to remote site, confirm?"
         if [[ $? -eq 0 ]]; then
             break
@@ -72,11 +83,6 @@ for CMD in ${DANGEROUS[@]}; do
         fi
     fi
 done
-
-if [[ $# -lt 1 ]]; then
-    error please input commands to execute.
-    exit 1
-fi
 
 host_list | while read HOST_CONF; do
     parse_ssh ${HOST_CONF}
