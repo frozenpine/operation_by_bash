@@ -20,7 +20,7 @@ UNLOCK TABLES;
 LOCK TABLES `t_info_templates` WRITE;
 
 insert  into `t_info_templates`(`templates_id`,`type`,`content`,`state`,`international`,`remark`,`operate_date`,`update_date`,`operate_id`)
-values (1,'261015','1','尊敬的用户，您正在注册365mex平台，验证码为：{code}，{time}分钟内有效，请勿向任何人包括客服提供验证码。','1','1','登陆注册验证',1547375715000,1547375715000,'admin'),
+values ('261015','1','尊敬的用户，您正在注册365mex平台，验证码为：{code}，{time}分钟内有效，请勿向任何人包括客服提供验证码。','1','1','登陆注册验证',1547375715000,1547375715000,'admin'),
 ('261016','1','三家有效交易所,{exchange}交易所的{product}品种价格{price}偏离所有样本交易所中位数价格{midPrice}的{value},超过阈值{peakValue}时被剔除,触发预警','1','1','登陆注册验证',1547375715000,1547375715000,'admin'),
 ('261017','1','两家有效交易所,{product}品种指数价格偏离绝对值{value}大于{peakValue}时,{exchange}交易所最新指数价格与上次指数价格偏离更大,被剔除,触发预警','1','1','登陆注册验证',1547375715000,1547375715000,'admin'),
 ('261018','1','一家交易所时{exchange},获取到{product}品种指数价格{price}与上一次获取到的指数价格{lastPrice}偏差绝对值{value}大于{peakValue},以上一次价格为准，触发预警','1','1','登陆注册验证',1547375715000,1547375715000,'admin'),
