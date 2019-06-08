@@ -35,13 +35,17 @@ values (1,'261015','1','尊敬的用户，您正在注册365mex平台，验证�
 ('261027','1','每日保险基金降低{value}BTC，触发自动减仓','1','1','登陆注册验证',1547375715000,1547375715000,'admin'),
 ('261028','1','您好,您在 {symbol} 的 {direction} {qty} 张 合约的仓位已被 强制平仓。{symbol}的 标记价格 最近 {updown} 到 {markPrice}。您的仓位的强平价格为 {liquidationPrice}。您的仓位已经被我们的强平引擎接管了。','1','1','登陆注册验证',1547375715000,1547375715000,'admin'),
 ('261029','1','您好,您在 {symbol} 的 {direction} 仓位已被 自动减仓, 在 {price} 的价格减仓 {qty} 张合约。这次的减仓对于您来说是{profit}的：平仓价格为 {price} {updown} 您的开仓价格。您的仓位已经平仓了。','1','1','登陆注册验证',1547375715000,1547375715000,'admin'),
-('261030','1','重置验证码：{code}，您正在尝试【重置密码】，{time}分钟内有效，若未操作请立即修改密码，请勿向任何人包括客服提供验证码。','1','1','登陆注册验证',1547375715000,1547375715000,'admin'),
+('261030','1','重置验证码：{code}，您正在尝试【重置密码】，{time}分钟内有效，若未操作请立即修改密码，请勿向任何人包括客服提供验证码。','1','1','登陆注册验证',1547375715000,1547375715000,'admin');
 
 UNLOCK TABLES;
 
 /*Data for the table `t_sms_sign` */
 
 LOCK TABLES `t_sms_sign` WRITE;
+
+insert  into `t_sms_sign`(`id`,`sign_id`,`sign_name`,`remark`,`operate_date`,`update_date`,`operate_id`) values (1,'189809','365MEX','注册登录验证',1547375715000,1547375715000,'admin');
+
+UNLOCK TABLES;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
