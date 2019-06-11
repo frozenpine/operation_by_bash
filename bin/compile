@@ -19,6 +19,9 @@ JAVA_MODULE_DEFINE["digital"]="digital-rest digital-serviceimpl"
 JAVA_MODULE_DEFINE["trade-system"]="trade-clear trade-sink-db trade-sink-es trade-match trade-order trade-query trade-kline trade-back-order"
 JAVA_MODULE_DEFINE["service-management"]="exchange-index-server scheduler-server sms-mail-server trade-base"
 
+declare -A JAVA_MODULE_DEPLOY
+JAVA_MODULE_DEPLOY["trade-system"]="trade-core trade-data-exchange"
+
 declare -A PUB_MAPPER
 PUB_MAPPER["digital-rest"]=digital-rest
 PUB_MAPPER["digital-serviceimpl"]=digital-serviceimpl
@@ -399,6 +402,15 @@ EOF
         if [[ ${PUBLISH} =~ http|all ]]; then
             local _http_pub_dir="${HTTP_PUBLISH_BASE}/${_project_base_name}/${BRANCH}-`date '+%Y%m%d%H%M%S'`-${COMMIT_ID}"
             ${SUDO} mkdir -p "${_http_pub_dir}"
+        fi
+
+        if [[ ${PUBLISH} =~ deploy|all ]]; then
+            for module in ${JAVA_MODULE_DEPLOY[$_project_base_dir]}; do
+                pushd ${module} >/dev/null
+                    # TODO: parse deploy args to tell snapshot or release
+                    mvn deploy -DaltDeploymentRepository=js-snapshot::default::http://localhost:8081/repository/maven-snapshot/
+                popd >/dev/null
+            done
         fi
         
         for module in ${JAVA_MODULE_DEFINE[$_project_base_name]}; do
