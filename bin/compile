@@ -59,6 +59,8 @@ HELP_POSITION_ARGS[0]="{all | project_name}..."
 
 ENVIRONMENT=
 
+# TODO: 拆分各 compile 函数及 git 函数为 module.d 下的模块文件
+
 function _check_environment() {
     if [[ x"${ENVIRONMENT}" != "x" ]]; then
         return
