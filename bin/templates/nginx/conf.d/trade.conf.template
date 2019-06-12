@@ -69,7 +69,7 @@ map \$limit \$limit_key {
     1 \$http_api_key;
 }
 
-limit_req_zone \$limit_key zone=api_key_limit:10m rate=300r/5m;
+limit_req_zone \$limit_key zone=api_key_limit:10m rate=1r/s;
 
 server {
     listen      80;
