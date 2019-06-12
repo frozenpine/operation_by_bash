@@ -73,7 +73,7 @@ function _check_environment() {
     fi
 
     case "${_public_ip}" in
-        47.105.52.41 | 203.110.179.26)
+        47.105.52.41 | 203.110.179.26 | 18.179.50.234)
             ENVIRONMENT=test
         ;;
         *)
@@ -287,11 +287,11 @@ function _mvn_compile() {
     local _project_base_name
     local _env_arg
 
-    netstat -tnl | grep :${MAVEN_MIRROR_PORT} | grep LISTEN &>/dev/null
-    if [[ $? -ne 0 ]]; then
-        warning "maven mirror port for js local repository not open."
-        confirm -t 10 || exit 1
-    fi
+    # netstat -tnl | grep :${MAVEN_MIRROR_PORT} | grep LISTEN &>/dev/null
+    # if [[ $? -ne 0 ]]; then
+    #     warning "maven mirror port for js local repository not open."
+    #     confirm -t 10 || exit 1
+    # fi
     
     pushd "${_project_base_dir}" >/dev/null
         _project_base_name=$(basename `pwd`)
