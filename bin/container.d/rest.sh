@@ -103,4 +103,5 @@ docker run -d \
         --dubbo.protocol.host="${SELF_IP}" \
         --dubbo.registry.file="/${NAME}/data/dubbo/dubbo-registry.properties" \
         --dubbo.consumer.timeout=300000 \
-        --dubbo.application.qos.port=33333
+        --dubbo.application.qos.port=33333 \
+        &>/dev/null

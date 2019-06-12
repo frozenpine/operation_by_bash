@@ -95,4 +95,5 @@ docker run -d \
         --spring.cloud.consul.port=${CONSUL_PORT} \
         --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?characterEncoding=utf-8" \
         --spring.datasource.username="${DB_USER:=$DEFAULT_DB_USER}" \
-        --spring.datasource.password="${DB_PASS:=$DEFAULT_DB_PASS}"
+        --spring.datasource.password="${DB_PASS:=$DEFAULT_DB_PASS}" \
+        &>/dev/null

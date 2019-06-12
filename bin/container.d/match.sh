@@ -55,3 +55,4 @@ docker run -d \
         --com.quantdo.trade.match.producer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.match.producer.buffer.memory=100000000 \
         --com.quantdo.trade.match.producer.max.request.size=100000000 \
+        &>/dev/null

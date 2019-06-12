@@ -55,3 +55,4 @@ docker run -d \
         --com.quantdo.trade.backorder.backorder.consumer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.backorder.market.consumer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.quantdo.trade.backorder.order.producer.bootstrap.servers=${KAFKA_SERVERS} \
+        &>/dev/null

@@ -70,3 +70,4 @@ docker run -d \
         --com.quantdo.trade.sink.properties.session.timeout.ms=30000 \
         --com.quantdo.trade.sink.properties.max.poll.records=1000 \
         --com.quantdo.trade.sink.properties.max.poll.interval.ms=300000 \
+        &>/dev/null

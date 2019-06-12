@@ -81,3 +81,4 @@ docker run -d \
         --com.quantdo.trade.web.signature.monitor.properties.bootstrap.servers=${KAFKA_SERVERS} \
         --spring.redis.host=${REDIS_HOST} \
         --spring.redis.port=${REDIS_PORT} \
+        &>/dev/null

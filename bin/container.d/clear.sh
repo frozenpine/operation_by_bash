@@ -83,3 +83,4 @@ docker run -d \
         --com.quantdo.trade.handle.consumer.properties.max.poll.records=1000 \
         --com.quantdo.trade.handle.consumer.properties.max.poll.interval.ms=300000 \
         --com.quantdo.trade.handle.consumer.properties.request.timeout.ms=300000 \
+        &>/dev/null

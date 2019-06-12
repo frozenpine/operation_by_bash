@@ -120,3 +120,4 @@ docker run -d \
         --spring.datasource.password=${DB_PASS:=$DEFAULT_DB_PASS} \
         --spring.redis.host=${REDIS_HOST} \
         --spring.redis.port=${REDIS_PORT} \
+        &>/dev/null

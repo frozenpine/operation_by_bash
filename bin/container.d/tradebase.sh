@@ -147,4 +147,5 @@ docker run -d \
         --url.wallet.sing="${WALLET_HOST}/${WALLET_BASE_URI##/}" \
         --com.quantdo.trade.data-exchange.command.producer.bootstrap.servers="${KAFKA_SERVERS}" \
         --com.quantdo.trade.data-exchange.monitor.consumer.bootstrap.servers="${KAFKA_SERVERS}" \
-        --verifyCode=false
+        --verifyCode=false \
+        &>/dev/null

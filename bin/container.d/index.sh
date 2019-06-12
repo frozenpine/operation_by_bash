@@ -139,3 +139,4 @@ docker run -d \
         --cache.type=0 \
         --com.quantdo.trade.data-exchange.monitor.consumer.com.quantdo.trade.content.json=MATCH-JSON-MARKET-DATA,POSITION \
         --com.quantdo.trade.data-exchange.monitor.topics=INDEX,MATCH-INDEX,MATCH-JSON-MARKET-DATA,POSITION \
+        &>/dev/null
