@@ -408,6 +408,7 @@ EOF
 
         if [[ ${PUBLISH} =~ deploy|all ]]; then
             for module in ${JAVA_MODULE_DEPLOY[$_project_base_dir]}; do
+                info "deploy ${moduel} to maven repositry."
                 pushd ${module} >/dev/null
                     # TODO: parse deploy args to tell snapshot or release
                     mvn deploy -DaltDeploymentRepository=js-snapshot::default::http://localhost:8081/repository/maven-snapshot/
