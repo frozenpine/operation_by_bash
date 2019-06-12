@@ -407,7 +407,7 @@ EOF
         fi
 
         if [[ ${PUBLISH} =~ deploy|all ]]; then
-            for module in ${JAVA_MODULE_DEPLOY[$_project_base_dir]}; do
+            for module in ${JAVA_MODULE_DEPLOY[$_project_base_name]}; do
                 info "deploy ${moduel} to maven repositry."
                 pushd ${module} >/dev/null
                     # TODO: parse deploy args to tell snapshot or release
