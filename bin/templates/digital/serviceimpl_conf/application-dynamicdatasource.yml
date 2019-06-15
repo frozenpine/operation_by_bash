@@ -65,7 +65,7 @@ spring:
     #      password: 111111
     config:
       routers: #必须设置,不同服务或方法的路由配置(只需要配置主库,无需配置从库)
-        front: com.quantdo.digital.clear.datasource.*.*(..)
+        front: com.js.digital.clear.datasource.*.*(..)
       #master-slaves: #master-slaves为非必须配置, 都是主库且不存在备库时则不需要配置。
       #  master: db_slave1,db_slave2
       #没有做主从数据源配置时,读写走的都是主库。读的处理逻辑是:先从从库读,如果从数据源不存在则从主数据源读;

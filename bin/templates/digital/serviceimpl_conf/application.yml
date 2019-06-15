@@ -28,7 +28,7 @@ spring:
         offset:
           reset: earliest
       group:
-        id: digital
+        id: digital_local
       concurrency: 1
   application:
     #指定当前服务/应用的名字（同样的服务名字相同，不要和别的服务同名）
@@ -89,7 +89,7 @@ quantdo:
     # 交易周边事件通知属性
 
 com:
-  quantdo:
+  js:
     trade:
       data-exchange:
         command-publisher:
@@ -104,10 +104,10 @@ com:
             key:
               serializer: org.apache.kafka.common.serialization.StringSerializer
             value:
-              serializer: com.quantdo.trade.kafka.kryo.KryoSerializer
+              serializer: com.js.trade.kafka.kryo.KryoSerializer
             compression:
               type: gzip
-              #com.quantdo.trade.data-exchange.clear-topic=SURROUND_EVENT
+              #com.js.trade.data-exchange.clear-topic=SURROUND_EVENT
               # 交易核心事件监听属性
         monitor:
           consumer:
@@ -124,9 +124,9 @@ com:
     #  亚马逊 文件服务器
 aws:
   s3:
-    accessKeyId: AKIAJBSFWTF3PASMCB3A
-    secretKeyId: z7mN6mWz6DvZhwn56WcmoUPScMfLfJCTiAJFPMXk
-    bucketName: jishen-photo-store
+    accessKeyId: AKIASJEIMWLUIXYY3ZX7
+    secretKeyId: jjxMD6bEyeha6E/ZWPc+/nkD6BWLrIm1h7uW8yiF
+    bucketName: js-photo-test
     region: ap-southeast-1
 
     # 邀请返佣计算 时间
