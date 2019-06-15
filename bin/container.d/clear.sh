@@ -75,8 +75,6 @@ docker run -d \
         --com.js.trade.handle.producer.properties.request.timeout.ms=450000 \
         --com.js.trade.handle.producer.properties.buffer.memory=100000000 \
         --com.js.trade.handle.consumer.properties.bootstrap.servers=${KAFKA_SERVERS} \
-        --com.js.trade.handle.snapshot-topic=${CLEAR_SNAPSHOT_TOPIC} \
-        --com.js.trade.handle.checkpoint-topic=${CLEAR_CHECKPOINT_TOPIC} \
         --com.js.trade.handle.consumer.properties.fetch.max.wait.ms=10 \
         --com.js.trade.handle.consumer.properties.heartbeat.interval.ms=10000 \
         --com.js.trade.handle.consumer.properties.session.timeout.ms=30000 \
