@@ -73,6 +73,8 @@ QueryMarginURL=${TRADE_FRONT}/api/v1/accountx
 QueryPositionURL=${TRADE_FRONT}/api/v1/positionx
 #近期交易列表接口
 QueryTradeURL=${TRADE_FRONT}/api/v1/trade?reverse=true
+#账户成交查询接口
+QueryExecutionURL=${TRADE_FRONT}/api/v1/executionx?count=200&reverse=true
 
 #获取全量instrument接口
 GetInstrumentDataURL=${TRADE_FRONT}/api/v1/instrument
