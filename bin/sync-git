@@ -20,5 +20,5 @@ fi
 find . -maxdepth 1 -type f -exec chmod u+x {} \;
 
 if [[ $1 == "deploy" ]]; then
-    allscp -r "${BASE_DIR}/*" "${BASE_DIR}/"
+    allscp -r "${CONFIG_DEPLOY_GROUP}" "${BASE_DIR}/*" "${BASE_DIR}/"
 fi
