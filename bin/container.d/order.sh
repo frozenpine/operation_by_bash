@@ -77,7 +77,7 @@ docker run -d \
         --server.port=${ORDER_PORT} \
         --com.js.trade.consul.host=${CONSUL_HOST} \
         --com.js.trade.consul.port=${CONSUL_PORT} \
-        --com.js.trade.front.order.kafka.producer.bootstrap.servers=${KAFKA_SERVERS} \
+        --com.js.trade.order.kafka.producer.bootstrap.servers=${KAFKA_SERVERS} \
         --com.js.trade.web.signature.monitor.properties.bootstrap.servers=${KAFKA_SERVERS} \
         --spring.redis.host=${REDIS_HOST} \
         --spring.redis.port=${REDIS_PORT} \
