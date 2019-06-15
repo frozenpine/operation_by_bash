@@ -538,7 +538,7 @@ CREATE TABLE `t_risk_index` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID自增长序列',
   `warn_type` varchar(3) NOT NULL COMMENT '报警类型  1 发送短信 2 发送邮件',
   `risk_flag` varchar(20) DEFAULT NULL COMMENT '指数参数类别  1 交易所价格偏离中位数 2 一家交易所价格获取不到 3 仅剩两家交易所 4 仅剩一家交易所可获取价格 5仅剩一家交易所价格偏离 6所有交易所价格都获取不到 7 交易所及BitMax都获取不到 8 无人工干预',
-  `peek_value` decimal(4,3) DEFAULT NULL COMMENT '报警阈值',
+  `peek_value` decimal(5,3) DEFAULT NULL COMMENT '报警阈值',
   `operate_time` bigint(20) DEFAULT NULL COMMENT '操作时间',
   `warn_level` varchar(3) DEFAULT NULL COMMENT '报警等级',
   `accounts` varchar(1000) DEFAULT NULL COMMENT '警报信息接收人',
