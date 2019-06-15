@@ -50,9 +50,9 @@ docker run -d \
         ${JVM_OPTS} \
         -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
         --server.port=${MATCH_PORT} \
-        --logging.level.com.quantdo.trade=${LOG_LEVEL:=info} \
-        --com.quantdo.trade.match.consumer.bootstrap.servers=${KAFKA_SERVERS} \
-        --com.quantdo.trade.match.producer.bootstrap.servers=${KAFKA_SERVERS} \
-        --com.quantdo.trade.match.producer.buffer.memory=100000000 \
-        --com.quantdo.trade.match.producer.max.request.size=100000000 \
+        --logging.level.com.js.trade=${LOG_LEVEL:=info} \
+        --com.js.trade.match.consumer.bootstrap.servers=${KAFKA_SERVERS} \
+        --com.js.trade.match.producer.bootstrap.servers=${KAFKA_SERVERS} \
+        --com.js.trade.match.producer.buffer.memory=100000000 \
+        --com.js.trade.match.producer.max.request.size=100000000 \
         &>/dev/null

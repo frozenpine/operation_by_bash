@@ -54,8 +54,8 @@ Configuration:
         level: warn
 #    Logger:
 #    监听具体包下面的日志
-#    Logger: # 为com.quantdo包配置特殊的Log级别,方便调试
-#    - name: com.quantdo
+#    Logger: # 为com.js包配置特殊的Log级别,方便调试
+#    - name: com.js
 #      additivity: false
 #      #level: ${sys:log.level.quantdo}
 #      AppenderRef:

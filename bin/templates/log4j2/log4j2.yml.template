@@ -8,7 +8,7 @@ Configuration:
     #生产：-Dlog.level.console=warn -Dlog.level.quantdo=info
     - name: log.level.quantdo
       value: info
-    - name: com.quantdox.trade.data.monitor.CompositeNotifyHandler
+    - name: com.jsx.trade.data.monitor.CompositeNotifyHandler
       value: info
     - name: log.level.console
       value: info

@@ -123,8 +123,8 @@ docker run -d \
         ${JVM_OPTS} \
         -jar /${NAME}/service-${NAME}-${VERSION}.jar \
         --server.port=${INDEX_PORT} \
-        --logging.level.com.quantdo.market.service.impl=${LOG_LEVEL:=warning} \
-        --logging.level.com.quantdo.market.service.ws=${LOG_LEVEL:=warning} \
+        --logging.level.com.js.market.service.impl=${LOG_LEVEL:=warning} \
+        --logging.level.com.js.market.service.ws=${LOG_LEVEL:=warning} \
         --spring.cloud.consul.host=${CONSUL_HOST} \
         --spring.cloud.consul.port=${CONSUL_PORT} \
         --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?characterEncoding=utf-8" \
@@ -133,10 +133,10 @@ docker run -d \
         --elaticjob.zookeeper.server-lists=${ZK_SERVERS} \
         --jedis.pool.host="${REDIS_HOST}" \
         --jedis.pool.port="${REDIS_PORT}" \
-        --com.quantdo.trade.data-exchange.command.producer.bootstrap.servers="${KAFKA_SERVERS}" \
-        --com.quantdo.trade.data-exchange.monitor.consumer.bootstrap.servers="${KAFKA_SERVERS}" \
+        --com.js.trade.data-exchange.command.producer.bootstrap.servers="${KAFKA_SERVERS}" \
+        --com.js.trade.data-exchange.monitor.consumer.bootstrap.servers="${KAFKA_SERVERS}" \
         --rest.kline.url="http://${FRONT_HOST}:${FRONT_PORT}/statistics?symbol=" \
         --cache.type=0 \
-        --com.quantdo.trade.data-exchange.monitor.consumer.com.quantdo.trade.content.json=MATCH-JSON-MARKET-DATA,POSITION \
-        --com.quantdo.trade.data-exchange.monitor.topics=INDEX,MATCH-INDEX,MATCH-JSON-MARKET-DATA,POSITION \
+        --com.js.trade.data-exchange.monitor.consumer.com.js.trade.content.json=MATCH-JSON-MARKET-DATA,POSITION \
+        --com.js.trade.data-exchange.monitor.topics=INDEX,MATCH-INDEX,MATCH-JSON-MARKET-DATA,POSITION \
         &>/dev/null

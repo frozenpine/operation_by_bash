@@ -116,7 +116,7 @@ function _sync_instrument() {
     fi
 
     info "Syncing Instruments..."
-    # _request "/gateway/api" '{"interfaceName":"com.quantdo.digital.product.service.InstrumentService","interfaceVersion":"1.0.0","method":"beListedInstrument","params":[{"instrumentStatus":"0"}]}'
+    # _request "/gateway/api" '{"interfaceName":"com.js.digital.product.service.InstrumentService","interfaceVersion":"1.0.0","method":"beListedInstrument","params":[{"instrumentStatus":"0"}]}'
     _request "/digital/instrument/beListedInstrument" '{"instrumentStatus":"0"}'
     if [[ $? -eq 0 && `echo ${RESULT} | jq .result` -eq 0 ]]; then
         info "Syncing instrument successed."
@@ -137,7 +137,7 @@ function _sync_instrument() {
 
 function _sync_fee() {
     info "Syncing instrument fee..."
-    # _request '/gateway/api' '{"interfaceName":"com.quantdo.digital.product.service.TradeFeeSetService","interfaceVersion":"1.0.0","method":"save","params":[{"productId":"XBT","instrumentId":"XBTUSD","feeMode":"1","makerFeeRate":"0.0001","takerFeeRate":"0.0001"}]}'
+    # _request '/gateway/api' '{"interfaceName":"com.js.digital.product.service.TradeFeeSetService","interfaceVersion":"1.0.0","method":"save","params":[{"productId":"XBT","instrumentId":"XBTUSD","feeMode":"1","makerFeeRate":"0.0001","takerFeeRate":"0.0001"}]}'
     _request '/digital/tradeFeeSet/save/' '{"feeMode":"1","instrumentId":"XBTUSD","makerFeeRate":"-0.00025","productId":"XBT","takerFeeRate":"0.00075"}'
     if [[ `echo ${RESULT} | jq .code` -eq 0 ]]; then
         info "Syncing fee successed."
@@ -147,7 +147,7 @@ function _sync_fee() {
         exit 1
     fi
     info "All synced fee rate: "
-    _request '/gateway/api' '{"interfaceName":"com.quantdo.digital.product.service.TradeFeeSetService","interfaceVersion":"1.0.0","method":"findTradeFeeSetByCondition","params":[1, 10, {}]}'
+    _request '/gateway/api' '{"interfaceName":"com.js.digital.product.service.TradeFeeSetService","interfaceVersion":"1.0.0","method":"findTradeFeeSetByCondition","params":[1, 10, {}]}'
     echo "${RESULT}" | jq .result.result
 }
 

@@ -73,12 +73,12 @@ docker run -d \
     registry:5000/trade$1/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
-        --logging.level.com.quantdo.trade=${LOG_LEVEL:=info} \
+        --logging.level.com.js.trade=${LOG_LEVEL:=info} \
         --server.port=${ORDER_PORT} \
-        --com.quantdo.trade.consul.host=${CONSUL_HOST} \
-        --com.quantdo.trade.consul.port=${CONSUL_PORT} \
-        --com.quantdo.trade.front.order.kafka.producer.bootstrap.servers=${KAFKA_SERVERS} \
-        --com.quantdo.trade.web.signature.monitor.properties.bootstrap.servers=${KAFKA_SERVERS} \
+        --com.js.trade.consul.host=${CONSUL_HOST} \
+        --com.js.trade.consul.port=${CONSUL_PORT} \
+        --com.js.trade.front.order.kafka.producer.bootstrap.servers=${KAFKA_SERVERS} \
+        --com.js.trade.web.signature.monitor.properties.bootstrap.servers=${KAFKA_SERVERS} \
         --spring.redis.host=${REDIS_HOST} \
         --spring.redis.port=${REDIS_PORT} \
         &>/dev/null

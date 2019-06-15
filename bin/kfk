@@ -21,7 +21,7 @@ CONSUMER_SCRIPT="${KAFKA_HOME}/bin/kafka-console-consumer.sh"
 TOPIC_LIST_FILE="${CONF_BASE}/topic.list"
 
 KEY_DESERIALIZER="--key-deserializer org.apache.kafka.common.serialization.StringDeserializer"
-VALUE_DESERIALIZER="--value-deserializer com.quantdo.trade.kafka.kryo.KryoDeserializer"
+VALUE_DESERIALIZER="--value-deserializer com.js.trade.kafka.kryo.KryoDeserializer"
 
 DRY_RUN=
 

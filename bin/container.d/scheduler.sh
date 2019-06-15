@@ -122,8 +122,8 @@ docker run -d \
         --spring.datasource.secondary.username="${DB_USER:=$DEFAULT_DB_USER}" \
         --spring.datasource.secondary.password="${DB_PASS:=$DEFAULT_DB_PASS}" \
         --elaticjob.zookeeper.server-lists="${ZK_SERVERS}" \
-        --com.quantdo.trade.data-exchange.command.producer.bootstrap.servers="${KAFKA_SERVERS}" \
-        --com.quantdo.trade.data-exchange.monitor.consumer.bootstrap.servers="${KAFKA_SERVERS}" \
+        --com.js.trade.data-exchange.command.producer.bootstrap.servers="${KAFKA_SERVERS}" \
+        --com.js.trade.data-exchange.monitor.consumer.bootstrap.servers="${KAFKA_SERVERS}" \
         --spring.datasource.primary.max-idle=10 \
         --spring.datasource.primary.max-wait=10000 \
         --spring.datasource.primary.min-idle=5 \

@@ -65,22 +65,22 @@ docker run -d \
         ${JVM_OPTS} \
         -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/${NAME}/data/heapdump.hprof \
         -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
-        --logging.level.com.quantdo.trade=${LOG_LEVEL:=info} \
+        --logging.level.com.js.trade=${LOG_LEVEL:=info} \
         --server.address=${SELF_IP} \
         --server.port=${CLEAR_PORT} \
-        --com.quantdo.trade.consul.host=${CONSUL_HOST} \
-        --com.quantdo.trade.consul.port=${CONSUL_PORT} \
-        --com.quantdo.trade.handle.producer.properties.bootstrap.servers=${KAFKA_SERVERS} \
-        --com.quantdo.trade.handle.producer.properties.max.request.size=100000000 \
-        --com.quantdo.trade.handle.producer.properties.request.timeout.ms=450000 \
-        --com.quantdo.trade.handle.producer.properties.buffer.memory=100000000 \
-        --com.quantdo.trade.handle.consumer.properties.bootstrap.servers=${KAFKA_SERVERS} \
-        --com.quantdo.trade.handle.snapshot-topic=${CLEAR_SNAPSHOT_TOPIC} \
-        --com.quantdo.trade.handle.checkpoint-topic=${CLEAR_CHECKPOINT_TOPIC} \
-        --com.quantdo.trade.handle.consumer.properties.fetch.max.wait.ms=10 \
-        --com.quantdo.trade.handle.consumer.properties.heartbeat.interval.ms=10000 \
-        --com.quantdo.trade.handle.consumer.properties.session.timeout.ms=30000 \
-        --com.quantdo.trade.handle.consumer.properties.max.poll.records=1000 \
-        --com.quantdo.trade.handle.consumer.properties.max.poll.interval.ms=300000 \
-        --com.quantdo.trade.handle.consumer.properties.request.timeout.ms=300000 \
+        --com.js.trade.consul.host=${CONSUL_HOST} \
+        --com.js.trade.consul.port=${CONSUL_PORT} \
+        --com.js.trade.handle.producer.properties.bootstrap.servers=${KAFKA_SERVERS} \
+        --com.js.trade.handle.producer.properties.max.request.size=100000000 \
+        --com.js.trade.handle.producer.properties.request.timeout.ms=450000 \
+        --com.js.trade.handle.producer.properties.buffer.memory=100000000 \
+        --com.js.trade.handle.consumer.properties.bootstrap.servers=${KAFKA_SERVERS} \
+        --com.js.trade.handle.snapshot-topic=${CLEAR_SNAPSHOT_TOPIC} \
+        --com.js.trade.handle.checkpoint-topic=${CLEAR_CHECKPOINT_TOPIC} \
+        --com.js.trade.handle.consumer.properties.fetch.max.wait.ms=10 \
+        --com.js.trade.handle.consumer.properties.heartbeat.interval.ms=10000 \
+        --com.js.trade.handle.consumer.properties.session.timeout.ms=30000 \
+        --com.js.trade.handle.consumer.properties.max.poll.records=1000 \
+        --com.js.trade.handle.consumer.properties.max.poll.interval.ms=300000 \
+        --com.js.trade.handle.consumer.properties.request.timeout.ms=300000 \
         &>/dev/null

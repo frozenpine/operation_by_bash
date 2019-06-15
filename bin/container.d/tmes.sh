@@ -58,16 +58,16 @@ docker run -d \
     registry:5000/trade$1/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
-        --logging.level.com.quantdo.trade=${LOG_LEVEL:=info} \
+        --logging.level.com.js.trade=${LOG_LEVEL:=info} \
         --server.address=${SELF_IP} \
         --server.port=${TMES_PORT} \
         --spring.data.elasticsearch.cluster-name=${ES_CLUSTER_NAME:=Js} \
         --spring.data.elasticsearch.cluster-nodes=${ELASTIC_SERVERS} \
-        --com.quantdo.trade.sink.properties.bootstrap.servers=${KAFKA_SERVERS} \
-        --com.quantdo.trade.sink.source-topic=${SINK_TOPIC:=SINK} \
-        --com.quantdo.trade.sink.properties.fetch.max.wait.ms=10 \
-        --com.quantdo.trade.sink.properties.heartbeat.interval.ms=10000 \
-        --com.quantdo.trade.sink.properties.session.timeout.ms=30000 \
-        --com.quantdo.trade.sink.properties.max.poll.records=1000 \
-        --com.quantdo.trade.sink.properties.max.poll.interval.ms=300000 \
+        --com.js.trade.sink.properties.bootstrap.servers=${KAFKA_SERVERS} \
+        --com.js.trade.sink.source-topic=${SINK_TOPIC:=SINK} \
+        --com.js.trade.sink.properties.fetch.max.wait.ms=10 \
+        --com.js.trade.sink.properties.heartbeat.interval.ms=10000 \
+        --com.js.trade.sink.properties.session.timeout.ms=30000 \
+        --com.js.trade.sink.properties.max.poll.records=1000 \
+        --com.js.trade.sink.properties.max.poll.interval.ms=300000 \
         &>/dev/null

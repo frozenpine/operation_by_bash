@@ -8,7 +8,7 @@ Configuration:
     #生产：-Dlog.level.console=warn -Dlog.level.quantdo=info
     - name: log.level.quantdo
       value: info
-    - name: com.quantdox.trade.data.monitor.CompositeNotifyHandler
+    - name: com.jsx.trade.data.monitor.CompositeNotifyHandler
       value: info
     - name: log.level.console
       value: info
@@ -57,8 +57,8 @@ Configuration:
         level: warn
 #    Logger:
 #    监听具体包下面的日志
-#    Logger: # 为com.quantdo包配置特殊的Log级别,方便调试
-#    - name: com.quantdo
+#    Logger: # 为com.js包配置特殊的Log级别,方便调试
+#    - name: com.js
 #      additivity: false
 #      #level: ${sys:log.level.quantdo}
 #      AppenderRef:

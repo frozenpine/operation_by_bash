@@ -49,10 +49,10 @@ docker run -d \
     registry:5000/trade$1/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
-        --logging.level.com.quantdo.trade=${LOG_LEVEL:=info} \
+        --logging.level.com.js.trade=${LOG_LEVEL:=info} \
         --server.port=${BACKORDER_PORT} \
-        --com.quantdo.trade.backorder.snapshot.consumer.bootstrap.servers=${KAFKA_SERVERS} \
-        --com.quantdo.trade.backorder.backorder.consumer.bootstrap.servers=${KAFKA_SERVERS} \
-        --com.quantdo.trade.backorder.market.consumer.bootstrap.servers=${KAFKA_SERVERS} \
-        --com.quantdo.trade.backorder.order.producer.bootstrap.servers=${KAFKA_SERVERS} \
+        --com.js.trade.backorder.snapshot.consumer.bootstrap.servers=${KAFKA_SERVERS} \
+        --com.js.trade.backorder.backorder.consumer.bootstrap.servers=${KAFKA_SERVERS} \
+        --com.js.trade.backorder.market.consumer.bootstrap.servers=${KAFKA_SERVERS} \
+        --com.js.trade.backorder.order.producer.bootstrap.servers=${KAFKA_SERVERS} \
         &>/dev/null

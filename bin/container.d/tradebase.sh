@@ -145,7 +145,7 @@ docker run -d \
         --url.sms.sing="http://${SMS_HOST}:${SMS_PORT}/sms/send" \
         --url.email.sing="http://${SMS_HOST}:${SMS_PORT}/mail/send" \
         --url.wallet.sing="${WALLET_HOST}/${WALLET_BASE_URI##/}" \
-        --com.quantdo.trade.data-exchange.command.producer.bootstrap.servers="${KAFKA_SERVERS}" \
-        --com.quantdo.trade.data-exchange.monitor.consumer.bootstrap.servers="${KAFKA_SERVERS}" \
+        --com.js.trade.data-exchange.command.producer.bootstrap.servers="${KAFKA_SERVERS}" \
+        --com.js.trade.data-exchange.monitor.consumer.bootstrap.servers="${KAFKA_SERVERS}" \
         --verifyCode=false \
         &>/dev/null

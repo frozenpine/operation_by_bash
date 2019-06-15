@@ -49,9 +49,9 @@ docker run -d \
     registry:5000/trade$1/${NAME}:${VERSION} \
         ${JVM_OPTS} \
         -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
-        --logging.level.com.quantdo.trade=${LOG_LEVEL:=info} \
+        --logging.level.com.js.trade=${LOG_LEVEL:=info} \
         --server.port=${KLINE_PORT} \
-        --com.quantdo.trade.kline.trade.consumer.bootstrap.servers=${KAFKA_SERVERS} \
-        --com.quantdo.trade.kline.tradekline.consumer.bootstrap.servers=${KAFKA_SERVERS} \
-        --com.quantdo.trade.kline.tradekline.producer.bootstrap.servers=${KAFKA_SERVERS} \
+        --com.js.trade.kline.trade.consumer.bootstrap.servers=${KAFKA_SERVERS} \
+        --com.js.trade.kline.tradekline.consumer.bootstrap.servers=${KAFKA_SERVERS} \
+        --com.js.trade.kline.tradekline.producer.bootstrap.servers=${KAFKA_SERVERS} \
         &>/dev/null

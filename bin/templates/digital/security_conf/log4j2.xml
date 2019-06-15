@@ -27,6 +27,6 @@
             <appender-ref ref="web_logs"/>
             <appender-ref ref="sentry" level="warn"/>
         </root>
-        <Logger level="info" name="com.quantdo"/>
+        <Logger level="info" name="com.js"/>
     </loggers>
 </configuration>

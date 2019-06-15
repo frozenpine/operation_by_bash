@@ -14,7 +14,7 @@ dubbo:
     check: false
   scan:
     #Base packages to scan Dubbo Components (e.g., @Service, @Reference)
-    basePackages: com.quantdo.digital.user.service.impl
+    basePackages: com.js.digital.user.service.impl
   protocol:
     id: dubbo
     name: dubbo
