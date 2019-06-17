@@ -59,7 +59,7 @@ MaxClientDataInterval=45
 # 拉取公告的时间间隔，单位为秒，可选配置
 PullAnnouncementInterval=15
 # 拉取公告的 URL
-PullAnnouncementURL=http://18.179.223.109/doc/api/document
+PullAnnouncementURL=http://docs.365mex.com/api/document
 
 #客户端连接成功后的欢迎语
 WelcomeMsg={"info":"Welcome to the 365MEX Realtime API.","version":"2019-03-26T18:43:09.000Z","timestamp":"2019-03-28T06:05:15.309Z","docs":"https://www.365MEX.com/app/wsAPI","limit":{"remaining":39}}
