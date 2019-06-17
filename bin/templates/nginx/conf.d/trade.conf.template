@@ -529,8 +529,13 @@ server {
         limit_req zone=api_key_limit burst=10 nodelay;
 
         proxy_http_version 1.1;
+
+        set \$BACK_END http://order-front;
+        if (\$request_method = 'GET') {
+            set \$BACK_END http://query-front;
+        }
         
-        proxy_pass http://order-front/position/\$1;
+        proxy_pass \$BACK_END/position/\$is_args\$args;
 
         proxy_set_header HOST \$HOST;
         proxy_set_header X-REAL-IP \$remote_addr;
