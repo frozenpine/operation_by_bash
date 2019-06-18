@@ -20,7 +20,7 @@ JAVA_MODULE_DEFINE["trade-system"]="trade-clear trade-sink-db trade-sink-es trad
 JAVA_MODULE_DEFINE["service-management"]="exchange-index-server scheduler-server sms-mail-server trade-base"
 
 declare -A JAVA_MODULE_DEPLOY
-JAVA_MODULE_DEPLOY["trade-system"]="trade-core trade-data-exchange"
+JAVA_MODULE_DEPLOY["trade-system"]="trade-data-exchange trade-core"
 
 declare -A PUB_MAPPER
 PUB_MAPPER["digital-rest"]=digital-rest
