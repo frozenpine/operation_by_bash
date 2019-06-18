@@ -234,7 +234,7 @@ case ${COMMAND} in
                 COUNT=$((COUNT+1))
             done
 
-            for index in order trade; do
+            for index in order trade execution; do
                 info "clean [${index}] from elastic: http://${ELASTIC_HOST}:${ELASTIC_PORT}"
                 curl -XDELETE "http://${ELASTIC_HOST}:${ELASTIC_PORT}/${index}*"
                 echo
