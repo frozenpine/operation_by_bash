@@ -81,4 +81,5 @@ docker run -d \
         --com.js.trade.handle.consumer.properties.max.poll.records=1000 \
         --com.js.trade.handle.consumer.properties.max.poll.interval.ms=300000 \
         --com.js.trade.handle.consumer.properties.request.timeout.ms=300000 \
+        --com.js.trade.handle.consumer.properties.partition.assignment.strategy=org.apache.kafka.clients.consumer.StickyAssignor \
         &>/dev/null
