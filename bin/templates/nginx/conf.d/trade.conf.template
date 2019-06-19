@@ -111,6 +111,13 @@ server {
         # rewrite ^/(.*)$ https://preview.pro.ant.design/$1 permanent;
     }
 
+    location ~ ^/.*\.map\$ {
+        allow 192.168.0.0/16;
+        allow 172.16.0.0/12;
+        allow 10.0.0.0/8;
+        deny all;
+    }
+
     location = /version {
         allow 192.168.0.0/16;
         allow 172.16.0.0/12;
