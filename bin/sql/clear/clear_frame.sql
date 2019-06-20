@@ -17,7 +17,6 @@ CREATE DATABASE /*!32312 IF NOT EXISTS*/`clear` /*!40100 DEFAULT CHARACTER SET u
 
 USE `clear`;
 
-/*Table structure for table `t_account` */
 
 DROP TABLE IF EXISTS `t_account`;
 
@@ -63,18 +62,19 @@ CREATE TABLE `t_account` (
 DROP TABLE IF EXISTS `t_account_snap`;
 
 CREATE TABLE `t_account_snap` (
-  `trading_day` varchar(30) NOT NULL COMMENT '交易日',
   `account_id` bigint(20) NOT NULL COMMENT '资金账号',
-  `currency` varchar(10) NOT NULL COMMENT '币种',
+  `settlement_id` bigint(20) NOT NULL COMMENT '数据标签',
   `client_id` varchar(30) NOT NULL COMMENT '用户代码',
+  `currency` varchar(10) NOT NULL COMMENT '币种',
   `prev_wallet_balance` decimal(30,10) NOT NULL COMMENT '上日钱包余额',
   `wallet_balance` decimal(30,10) NOT NULL COMMENT '钱包余额',
-  `availilable` decimal(30,10) NOT NULL COMMENT '可用余额',
+  `available` decimal(30,10) NOT NULL COMMENT '可用余额',
   `margin_balance` decimal(30,10) NOT NULL COMMENT '保证金余额',
   `frozen_margin` decimal(30,10) NOT NULL COMMENT '委托冻结保证金',
   `frozen_available` decimal(30,10) NOT NULL DEFAULT '0.0000000000',
   `current_margin` decimal(30,10) DEFAULT NULL COMMENT '占用保证金(持仓保证金)',
   `affiliate_payout` decimal(30,10) DEFAULT NULL,
+  `fee` decimal(30,10) DEFAULT NULL COMMENT '成交手续费',
   `withdraw` decimal(30,10) DEFAULT NULL COMMENT '出金',
   `deposit` decimal(30,10) DEFAULT NULL COMMENT '入金',
   `capital_fee` decimal(30,10) DEFAULT NULL COMMENT '资金费用',
@@ -86,16 +86,17 @@ CREATE TABLE `t_account_snap` (
   `sell_cost` decimal(30,10) DEFAULT NULL,
   `buy_cost` decimal(30,10) DEFAULT NULL,
   `transfer` decimal(30,10) DEFAULT NULL COMMENT '今日转账',
-  `settlement_id` bigint(20) NOT NULL COMMENT '结算编号',
-  `commission` decimal(30,10) NOT NULL COMMENT '佣金',
+  `commission` decimal(30,10) NOT NULL COMMENT '交易手续费',
   `withdraw_fee` decimal(30,10) DEFAULT NULL COMMENT '提现手续费(比特币网络费用)',
-  `fee` decimal(30,0) DEFAULT NULL COMMENT '成交手续费',
+  `transfer_account` decimal(30,10) DEFAULT NULL COMMENT '（同用户资金账号间）划转',
+  `transfer_client` decimal(30,10) DEFAULT NULL COMMENT '（不同用户间）今日转账',
+  `largess` decimal(30,10) DEFAULT NULL COMMENT '赠币',
+  `compensation` decimal(10,0) DEFAULT NULL COMMENT '补偿',
   `kafka_partition` int(11) NOT NULL,
   `kafka_offset` bigint(20) DEFAULT NULL,
-  `update_time` bigint(30) DEFAULT NULL COMMENT '更新时间',
-  `insert_time` bigint(30) DEFAULT NULL COMMENT '插入时间',
-  PRIMARY KEY (`account_id`,`currency`,`trading_day`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='日终结算资金快照表';
+  `insert_time` bigint(20) DEFAULT NULL COMMENT '插入时间',
+  PRIMARY KEY (`account_id`,`settlement_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `t_order_history` */
 
@@ -105,13 +106,12 @@ CREATE TABLE `t_order_history` (
   `order_id` bigint(20) NOT NULL COMMENT '订单编号',
   `order_local_id` varchar(50) DEFAULT NULL COMMENT '本地报单编号',
   `client_id` varchar(30) NOT NULL COMMENT '客户代码',
+  `account_id` bigint(20) DEFAULT NULL COMMENT '资金账号',
   `bound_price` decimal(30,10) DEFAULT NULL COMMENT '约束价格',
   `stop_px` decimal(30,10) DEFAULT NULL COMMENT '止损价格',
   `open_volume` bigint(20) DEFAULT NULL,
   `each_fee` decimal(30,10) DEFAULT NULL COMMENT '每手冻结手续费',
   `each_margin` decimal(30,10) DEFAULT NULL COMMENT '每手冻结保证金',
-  `trading_day` varchar(30) DEFAULT NULL,
-  `account_id` bigint(20) DEFAULT NULL COMMENT '资金账号',
   `instrument_id` varchar(30) NOT NULL COMMENT '合约代码',
   `direction` varchar(4) NOT NULL COMMENT '买卖方向:buy,sell',
   `offset_flag` varchar(30) DEFAULT NULL COMMENT '开平标志:open,close',
@@ -138,7 +138,6 @@ CREATE TABLE `t_order_history` (
   `settle_currency` varchar(10) NOT NULL COMMENT '结算币种',
   `currency` varchar(10) NOT NULL COMMENT '币种',
   `transact_time` bigint(20) NOT NULL,
-  `kafka_partition` int(11) NOT NULL,
   `leaves_qty` bigint(20) DEFAULT NULL,
   `cum_qty` bigint(20) DEFAULT NULL,
   `avg_px` decimal(30,10) DEFAULT NULL,
@@ -148,6 +147,7 @@ CREATE TABLE `t_order_history` (
   `modify_time` bigint(20) DEFAULT NULL,
   `order_type` int(11) DEFAULT NULL COMMENT 'OT_NORMAL(0,"用户下单"),\nOT_RISK(1,"风控爆仓下单"),\nOT_RISK_REDUCE(2,"风控爆仓减仓下单")',
   `order_source` int(11) DEFAULT NULL,
+  `kafka_partition` int(11) NOT NULL,
   `kafka_offset` bigint(20) DEFAULT NULL,
   `bankrupt_price` decimal(30,10) DEFAULT NULL COMMENT '破产价格',
   `realisedPnl` decimal(30,10) DEFAULT NULL COMMENT '已实现盈亏',
@@ -218,20 +218,19 @@ CREATE TABLE `t_position` (
   `last_trade_id` char(32) DEFAULT NULL COMMENT '最后一笔影响持仓的成交编号',
   `long_bankrupt` decimal(30,10) DEFAULT NULL COMMENT '多头破产价值',
   `short_bankrupt` decimal(30,10) DEFAULT NULL COMMENT '空头破产价值',
-  `kafka_partition` int(11) NOT NULL,
   `partition_offset` bigint(20) DEFAULT NULL,
-  `closeable_volume` bigint(20) DEFAULT NULL,
   `order_fee` decimal(30,10) DEFAULT NULL,
   `close_fee` decimal(30,10) DEFAULT NULL,
   `capital_fee` decimal(30,10) DEFAULT NULL,
   `pos_cross` decimal(30,10) DEFAULT NULL,
   `pos_loss` decimal(30,10) DEFAULT NULL,
   `transfer` decimal(30,10) DEFAULT NULL,
-  `kafka_offset` bigint(20) DEFAULT NULL,
   `frozen_margin` decimal(30,10) DEFAULT NULL,
+  `kafka_partition` int(11) NOT NULL,
+  `kafka_offset` bigint(20) DEFAULT NULL,
   `update_time` bigint(20) DEFAULT NULL COMMENT '更新时间戳',
   `insert_time` bigint(20) DEFAULT NULL,
-  PRIMARY KEY (`account_id`,`instrument_id`)
+  PRIMARY KEY (`account_id`,`instrument_id`,`direction`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='持仓';
 
 /*Table structure for table `t_settlement` */
@@ -239,10 +238,10 @@ CREATE TABLE `t_position` (
 DROP TABLE IF EXISTS `t_settlement`;
 
 CREATE TABLE `t_settlement` (
-  `currency` varchar(10) NOT NULL COMMENT '币种',
-  `client_id` varchar(30) NOT NULL COMMENT '用户代码',
   `account_id` bigint(20) NOT NULL COMMENT '资金账号',
+  `client_id` varchar(30) NOT NULL COMMENT '用户代码',
   `settlement_id` bigint(20) NOT NULL COMMENT '结算ID',
+  `currency` varchar(10) NOT NULL COMMENT '币种',
   `prev_wallet_balance` decimal(30,10) NOT NULL COMMENT '上日钱包余额',
   `wallet_balance` decimal(30,10) NOT NULL COMMENT '钱包余额',
   `realised_gross_pnl` decimal(30,10) NOT NULL COMMENT '平仓盈亏',
@@ -262,7 +261,7 @@ CREATE TABLE `t_settlement` (
   `kafka_partition` int(11) NOT NULL,
   `kafka_offset` bigint(20) NOT NULL,
   `insert_time` bigint(20) NOT NULL COMMENT '插入时间',
-  PRIMARY KEY (`account_id`,`currency`)
+  PRIMARY KEY (`account_id`,`settlement_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `t_statement` */
@@ -283,11 +282,11 @@ CREATE TABLE `t_statement` (
   `command_id` varchar(36) DEFAULT NULL COMMENT '如果是外部交互，填充命令Id，如果是内部交易引起，填交易id',
   `remark` varchar(128) DEFAULT NULL COMMENT '备注',
   `settlement_id` bigint(20) DEFAULT NULL COMMENT '数据标签',
+  `kafka_partition` int(11) NOT NULL,
   `kafka_offset` bigint(20) NOT NULL,
-  `kafka_partition` bigint(20) NOT NULL,
   `insert_time` bigint(20) NOT NULL COMMENT '插入时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=282 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 /*Table structure for table `t_trade` */
 
@@ -299,14 +298,14 @@ CREATE TABLE `t_trade` (
   `instrument_id` varchar(30) NOT NULL COMMENT '合约代码',
   `order_id` bigint(20) NOT NULL COMMENT '报单编号',
   `other_order_id` bigint(20) NOT NULL COMMENT '对方委托id',
-  `direction` varchar(4) NOT NULL COMMENT '买卖方向:buy,sell',
+  `direction` varchar(4)  COMMENT '买卖方向:buy,sell',
   `order_status` varchar(30) DEFAULT '' COMMENT '成交状态',
   `currency` varchar(10) NOT NULL COMMENT '币种',
   `price` decimal(30,10) NOT NULL COMMENT '价格',
   `trade_amount` decimal(30,10) NOT NULL DEFAULT '0.0000000000' COMMENT '成交金额',
   `volume` bigint(20) NOT NULL COMMENT '数量',
   `side` varchar(10) DEFAULT '' COMMENT 'Taker/Maker',
-  `order_kind` varchar(10) DEFAULT '' COMMENT '成交里的委托类型',
+  `order_kind` varchar(20) DEFAULT '' COMMENT '成交里的委托类型',
   `close_profit` decimal(30,10) DEFAULT NULL COMMENT '平仓盈亏',
   `exec_comm` decimal(30,10) DEFAULT NULL COMMENT '成交手续费',
   `trade_time` bigint(20) NOT NULL COMMENT '成交时间',
@@ -320,14 +319,40 @@ CREATE TABLE `t_trade` (
   `exec_cost` decimal(30,10) DEFAULT NULL COMMENT '成交价值',
   `commission` decimal(30,10) DEFAULT '0.0000000000' COMMENT '佣金费率',
   `remark` varchar(50) DEFAULT NULL COMMENT '备注',
-  `kafka_partition` bigint(20) NOT NULL,
+  `kafka_partition` int(11) NOT NULL,
   `kafka_offset` bigint(20) NOT NULL,
-  `loopIndex` bigint(20) NOT NULL DEFAULT '0',
+  `loopIndex` bigint(20) NOT NULL DEFAULT '0' COMMENT '排序新增字段',
   `insert_time` bigint(20) NOT NULL,
   PRIMARY KEY (`order_id`,`trade_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='成交';
 
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+DROP TABLE IF EXISTS `t_verify_account`;
+
+CREATE TABLE `t_verify_account` (
+  `account_id` bigint(20) NOT NULL COMMENT '资金账号',
+  `client_id` varchar(30) NOT NULL COMMENT '用户代码',
+  `source_type` int(1) NOT NULL COMMENT '来源 1:结算 2:流水汇总',
+  `settlement_id` bigint(20) NOT NULL COMMENT '结算ID',
+  `currency` varchar(10) NOT NULL COMMENT '币种',
+  `prev_wallet_balance` decimal(30,10) NOT NULL COMMENT '上日钱包余额',
+  `wallet_balance` decimal(30,10) NOT NULL COMMENT '钱包余额',
+  `realised_gross_pnl` decimal(30,10) NOT NULL COMMENT '平仓盈亏',
+  `frozen_available` decimal(30,10) NOT NULL COMMENT '冻结资金',
+  `realised_pnl` decimal(30,10) NOT NULL COMMENT '已实现盈亏',
+  `withdraw` decimal(30,10) DEFAULT NULL COMMENT '出金',
+  `deposit` decimal(30,10) DEFAULT NULL COMMENT '入金',
+  `fee` decimal(30,10) DEFAULT NULL COMMENT '成交手续费',
+  `capital_fee` decimal(30,10) DEFAULT NULL COMMENT '资金费用',
+  `withdraw_fee` decimal(30,10) DEFAULT NULL COMMENT '提现手续费(比特币网络费用)',
+  `transfer` decimal(30,10) DEFAULT NULL COMMENT '今日转账',
+  `transfer_account` decimal(30,10) DEFAULT NULL COMMENT '（同用户资金账号间）划转',
+  `transfer_client` decimal(30,10) DEFAULT NULL COMMENT '（不同用户间）今日转账',
+  `affiliate_payout` decimal(30,10) DEFAULT NULL COMMENT '返佣',
+  `largess` decimal(30,10) DEFAULT NULL COMMENT '赠币',
+  `compensation` decimal(30,10) DEFAULT NULL COMMENT '补偿',
+  `insert_time` bigint(20) NOT NULL COMMENT '插入时间',
+  PRIMARY KEY (`account_id`,`settlement_id`,`source_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
