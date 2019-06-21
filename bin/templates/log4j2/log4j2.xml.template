@@ -4,7 +4,7 @@
         <property name="application">${LOG_FILE_NAME}</property>
         <property name="file_duration">\${sys:LOG_FILE_DURATION:-\${env:LOG_FILE_DURATION:-10d}}</property>
         <property name="file_size">\${sys:LOG_FILE_SIZE:-\${env:LOG_FILE_SIZE:-500M}}</property>
-        <property name="file_count">\${sys:LOG_FILE_COUNT:-\${env:LOG_FILE_COUNT:-10}}</property>Duration
+        <property name="file_count">\${sys:LOG_FILE_COUNT:-\${env:LOG_FILE_COUNT:-100}}</property>Duration
         <property name="file_location">\${sys:LOG_FILE_LOCATION:-\${env:LOG_FILE_LOCATION:-logs}}</property>
         <property name="pattern">%d{yyyy-MM-dd HH:mm:ss }%-5level %c{1.} %L %M - %msg%xEx%n</property>
         <property name="file">\${file_location}/\${application}.log</property>
@@ -15,7 +15,7 @@
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss }%-5level %c{1.} %L %M - %msg%xEx%n" />
         </Console>
-        
+
         <RollingFile name="RollingFile" fileName="\${file}" filePattern="\${rolling-file}" append="true">
             <PatternLayout pattern="\${pattern}"/>
 
@@ -32,7 +32,7 @@
                 </Delete>
             </DefaultRolloverStrategy>
         </RollingFile>
-        
+
         <Sentry name="Sentry" />
     </appenders>
 
@@ -42,7 +42,7 @@
             <appender-ref ref="RollingFile" level="\${env:LOG_LEVEL_ROOT}"/>
 `check_env_true SENTRY_ENABLE && cat<<EOF
             <!-- Note that the Sentry logging threshold is overridden to the WARN level -->
-            <appender-ref ref="Sentry" level="WARN" />
+<appender-ref ref="Sentry" level="WARN" />
 EOF`
         </root>
     </loggers>

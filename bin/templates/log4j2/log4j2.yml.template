@@ -43,7 +43,7 @@ Configuration:
         SizeBasedTriggeringPolicy:
           size: "500 MB"
       DefaultRolloverStrategy:     # 文件最多100个
-        max: 10
+        max: 100
     Sentry:
       name: sentry
 
