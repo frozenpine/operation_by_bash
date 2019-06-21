@@ -148,4 +148,5 @@ docker run -d \
         --com.js.trade.data-exchange.command.producer.bootstrap.servers="${KAFKA_SERVERS}" \
         --com.js.trade.data-exchange.monitor.consumer.bootstrap.servers="${KAFKA_SERVERS}" \
         --verifyCode=false \
+        --nc.verify.use=false \
         &>/dev/null
