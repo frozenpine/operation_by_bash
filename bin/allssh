@@ -55,27 +55,27 @@ if [[ $# -lt 1 ]]; then
     exit 1
 fi
 
+CMD_LINE=($*)
+
 if [[ $1 == "sudo" ]]; then
-    COMMAND=$2
-else
-    COMMAND=$1
+    shift
 fi
 
 while read CMD; do
-    if [[ ${COMMAND} == ${CMD} || ${COMMAND} =~ ^${CMD}( )+ ]]; then
+    if [[ "$*" =~ ^${CMD} ]]; then
         echo -e "${COLOR[red]}Command \`$1\` not supported by this script.${COLOR[nc]}" >&2
-        error skip $*
+        error skip ${CMD_LINE[@]}
         exit 1
     fi
 done <"${CONF_BASE}/.ignore"
 
 while read CMD; do
-    if [[ ${COMMAND} == ${CMD} || ${COMMAND} =~ ^${CMD}( )+ ]]; then
-        confirm "\`${COLOR[yellow]}${COMMAND}${COLOR[nc]}\` command is ${COLOR[red]}dangeours${COLOR[nc]} to remote site, confirm?"
+    if [[ "$*" =~ ^${CMD} ]]; then
+        confirm "\`${COLOR[yellow]}$1${COLOR[nc]}\` command is ${COLOR[red]}dangeours${COLOR[nc]} to remote site, confirm?"
         if [[ $? -eq 0 ]]; then
             break
         else
-            error skip $*
+            error skip ${CMD_LINE[@]}
             exit 1
         fi
     fi
@@ -87,5 +87,5 @@ host_list | while read HOST_CONF; do
         warning "Invalid config in group ${GROUP_NAME}: $HOST_CONF"
         continue
     fi
-    remote_exec $*
+    remote_exec ${CMD_LINE[@]}
 done
