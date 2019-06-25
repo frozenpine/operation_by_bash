@@ -152,6 +152,7 @@ function confirm() {
     local _DELAY
     local _ANS
 
+    local OPTIND FLAG
     while getopts :t: FLAG; do
         case $FLAG in
             t)

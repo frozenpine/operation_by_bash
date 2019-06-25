@@ -69,9 +69,12 @@ while read CMD; do
     fi
 done <"${CONF_BASE}/.ignore"
 
-while read CMD; do
+
+
+for CMD in `cat "${CONF_BASE}/.dangerous"`; do
     if [[ "$*" =~ ^${CMD} ]]; then
         confirm "\`${COLOR[yellow]}$1${COLOR[nc]}\` command is ${COLOR[red]}dangeours${COLOR[nc]} to remote site, confirm?"
+        
         if [[ $? -eq 0 ]]; then
             break
         else
@@ -79,7 +82,7 @@ while read CMD; do
             exit 1
         fi
     fi
-done <"${CONF_BASE}/.dangerous"
+done
 
 host_list | while read HOST_CONF; do
     parse_ssh ${HOST_CONF}
