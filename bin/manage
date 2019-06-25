@@ -109,9 +109,9 @@ function _sync_instrument() {
         exit 1
     fi
 
-    echo "${RESULT}" | jq -c '.result | .[] | select(.instrumentStatus == "0")'
+    echo "${RESULT}" | jq -c '.result.result | .[] | select(.instrumentStatus == "0")'
     
-    if [[ `echo "${RESULT}" | jq -c '.result | .[] | select(.instrumentStatus == "0") | length'` -lt 1 ]]; then
+    if [[ `echo "${RESULT}" | jq -c '.result.result | .[] | select(.instrumentStatus == "0") | length'` -lt 1 ]]; then
         info "No unsynced instruments."
         exit 0
     fi
@@ -119,7 +119,7 @@ function _sync_instrument() {
     info "Syncing Instruments..."
     # _request "/gateway/api" '{"interfaceName":"com.js.digital.product.service.InstrumentService","interfaceVersion":"1.0.0","method":"beListedInstrument","params":[{"instrumentStatus":"0"}]}'
     _request "/digital/instrument/beListedInstrument" '{"instrumentStatus":"0"}'
-    if [[ $? -eq 0 && `echo ${RESULT} | jq .result` -eq 0 ]]; then
+    if [[ $? -eq 0 && `echo ${RESULT} | jq .result.result` -eq 0 ]]; then
         info "Syncing instrument successed."
     else
         error "Syncing instrument failed."
@@ -134,7 +134,7 @@ function _sync_instrument() {
         error ${RESULT}
         exit 1
     fi
-    echo "${RESULT}" | jq -c '.result | .[] | select(.instrumentStatus == "1")'
+    echo "${RESULT}" | jq -c '.result.result | .[] | select(.instrumentStatus == "1")'
 }
 
 function _sync_fee() {
