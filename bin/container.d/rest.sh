@@ -78,7 +78,7 @@ if [[ $? -ne 0 ]]; then
             --shell /sbin/nologin \
             ${USER} || exit 1
 fi
-make_dir -b "${CONTAINER_BASE}" data logs || exit 1
+make_dir -b "${CONTAINER_BASE}" data log logs || exit 1
 ${SUDO} chown -R ${USER}:${USER} "${CONTAINER_BASE}"
 
 docker run -d \
@@ -88,7 +88,8 @@ docker run -d \
     --user `grep ${USER} /etc/passwd | cut -d':' -f3` \
     -e SENTRY_DSN="${SENTRY_DSN}" \
     -e LOG_LEVEL_ROOT=${LOG_LEVEL:=info} \
-    -v "${CONTAINER_BASE}/log":/${NAME}/logs \
+    -v "${CONTAINER_BASE}/log":/${NAME}/log \
+    -v "${CONTAINER_BASE}/logs":/${NAME}/logs \
     -v "${CONTAINER_BASE}/data":/${NAME}/data \
     registry:5000/digital/${NAME}:${VERSION} \
         ${JVM_OPTS} \
