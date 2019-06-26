@@ -14,7 +14,7 @@ SENTRY_DSN=`get_sentry_dsn ${NAME}`
 
 DB_NAME="sso"
 
-SERVICE_LIST="registry zookeeper kafka mysql redis digital"
+SERVICE_LIST="registry zookeeper kafka mysql redis digital kafka"
 for SERVICE in ${SERVICE_LIST}; do
     source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
         echo "service list file missing: ${SERVICE}.sh" >&2
@@ -68,6 +68,12 @@ for SVR_NAME in ${!ZOOKEEPER_LIST[@]}; do
 done
 ZK_SERVERS=${ZK_SERVERS:1}
 
+KAFKA_SERVERS=
+for SVR_NAME in ${!KAFKA_LIST[@]}; do
+    KAFKA_SERVERS="${KAFKA_SERVERS},${SVR_NAME}:${KAFKA_PORT}"
+done
+KAFKA_SERVERS=${KAFKA_SERVERS:1}
+
 SELF_IP=`ip address show ${BIND_INT:=eth0} | grep inet | grep -v inet6 | awk '{print $2}' | cut -d'/' -f1`
 
 CONTAINER_BASE="${DATA_BASE:=/opt}/${NAME}"
@@ -105,4 +111,6 @@ docker run -d \
         --dubbo.registry.file="/${NAME}/data/dubbo/dubbo-registry.properties" \
         --dubbo.consumer.timeout=300000 \
         --dubbo.application.qos.port=33333 \
+        --com.js.trade.operation.consume-properties.bootstrap.servers=${KAFKA_SERVERS} \
+        --com.js.trade.operation.produce-properties.bootstrap.servers=${KAFKA_SERVERS} \
         &>/dev/null
