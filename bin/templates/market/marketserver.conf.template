@@ -32,11 +32,11 @@ monitortoken=123
 KafkaGroupID=marketserver${ID}
 KafkaBrokers=${KFK_SERVERS}
 # 行情全量快照kafka topic名称
-KafkaTopicSnapshot=${KFK_CHECKPOINT_TOPIC:=MATCH-JSON-SS}
+KafkaTopicSnapshot=${KFK_CHECKPOINT_TOPIC:=MATCH-JSN-CHK}
 # 行情增量、基础行情、合约kafka topic名称
-KafkaTopicIncrement=${KFK_INCREMENT_TOPIC:=MATCH-JSON-SS-INCREMENT}
+KafkaTopicIncrement=${KFK_INCREMENT_TOPIC:=MATCH-JSN-SNP}
 # order、trade、position、margin等信息kafka topic名称
-KafkaTopicOther=${KFK_NOTIFY_TOPIC:=NOTIFY-CLIENT}
+KafkaTopicOther=${KFK_NOTIFY_TOPIC:=NOTIFY}
 # instrument topic名称
 KafkaTopicInstrument=${KFK_INSTRUMENT_TOPIC:=INSTRUMENT}
 
