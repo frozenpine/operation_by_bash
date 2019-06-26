@@ -16,6 +16,7 @@ HTTP_PUBLISH_BASE="${DATA_BASE:=/opt}/publish"
 
 declare -A JAVA_MODULE_DEFINE
 JAVA_MODULE_DEFINE["digital"]="digital-rest digital-serviceimpl"
+JAVA_MODULE_DEFINE["management"]="management-rest management-service"
 JAVA_MODULE_DEFINE["trade-system"]="trade-clear trade-sink-db trade-sink-es trade-match trade-order trade-query trade-kline trade-back-order"
 JAVA_MODULE_DEFINE["service-management"]="exchange-index-server scheduler-server sms-mail-server trade-base"
 
@@ -23,8 +24,8 @@ declare -A JAVA_MODULE_DEPLOY
 JAVA_MODULE_DEPLOY["trade-system"]="trade-data-exchange trade-core"
 
 declare -A PUB_MAPPER
-PUB_MAPPER["digital-rest"]=digital-rest
-PUB_MAPPER["digital-serviceimpl"]=digital-serviceimpl
+PUB_MAPPER["management-rest"]=digital-rest
+PUB_MAPPER["management-service"]=digital-serviceimpl
 PUB_MAPPER["trade-sink-db"]=trade-tmdb
 PUB_MAPPER["trade-sink-es"]=trade-tmes
 PUB_MAPPER["trade-clear"]=trade-clear
