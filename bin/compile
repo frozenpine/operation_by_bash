@@ -338,6 +338,11 @@ EOF
 
             local _log4j2_ext
             local _log4j2_file=`ls ${module}/src/main/resources/log4j2* 2>/dev/null`
+            
+            if [[ ${_project_base_name} == "management" ]]; then
+                _log4j2_file="${module}/src/main/resources/log4j2.yml"
+            fi
+            
             if [[ x"${_log4j2_file}" != "x" ]]; then
                 _log4j2_ext=`echo ${_log4j2_file} | cut -d'.' -f2`
             else
