@@ -87,7 +87,7 @@ if [[ $? -ne 0 ]]; then
             --shell /sbin/nologin \
             ${USER} || exit 1
 fi
-make_dir -b "${CONTAINER_BASE}" data log || exit 1
+make_dir -b "${CONTAINER_BASE}" data logs || exit 1
 ${SUDO} chown -R ${USER}:${USER} "${CONTAINER_BASE}"
 
 docker run -d \
