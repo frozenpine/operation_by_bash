@@ -52,6 +52,19 @@ filebeat.inputs:
     pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}'
     negate: true
     match: after
+  processors:
+    - grok:
+        field: message
+        patterns:
+        - %{TIMESTAMP_ISO8601:log.time} %{WORD:log.level} %{GREEDYDATA:class_name} %{POSINT:line_no} %{WORD:func_name} - %{GREEDYDATA:log_message}
+        ignore_missing: true
+    - date:
+        field: log.time
+        target_field: @timestamp
+        formats:
+        - yyyy-mm-dd H:m:s
+        timezone: "{{event.timezone}}"
+        ignore_failure: true
 
 output.elasticsearch:
   hosts: [${ELASTIC_SERVERS}]
