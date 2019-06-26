@@ -336,34 +336,37 @@ EOF
                 ${SUDO} sed -i '/<dependencies>/ a \        <dependency>\n            <groupId>io.sentry</groupId>\n            <artifactId>sentry-log4j2</artifactId>\n            <version>1.7.16</version>\n        </dependency>' "${_pom_file}"
             fi
 
-            local _log4j2_ext
-            local _log4j2_file=`ls ${module}/src/main/resources/log4j2* 2>/dev/null`
+            # local _log4j2_ext
+            # local _log4j2_file=`ls ${module}/src/main/resources/log4j2* 2>/dev/null`
             
-            if [[ ${_project_base_name} == "management" ]]; then
-                _log4j2_file="${module}/src/main/resources/log4j2.yml"
-            fi
+            # if [[ ${_project_base_name} == "management" ]]; then
+            #     _log4j2_file="${module}/src/main/resources/log4j2.yml"
+            # fi
             
-            if [[ x"${_log4j2_file}" != "x" ]]; then
-                _log4j2_ext=`echo ${_log4j2_file} | cut -d'.' -f2`
-            else
-                _log4j2_ext=xml
-                _log4j2_file="${module}/src/main/resources/log4j2.xml"
-            fi
+            # if [[ x"${_log4j2_file}" != "x" ]]; then
+            #     _log4j2_ext=`echo ${_log4j2_file} | cut -d'.' -f2`
+            # else
+            #     _log4j2_ext=xml
+            #     _log4j2_file="${module}/src/main/resources/log4j2.xml"
+            # fi
 
-            case ${_log4j2_ext} in
-                yml)
-                    LOG_FILE_NAME=${module}
-                    template "${TEMPLATE_BASE}/log4j2/log4j2.yml.template" "${_log4j2_file}"
-                ;;
-                xml)
-                    LOG_FILE_NAME=${module}
-                    template "${TEMPLATE_BASE}/log4j2/log4j2.xml.template" "${_log4j2_file}"
-                ;;
-                *)
-                    error "invalid log4j2 config file found: ${_log4j2_file}"
-                    exit 1
-                ;;
-            esac
+            # case ${_log4j2_ext} in
+            #     yml)
+            #         LOG_FILE_NAME=${module}
+            #         template "${TEMPLATE_BASE}/log4j2/log4j2.yml.template" "${_log4j2_file}"
+            #     ;;
+            #     xml)
+            #         LOG_FILE_NAME=${module}
+            #         template "${TEMPLATE_BASE}/log4j2/log4j2.xml.template" "${_log4j2_file}"
+            #     ;;
+            #     *)
+            #         error "invalid log4j2 config file found: ${_log4j2_file}"
+            #         exit 1
+            #     ;;
+            # esac
+
+            LOG_FILE_NAME=${module}
+            template "${TEMPLATE_BASE}/log4j2/log4j2.xml.template" "${module}/src/main/resources/log4j2.xml"
 
             find ${module}/src/main/resources -type f -name "*.properties" | while read FILE; do
                 ${SUDO} sed -i '/spring.redis.password/ d; /jedis.pool.password/ d; /redis.password/ d;' ${FILE}

@@ -97,7 +97,7 @@ docker run -d \
     --user `grep ${USER} /etc/passwd | cut -d':' -f3` \
     -e SENTRY_DSN="${SENTRY_DSN}" \
     -e LOG_LEVEL_ROOT=${LOG_LEVEL:=info} \
-    -v "${CONTAINER_BASE}/log":/${NAME}/log \
+    -v "${CONTAINER_BASE}/log":/${NAME}/logs \
     -v "${CONTAINER_BASE}/data":/${NAME}/data \
     registry:5000/digital/${NAME}:${VERSION} \
         ${JVM_OPTS} \

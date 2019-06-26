@@ -72,10 +72,10 @@ function _build() {
                 template "${BUILD_DIR}/dockerfile.template" "${TEMP_DOCKERFILE}"
                 $SUDO mv "${TEMP_DOCKERFILE}" ./dockerfile
 
-                if [[ -d "../${MODULE}_conf" ]]; then
-                    ${SUDO} rm -rf ./config
-                    ${SUDO} cp -r "../${MODULE}_conf" ./config
-                fi
+                # if [[ -d "../${MODULE}_conf" ]]; then
+                #     ${SUDO} rm -rf ./config
+                #     ${SUDO} cp -r "../${MODULE}_conf" ./config
+                # fi
 
                 ${SUDO} rm -f *.jar &>/dev/null
                 ${SUDO} cp "${BUILD_DIR}/${FILE_NAME}" ./ &>/dev/null
