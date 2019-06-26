@@ -13,7 +13,7 @@ Configuration:
     - name: log.level.console
       value: info
     - name: log.path
-      value: log
+      value: logs
     - name: project.name
       value: ${LOG_FILE_NAME}
     - name: log.pattern
