@@ -875,43 +875,42 @@ CREATE TABLE `t_trade_fee_set`
 
 DROP TABLE IF EXISTS `t_trade_user`;
 
-CREATE TABLE `t_trade_user`
-(
-    `id`                   bigint(20)  NOT NULL AUTO_INCREMENT COMMENT 'ID自增长序列',
-    `application_id`       varchar(20)     DEFAULT NULL COMMENT '注册申请号',
-    `user_id`              varchar(20)     DEFAULT NULL COMMENT '用户代码',
-    `user_name`            varchar(50)     DEFAULT NULL COMMENT '客户名称',
-    `nick_name`            varchar(50)     DEFAULT NULL COMMENT '客户昵称',
-    `country_code`         int(10)         DEFAULT NULL COMMENT '国家代码',
-    `email`                varchar(50)     DEFAULT NULL COMMENT '电子邮件',
-    `password`             varchar(50) NOT NULL COMMENT '密码',
-    `invite_code`          varchar(20)     DEFAULT NULL COMMENT '客户邀请码',
-    `account_password`     varchar(50)     DEFAULT NULL COMMENT '资金密码',
-    `registered_rake_back` decimal(30, 10) DEFAULT NULL COMMENT '注册返币',
-    `identification_type`  varchar(1)      DEFAULT NULL COMMENT '证件类型',
-    `identification_id`    varchar(50)     DEFAULT NULL COMMENT '证件代码',
-    `apply_status`         varchar(3)      DEFAULT NULL COMMENT '客户状态0 注册,1邮箱验证已打开, 2 证件审核已提交, 3 证件审核已驳回, 4证件审核已通过,5两步验证已通过，6资金密码已设置 ,7 正常 8 冻结 9 上场中 10 已上场',
-    `level`                varchar(20)     DEFAULT NULL COMMENT '客户分类等级',
-    `google_status`        varchar(1)      DEFAULT NULL COMMENT 'google验证状态(0:关闭，1：打开)',
-    `secret`               varchar(50)     DEFAULT NULL COMMENT 'google验证码',
-    `is_active`            varchar(1)      DEFAULT '1' COMMENT '账号状态  0:冻结；1:正常',
-    `telephone`            varchar(30)     DEFAULT NULL COMMENT '联系电话',
-    `id_back_photo`        varchar(500)    DEFAULT NULL COMMENT '证件反面照片',
-    `id_front_photo`       varchar(500)    DEFAULT NULL COMMENT '证件正面照片',
-    `self_card_photo`      varchar(500)    DEFAULT NULL COMMENT '手持证件照片',
-    `client_channel`       varchar(1)      DEFAULT NULL COMMENT '开户渠道',
-    `register_time`        bigint(20)      DEFAULT NULL COMMENT '注册时间',
-    `recheck_time`         bigint(20)      DEFAULT NULL COMMENT '复核时间',
-    `rechecker_id`         varchar(100)    DEFAULT NULL COMMENT '复核员',
-    `reject_remark`        varchar(255)    DEFAULT NULL COMMENT '驳回备注',
-    `remark`               varchar(255)    DEFAULT NULL COMMENT '备注',
-    `user_type`            varchar(2)      DEFAULT NULL COMMENT '用户类别：1,普通用户 2,爆仓用户 3, 手续费用户 4 运营账号',
-    `old_id`               bigint(20)      DEFAULT NULL COMMENT '原Id',
-    `notice_status`        varchar(3)      DEFAULT NULL COMMENT '通知交易状态 0 指令已生效 1 新增指令发送中 2 修改指令发送中 3 删除指令发送中 4 交易返回失败回退原始值',
-    PRIMARY KEY (`id`)
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 120
-  DEFAULT CHARSET = utf8 COMMENT ='用户信息';
+CREATE TABLE `t_trade_user` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID自增长序列',
+  `application_id` varchar(20) DEFAULT NULL COMMENT '注册申请号',
+  `user_id` varchar(20) DEFAULT NULL COMMENT '用户代码',
+  `user_name` varchar(50) DEFAULT NULL COMMENT '客户名称',
+  `nick_name` varchar(50) DEFAULT NULL COMMENT '客户昵称',
+  `country_code` int(10) DEFAULT NULL COMMENT '国家代码',
+  `email` varchar(50) DEFAULT NULL COMMENT '电子邮件',
+  `password` varchar(50) DEFAULT NULL COMMENT '密码',
+  `invite_code` varchar(20) DEFAULT NULL COMMENT '客户邀请码',
+  `account_password` varchar(50) DEFAULT '' COMMENT '资金密码',
+  `registered_rake_back` decimal(30,10) DEFAULT NULL COMMENT '注册返币',
+  `identification_type` varchar(1) DEFAULT NULL COMMENT '证件类型',
+  `identification_id` varchar(50) DEFAULT NULL COMMENT '证件代码',
+  `apply_status` varchar(3) DEFAULT NULL COMMENT '客户状态0 注册,1邮箱验证已打开, 2 证件审核已提交, 3 证件审核已驳回, 4证件审核已通过,5两步验证已通过，6资金密码已设置 ,7 正常 8 冻结 9 上场中 10 已上场',
+  `level` varchar(20) DEFAULT NULL COMMENT '客户分类等级',
+  `google_status` varchar(1) DEFAULT '0' COMMENT 'google验证状态（0：未绑定；1：绑定）',
+  `secret` varchar(50) DEFAULT NULL COMMENT 'google验证码',
+  `is_active` varchar(1) DEFAULT '1' COMMENT '账号状态  0:冻结；1:正常',
+  `telephone` varchar(30) DEFAULT NULL COMMENT '联系电话',
+  `id_back_photo` varchar(500) DEFAULT NULL COMMENT '证件反面照片',
+  `id_front_photo` varchar(500) DEFAULT NULL COMMENT '证件正面照片',
+  `self_card_photo` varchar(500) DEFAULT NULL COMMENT '手持证件照片',
+  `client_channel` varchar(1) DEFAULT NULL COMMENT '开户渠道',
+  `register_time` bigint(20) DEFAULT NULL COMMENT '注册时间',
+  `recheck_time` bigint(20) DEFAULT NULL COMMENT '复核时间',
+  `rechecker_id` varchar(100) DEFAULT NULL COMMENT '复核员',
+  `reject_remark` varchar(255) DEFAULT NULL COMMENT '驳回备注',
+  `remark` varchar(255) DEFAULT NULL COMMENT '备注',
+  `user_type` varchar(2) DEFAULT NULL COMMENT '用户类别：1,普通用户 2,爆仓用户 3, 手续费用户 4 运营账号',
+  `old_id` bigint(20) DEFAULT NULL COMMENT '原Id',
+  `notice_status` varchar(3) DEFAULT NULL COMMENT '通知交易状态 0 指令已生效 1 新增指令发送中 2 修改指令发送中 3 删除指令发送中 4 交易返回失败回退原始值',
+  `google_verify_status` varchar(255) NOT NULL DEFAULT '0' COMMENT 'google绑定状态，0：未绑定；1：绑定',
+  `register_type` int(255) NOT NULL DEFAULT '0' COMMENT '注册时使用的信息，0：手机；1：邮箱',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COMMENT='用户信息';
 
 /*Table structure for table `t_trade_user_oper_log` */
 
@@ -1002,7 +1001,7 @@ CREATE TABLE `t_underlying_prices` (
   `crash_times` int(10) unsigned DEFAULT '0' COMMENT '中断次数',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_t_underlying_prices` (`underlying_id`,`exch_id`,`product_id`,`price_time`)
-) ENGINE=InnoDB AUTO_INCREMENT=497684 DEFAULT CHARSET=utf8 COMMENT='标的依赖价格';
+) ENGINE=InnoDB AUTO_INCREMENT=497684 DEFAULT CHARSET=utf8 COMMENT='标的依赖价格';/
 
 /*Table structure for table `t_wallet_transaction_history` */
 
