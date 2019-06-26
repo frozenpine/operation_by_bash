@@ -1,6 +1,6 @@
 /*
 SQLyog Ultimate v11.24 (32 bit)
-MySQL - 5.7.25 : Database - digital
+MySQL - 5.7.25 : Database - management
 *********************************************************************
 */
 
@@ -778,7 +778,7 @@ CREATE TABLE `t_trade_user` (
   `account_password` varchar(50) DEFAULT NULL COMMENT '资金密码',
   `registered_rake_back` decimal(30,10) DEFAULT NULL COMMENT '注册返币',
   `identification_type` varchar(1) DEFAULT NULL COMMENT '证件类型',
-  `identification_id` varchar(50) DEFAULT NULL COMMENT '证件代码',
+  `identification_id` varchar(50) /DEFAULT NULL COMMENT '证件代码',
   `apply_status` varchar(3) DEFAULT NULL COMMENT '客户状态0 注册,1邮箱验证已打开, 2 证件审核已提交, 3 证件审核已驳回, 4证件审核已通过,5两步验证已通过，6资金密码已设置 ,7 正常 8 冻结 9 上场中 10 已上场',
   `level` varchar(20) DEFAULT NULL COMMENT '客户分类等级',
   `google_status` varchar(1) DEFAULT NULL COMMENT 'google验证状态(0:关闭，1：打开)',
@@ -890,6 +890,7 @@ CREATE TABLE `t_wallet_transaction_history` (
   `currency` varchar(10) DEFAULT NULL COMMENT '币种代码',
   `amount` decimal(30,0) NOT NULL COMMENT '流水金额',
   `withdraw_fee` decimal(30,0) DEFAULT NULL COMMENT '提现费用',
+  `frozen_id` varchar(50) DEFAULT NULL COMMENT '资金冻结id',
   `address` varchar(100) DEFAULT NULL COMMENT '地址',
   `transaction_type` varchar(3) DEFAULT NULL COMMENT '流水类型 1 充值 2提现',
   `transaction_status` varchar(3) DEFAULT NULL COMMENT '流水状态  0 提现申请提交,1 提现申请已拒绝 , 2 提现申请已通过     3充值提现钱包待确认 , 4 充值提现钱包确认已完成    5充值通知交易成功  6充值通知交易失败  7 提现交易返回失败',
