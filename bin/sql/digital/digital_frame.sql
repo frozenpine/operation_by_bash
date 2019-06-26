@@ -778,7 +778,7 @@ CREATE TABLE `t_trade_user` (
   `account_password` varchar(50) DEFAULT NULL COMMENT '资金密码',
   `registered_rake_back` decimal(30,10) DEFAULT NULL COMMENT '注册返币',
   `identification_type` varchar(1) DEFAULT NULL COMMENT '证件类型',
-  `identification_id` varchar(50) /DEFAULT NULL COMMENT '证件代码',
+  `identification_id` varchar(50) DEFAULT NULL COMMENT '证件代码',
   `apply_status` varchar(3) DEFAULT NULL COMMENT '客户状态0 注册,1邮箱验证已打开, 2 证件审核已提交, 3 证件审核已驳回, 4证件审核已通过,5两步验证已通过，6资金密码已设置 ,7 正常 8 冻结 9 上场中 10 已上场',
   `level` varchar(20) DEFAULT NULL COMMENT '客户分类等级',
   `google_status` varchar(1) DEFAULT NULL COMMENT 'google验证状态(0:关闭，1：打开)',
