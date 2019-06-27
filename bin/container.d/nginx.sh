@@ -1,5 +1,5 @@
 VERSION="1.15.8"
-NAME=openresty
+NAME=nginx
 USER=nginx
 
 SERVICE_LIST="registry"
