@@ -546,8 +546,6 @@ if [[ $# -lt 1 ]]; then
     exit 1
 fi
 
-_check_environment
-
 if [[ $* =~ all ]]; then
     PROJECTS=$(find "${COMPILE_BASE}" -maxdepth 1 -type d -not -name `basename "${COMPILE_BASE}"` -exec basename {} \; | xargs)
 else

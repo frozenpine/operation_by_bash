@@ -6,7 +6,7 @@
         <property name="file_size">\${sys:LOG_FILE_SIZE:-\${env:LOG_FILE_SIZE:-500M}}</property>
         <property name="file_count">\${sys:LOG_FILE_COUNT:-\${env:LOG_FILE_COUNT:-100}}</property>Duration
         <property name="file_location">\${sys:LOG_FILE_LOCATION:-\${env:LOG_FILE_LOCATION:-logs}}</property>
-        <property name="pattern">%d{yyyy-MM-dd HH:mm:ss }%-5level %c{1.} %L %M - %msg%xEx%n</property>
+        <property name="pattern">%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %c{1.} %L %M - %msg%xEx%n</property>
         <property name="file">\${file_location}/\${application}.log</property>
         <property name="rolling-file">\${file_location}/%d{yyyy-MM-dd}/\${application}-%d{yyyy-MM-dd}-%i.log.gz</property>
         <property name="file-size">\${file_size}</property>
