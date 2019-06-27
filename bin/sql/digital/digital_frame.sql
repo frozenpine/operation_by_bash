@@ -1001,7 +1001,7 @@ CREATE TABLE `t_underlying_prices` (
   `crash_times` int(10) unsigned DEFAULT '0' COMMENT '中断次数',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_t_underlying_prices` (`underlying_id`,`exch_id`,`product_id`,`price_time`)
-) ENGINE=InnoDB AUTO_INCREMENT=497684 DEFAULT CHARSET=utf8 COMMENT='标的依赖价格';/
+) ENGINE=InnoDB AUTO_INCREMENT=497684 DEFAULT CHARSET=utf8 COMMENT='标的依赖价格';
 
 /*Table structure for table `t_wallet_transaction_history` */
 
