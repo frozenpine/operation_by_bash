@@ -13,9 +13,9 @@ MySQL - 5.7.25 : Database - management
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS = @@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS = 0 */;
 /*!40101 SET @OLD_SQL_MODE = @@SQL_MODE, SQL_MODE = 'NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES = @@SQL_NOTES, SQL_NOTES = 0 */;
-CREATE DATABASE /*!32312 IF NOT EXISTS */`digital` /*!40100 DEFAULT CHARACTER SET utf8 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS */`management` /*!40100 DEFAULT CHARACTER SET utf8 */;
 
-USE `digital`;
+USE `management`;
 
 /*Table structure for table `JOB_EXECUTION_LOG` */
 
@@ -85,7 +85,6 @@ CREATE TABLE `t_account_capital`
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_t_account_capital` (`account_id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 69
   DEFAULT CHARSET = utf8 COMMENT ='账户资金';
 
 /*Table structure for table `t_api_key` */
@@ -107,7 +106,6 @@ CREATE TABLE `t_api_key`
     `operator_id`  varchar(20)  DEFAULT NULL COMMENT '操作员',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 98
   DEFAULT CHARSET = utf8 COMMENT ='API秘钥';
 
 /*Table structure for table `t_black_list` */
@@ -126,7 +124,6 @@ CREATE TABLE `t_black_list`
     `operator_id`         varchar(20) DEFAULT NULL COMMENT '操作员',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 15
   DEFAULT CHARSET = utf8 COMMENT ='开户黑名单';
 
 /*Table structure for table `t_clear_fund_rate` */
@@ -148,7 +145,6 @@ CREATE TABLE `t_clear_fund_rate`
     `recheck_oper_time` bigint(20)      DEFAULT NULL COMMENT '复核时间',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 174
   DEFAULT CHARSET = utf8 COMMENT ='资金费率';
 
 /*Table structure for table `t_clear_premium_price` */
@@ -172,7 +168,6 @@ CREATE TABLE `t_clear_premium_price`
     `recheck_oper_time` bigint(20)      DEFAULT NULL COMMENT '复核时间',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 5185
   DEFAULT CHARSET = utf8 COMMENT ='清算汇率和溢价指数';
 
 /*Table structure for table `t_currency` */
@@ -197,7 +192,6 @@ CREATE TABLE `t_currency`
     PRIMARY KEY (`id`),
     UNIQUE KEY `pk_t_currency` (`currency`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 2
   DEFAULT CHARSET = utf8 COMMENT ='币种';
 
 /*Table structure for table `t_deliv_fee_set` */
@@ -219,7 +213,6 @@ CREATE TABLE `t_deliv_fee_set`
     `notice_status`  varchar(3)  DEFAULT NULL COMMENT '通知交易状态 0 指令已生效 1 新增指令发送中 2 修改指令发送中 3删除指令发送中 4 交易返回失败回退原始值',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 9
   DEFAULT CHARSET = utf8 COMMENT ='交割手续费';
 
 /*Table structure for table `t_deliv_series` */
@@ -250,7 +243,6 @@ CREATE TABLE `t_dict`
     `dict_name_en` varchar(50)          DEFAULT NULL COMMENT '英文描述',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 345
   DEFAULT CHARSET = utf8 COMMENT ='数据字典';
 
 /*Table structure for table `t_garbage_user` */
@@ -268,7 +260,6 @@ CREATE TABLE `t_garbage_user`
     `operate_time`  BIGINT(20)  DEFAULT NULL COMMENT '操作时间',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 30
   DEFAULT CHARSET = utf8 COMMENT ='垃圾用户';
 
 /*Table structure for table `t_identification_type` */
@@ -284,7 +275,6 @@ CREATE TABLE `t_identification_type`
     `operator_id`         varchar(20) DEFAULT NULL COMMENT '操作员',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 4
   DEFAULT CHARSET = utf8 COMMENT ='证件类型管理';
 
 /*Table structure for table `t_index_price` */
@@ -302,7 +292,6 @@ CREATE TABLE `t_index_price`
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_t_index_price` (`underlying_id`, `price_time`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 166417
   DEFAULT CHARSET = utf8 COMMENT ='标的指数价格';
 
 /*Table structure for table `t_instrument` */
@@ -367,7 +356,6 @@ CREATE TABLE `t_instrument`
     PRIMARY KEY (`id`),
     UNIQUE KEY `ak_uk_t_instrument` (`instrumentid`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 5
   DEFAULT CHARSET = utf8 COMMENT ='合约';
 
 /*Table structure for table `t_invitation_detail` */
@@ -383,7 +371,6 @@ CREATE TABLE `t_invitation_detail`
     `reward_date`      bigint(20)  DEFAULT NULL COMMENT '邀请日期',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 312
   DEFAULT CHARSET = utf8 COMMENT ='邀请明细';
 
 /*Table structure for table `t_invitation_rake_back_action` */
@@ -404,7 +391,6 @@ CREATE TABLE `t_invitation_rake_back_action`
     `currency`         varchar(10)     NOT NULL COMMENT '币种',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 212
   DEFAULT CHARSET = utf8 COMMENT ='返佣明细';
 
 /*Table structure for table `t_invitation_set` */
@@ -422,7 +408,6 @@ CREATE TABLE `t_invitation_set`
     `currency`         varchar(10)     NOT NULL COMMENT '币种',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 6
   DEFAULT CHARSET = utf8 COMMENT ='返佣参数设置';
 
 /*Table structure for table `t_invitation_trade_set` */
@@ -443,7 +428,6 @@ CREATE TABLE `t_invitation_trade_set`
     `operator_id`      varchar(20) DEFAULT NULL COMMENT '操作员',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 12
   DEFAULT CHARSET = utf8 COMMENT ='返佣参数设置';
 
 /*Table structure for table `t_key_right_relation` */
@@ -460,7 +444,6 @@ CREATE TABLE `t_key_right_relation`
     `operator_id`  varchar(20) DEFAULT NULL COMMENT '操作员',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 6
   DEFAULT CHARSET = utf8 COMMENT ='权限请求关系';
 
 /*Table structure for table `t_kyc_identify` */
@@ -476,7 +459,6 @@ CREATE TABLE `t_kyc_identify`
     `operator_id`  varchar(20)     DEFAULT NULL COMMENT '操作员',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 2
   DEFAULT CHARSET = utf8 COMMENT ='kyc认证设置';
 
 /*Table structure for table `t_level_type` */
@@ -493,7 +475,6 @@ CREATE TABLE `t_level_type`
     `operator_id`  varchar(20)  DEFAULT NULL COMMENT '操作员',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 6
   DEFAULT CHARSET = utf8 COMMENT ='客户分类';
 
 /*Table structure for table `t_operation_log` */
@@ -514,7 +495,6 @@ CREATE TABLE `t_operation_log`
     `operator_ip`       varchar(20)  DEFAULT NULL COMMENT '操作人ip地址',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 1331
   DEFAULT CHARSET = utf8 COMMENT ='系统操作日志';
 
 /*Table structure for table `t_order_prompt` */
@@ -533,7 +513,6 @@ CREATE TABLE `t_order_prompt`
     `old_id`        bigint(20)     DEFAULT NULL COMMENT 'yuanid',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 287
   DEFAULT CHARSET = utf8 COMMENT ='委托事前风控参数设置';
 
 /*Table structure for table `t_price_band_detail` */
@@ -557,7 +536,6 @@ CREATE TABLE `t_price_band_detail`
     `recheck_oper_time` bigint(20)  DEFAULT NULL COMMENT '复核时间',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 2
   DEFAULT CHARSET = utf8 COMMENT ='合约价格波动带详细内容';
 
 /*Table structure for table `t_product` */
@@ -588,7 +566,6 @@ CREATE TABLE `t_product`
     `market_id`               varchar(30)    DEFAULT NULL COMMENT '市场代码',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 3
   DEFAULT CHARSET = utf8 COMMENT ='产品信息';
 
 /*Table structure for table `t_risk_exchange_limit` */
@@ -605,7 +582,6 @@ CREATE TABLE `t_risk_exchange_limit`
     `notice_status`   varchar(3)  DEFAULT NULL COMMENT '通知交易状态 0 指令已生效 1 新增指令发送中 2 修改指令发送中 3 删除指令发送中 4 交易返回失败回退原始值',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 2
   DEFAULT CHARSET = utf8 COMMENT ='交易所状态管理';
 
 /*Table structure for table `t_risk_index` */
@@ -624,7 +600,6 @@ CREATE TABLE `t_risk_index`
     `interval_time` bigint(20)    DEFAULT NULL COMMENT '报警间隔时间',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 9
   DEFAULT CHARSET = utf8 COMMENT ='报警记录';
 
 /*Table structure for table `t_risk_leverage_point_detail` */
@@ -639,7 +614,6 @@ CREATE TABLE `t_risk_leverage_point_detail`
     `leverage`   decimal(10, 2) NOT NULL COMMENT '杠杆',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 86
   DEFAULT CHARSET = utf8 COMMENT ='杠杆点分布明细初始化配置';
 
 /*Table structure for table `t_risk_limit` */
@@ -663,7 +637,6 @@ CREATE TABLE `t_risk_limit`
     `notice_status`     varchar(3)     DEFAULT NULL COMMENT '通知交易状态 0 指令已生效 1 新增指令发送中 2 修改指令发送中 3 删除指令发送中 4 交易返回失败回退原始值',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 14
   DEFAULT CHARSET = utf8 COMMENT ='风险限额';
 
 /*Table structure for table `t_risk_mandatory_reduction_set` */
@@ -688,7 +661,6 @@ CREATE TABLE `t_risk_mandatory_reduction_set`
     `notice_status`                 varchar(3)  DEFAULT NULL COMMENT '通知交易状态 0 指令已生效 1 新增指令发送中 2 修改指令发送中 3 删除指令发送中 4 交易返回失败回退原始值',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 3
   DEFAULT CHARSET = utf8 COMMENT ='强平参数设置';
 
 /*Table structure for table `t_risk_trade_right_limit` */
@@ -708,7 +680,6 @@ CREATE TABLE `t_risk_trade_right_limit`
     `notice_status` varchar(3)  DEFAULT NULL COMMENT '通知交易状态 0 指令已生效 1 新增指令发送中 2 修改指令发送中 3 删除指令发送中 4 交易返回失败回退原始值',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 52
   DEFAULT CHARSET = utf8 COMMENT ='交易权限设置';
 
 /*Table structure for table `t_risk_withdraw_limit` */
@@ -723,7 +694,6 @@ CREATE TABLE `t_risk_withdraw_limit`
     `operator_id`  varchar(20) DEFAULT NULL COMMENT '操作员',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 2
   DEFAULT CHARSET = utf8 COMMENT ='出金权限开关';
 
 /*Table structure for table `t_risk_withdraw_right_set` */
@@ -740,7 +710,6 @@ CREATE TABLE `t_risk_withdraw_right_set`
     `operator_id`  varchar(20) DEFAULT NULL COMMENT '操作员',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 5
   DEFAULT CHARSET = utf8 COMMENT ='出金权限设置';
 
 /*Table structure for table `t_system_config` */
@@ -754,7 +723,6 @@ CREATE TABLE `t_system_config`
     `config_value` varchar(30) DEFAULT NULL COMMENT '系统设置值',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 4
   DEFAULT CHARSET = utf8 COMMENT ='系统设置';
 
 /*Table structure for table `t_tpl_instrument_create` */
@@ -801,7 +769,6 @@ CREATE TABLE `t_tpl_instrument_create`
     `instrument_count`         int(20)         DEFAULT NULL COMMENT '合约数量',
     PRIMARY KEY (`id`, `volume_multiple`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 3
   DEFAULT CHARSET = utf8 COMMENT ='合约创建参数模板';
 
 /*Table structure for table `t_trade` */
@@ -868,49 +835,50 @@ CREATE TABLE `t_trade_fee_set`
     `notice_status`  varchar(3)  DEFAULT NULL COMMENT '通知交易状态 0 指令已生效 1 新增指令发送中 2 修改指令发送中 3 删除指令发送中 4 交易返回失败回退原始值',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 128
   DEFAULT CHARSET = utf8 COMMENT ='交易手续费';
 
 /*Table structure for table `t_trade_user` */
 
 DROP TABLE IF EXISTS `t_trade_user`;
 
-CREATE TABLE `t_trade_user` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID自增长序列',
-  `application_id` varchar(20) DEFAULT NULL COMMENT '注册申请号',
-  `user_id` varchar(20) DEFAULT NULL COMMENT '用户代码',
-  `user_name` varchar(50) DEFAULT NULL COMMENT '客户名称',
-  `nick_name` varchar(50) DEFAULT NULL COMMENT '客户昵称',
-  `country_code` int(10) DEFAULT NULL COMMENT '国家代码',
-  `email` varchar(50) DEFAULT NULL COMMENT '电子邮件',
-  `password` varchar(50) DEFAULT NULL COMMENT '密码',
-  `invite_code` varchar(20) DEFAULT NULL COMMENT '客户邀请码',
-  `account_password` varchar(50) DEFAULT '' COMMENT '资金密码',
-  `registered_rake_back` decimal(30,10) DEFAULT NULL COMMENT '注册返币',
-  `identification_type` varchar(1) DEFAULT NULL COMMENT '证件类型',
-  `identification_id` varchar(50) DEFAULT NULL COMMENT '证件代码',
-  `apply_status` varchar(3) DEFAULT NULL COMMENT '客户状态0 注册,1邮箱验证已打开, 2 证件审核已提交, 3 证件审核已驳回, 4证件审核已通过,5两步验证已通过，6资金密码已设置 ,7 正常 8 冻结 9 上场中 10 已上场',
-  `level` varchar(20) DEFAULT NULL COMMENT '客户分类等级',
-  `google_status` varchar(1) DEFAULT '0' COMMENT 'google验证状态（0：未绑定；1：绑定）',
-  `secret` varchar(50) DEFAULT NULL COMMENT 'google验证码',
-  `is_active` varchar(1) DEFAULT '1' COMMENT '账号状态  0:冻结；1:正常',
-  `telephone` varchar(30) DEFAULT NULL COMMENT '联系电话',
-  `id_back_photo` varchar(500) DEFAULT NULL COMMENT '证件反面照片',
-  `id_front_photo` varchar(500) DEFAULT NULL COMMENT '证件正面照片',
-  `self_card_photo` varchar(500) DEFAULT NULL COMMENT '手持证件照片',
-  `client_channel` varchar(1) DEFAULT NULL COMMENT '开户渠道',
-  `register_time` bigint(20) DEFAULT NULL COMMENT '注册时间',
-  `recheck_time` bigint(20) DEFAULT NULL COMMENT '复核时间',
-  `rechecker_id` varchar(100) DEFAULT NULL COMMENT '复核员',
-  `reject_remark` varchar(255) DEFAULT NULL COMMENT '驳回备注',
-  `remark` varchar(255) DEFAULT NULL COMMENT '备注',
-  `user_type` varchar(2) DEFAULT NULL COMMENT '用户类别：1,普通用户 2,爆仓用户 3, 手续费用户 4 运营账号',
-  `old_id` bigint(20) DEFAULT NULL COMMENT '原Id',
-  `notice_status` varchar(3) DEFAULT NULL COMMENT '通知交易状态 0 指令已生效 1 新增指令发送中 2 修改指令发送中 3 删除指令发送中 4 交易返回失败回退原始值',
-  `google_verify_status` varchar(255) NOT NULL DEFAULT '0' COMMENT 'google绑定状态，0：未绑定；1：绑定',
-  `register_type` int(255) NOT NULL DEFAULT '0' COMMENT '注册时使用的信息，0：手机；1：邮箱',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COMMENT='用户信息';
+CREATE TABLE `t_trade_user`
+(
+    `id`                   bigint(20)  NOT NULL AUTO_INCREMENT COMMENT 'ID自增长序列',
+    `application_id`       varchar(20)     DEFAULT NULL COMMENT '注册申请号',
+    `user_id`              varchar(20)     DEFAULT NULL COMMENT '用户代码',
+    `user_name`            varchar(50)     DEFAULT NULL COMMENT '客户名称',
+    `nick_name`            varchar(50)     DEFAULT NULL COMMENT '客户昵称',
+    `country_code`         int(10)         DEFAULT NULL COMMENT '国家代码',
+    `email`                varchar(50)     DEFAULT NULL COMMENT '电子邮件',
+    `password`             varchar(50) NOT NULL COMMENT '密码',
+    `invite_code`          varchar(20)     DEFAULT NULL COMMENT '客户邀请码',
+    `account_password`     varchar(50)     DEFAULT NULL COMMENT '资金密码',
+    `registered_rake_back` decimal(30, 10) DEFAULT NULL COMMENT '注册返币',
+    `identification_type`  varchar(1)      DEFAULT NULL COMMENT '证件类型',
+    `identification_id`    varchar(50)     DEFAULT NULL COMMENT '证件代码',
+    `apply_status`         varchar(3)      DEFAULT NULL COMMENT '客户状态0 注册,1邮箱验证已打开, 2 证件审核已提交, 3 证件审核已驳回, 4证件审核已通过,5两步验证已通过，6资金密码已设置 ,7 正常 8 冻结 9 上场中 10 已上场',
+    `level`                varchar(20)     DEFAULT NULL COMMENT '客户分类等级',
+    `google_status`        varchar(1)      DEFAULT NULL COMMENT 'google验证状态(0:关闭，1：打开)',
+    `secret`               varchar(50)     DEFAULT NULL COMMENT 'google验证码',
+    `is_active`            varchar(1)      DEFAULT '1' COMMENT '账号状态  0:冻结；1:正常',
+    `telephone`            varchar(30)     DEFAULT NULL COMMENT '联系电话',
+    `id_back_photo`        varchar(500)    DEFAULT NULL COMMENT '证件反面照片',
+    `id_front_photo`       varchar(500)    DEFAULT NULL COMMENT '证件正面照片',
+    `self_card_photo`      varchar(500)    DEFAULT NULL COMMENT '手持证件照片',
+    `client_channel`       varchar(1)      DEFAULT NULL COMMENT '开户渠道',
+    `register_time`        bigint(20)      DEFAULT NULL COMMENT '注册时间',
+    `recheck_time`         bigint(20)      DEFAULT NULL COMMENT '复核时间',
+    `rechecker_id`         varchar(100)    DEFAULT NULL COMMENT '复核员',
+    `reject_remark`        varchar(255)    DEFAULT NULL COMMENT '驳回备注',
+    `remark`               varchar(255)    DEFAULT NULL COMMENT '备注',
+    `user_type`            varchar(2)      DEFAULT NULL COMMENT '用户类别：1,普通用户 2,爆仓用户 3, 手续费用户 4 运营账号',
+    `old_id`               bigint(20)      DEFAULT NULL COMMENT '原Id',
+    `notice_status`        varchar(3)      DEFAULT NULL COMMENT '通知交易状态 0 指令已生效 1 新增指令发送中 2 修改指令发送中 3 删除指令发送中 4 交易返回失败回退原始值',
+    `google_verify_status` varchar(255) NOT NULL DEFAULT '0' COMMENT 'google绑定状态，0：未绑定；1：绑定',
+    `register_type` int(255) NOT NULL DEFAULT '0' COMMENT '注册时使用的信息，0：手机；1：邮箱',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8 COMMENT ='用户信息';
 
 /*Table structure for table `t_trade_user_oper_log` */
 
@@ -924,7 +892,6 @@ CREATE TABLE `t_trade_user_oper_log`
     `user_id`        varchar(20) DEFAULT NULL COMMENT '操作人',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 1867
   DEFAULT CHARSET = utf8 COMMENT ='用户操作日志';
 
 /*Table structure for table `t_transaction_history` */
@@ -964,7 +931,6 @@ CREATE TABLE `t_underlying`
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_t_underlying` (`underlying_id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 2
   DEFAULT CHARSET = utf8 COMMENT ='标的';
 
 /*Table structure for table `t_underlying_detail` */
@@ -981,7 +947,6 @@ CREATE TABLE `t_underlying_detail`
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_t_underlying_detail` (`underlying_id`, `exch_id`, `product_id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 17
   DEFAULT CHARSET = utf8 COMMENT ='标的物指数';
 
 /*Table structure for table `t_underlying_prices` */
@@ -1001,7 +966,7 @@ CREATE TABLE `t_underlying_prices` (
   `crash_times` int(10) unsigned DEFAULT '0' COMMENT '中断次数',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_t_underlying_prices` (`underlying_id`,`exch_id`,`product_id`,`price_time`)
-) ENGINE=InnoDB AUTO_INCREMENT=497684 DEFAULT CHARSET=utf8 COMMENT='标的依赖价格';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='标的依赖价格';
 
 /*Table structure for table `t_wallet_transaction_history` */
 
@@ -1024,7 +989,6 @@ CREATE TABLE `t_wallet_transaction_history`
     `notice_status`      varchar(3)     DEFAULT NULL COMMENT '通知交易状态 0 指令已生效 1 新增指令发送中 2 修改指令发送中 3 删除指令发送中 4 交易返回失败回退原始值',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 187
   DEFAULT CHARSET = utf8 COMMENT ='充提流水（对接钱包）';
 
 /*Table structure for table `t_wallet_user_address` */
@@ -1038,7 +1002,7 @@ CREATE TABLE `t_wallet_user_address`
     `address` varchar(100) DEFAULT NULL COMMENT '用户充值地址',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 65
+  
   DEFAULT CHARSET = utf8 COMMENT ='用户充值地址';
 
 
@@ -1057,7 +1021,6 @@ CREATE TABLE `t_warn_garbage_user_set`
     `operator_id`     varchar(20)     DEFAULT NULL COMMENT '操作员',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 3
   DEFAULT CHARSET = utf8 COMMENT ='垃圾委托用户参数设置';
 
 /*Table structure for table `t_warn_insurance_fund` */
@@ -1080,7 +1043,6 @@ CREATE TABLE `t_warn_insurance_fund`
     `old_id`        bigint(20)      DEFAULT NULL COMMENT 'yuanid',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 67
   DEFAULT CHARSET = utf8 COMMENT ='保险基金参数设置';
 
 /*Table structure for table `t_warn_result` */
@@ -1098,7 +1060,6 @@ CREATE TABLE `t_warn_result`
     `operate_time` bigint(20)    NOT NULL COMMENT '操作时间',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 228
   DEFAULT CHARSET = utf8 COMMENT ='报警记录';
 
 
@@ -1117,7 +1078,6 @@ CREATE TABLE `t_notice_kafka_property`
     PRIMARY KEY (`id`),
     KEY `property_type` (`property_type`, `property_id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 247
   DEFAULT CHARSET = utf8 COMMENT ='kafka通知记录';
 
 
@@ -1221,6 +1181,55 @@ CREATE TABLE `t_command`
     KEY `IDX_SEND_TARGET` (`send_topic`, `send_partition`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
+
+DROP TABLE IF EXISTS `t_info_detail`;
+
+CREATE TABLE `t_info_detail` (
+  `id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '自增长序列号',
+  `templates_id` VARCHAR(20) NOT NULL COMMENT '模板Id',
+  `sign_id` VARCHAR(20) DEFAULT NULL COMMENT '签名ID',
+  `type` VARCHAR(1) NOT NULL COMMENT '发送类型 1:邮件 2:短信',
+  `nation_code` VARCHAR(20) DEFAULT NULL COMMENT '国家代码',
+  `receive_code` VARCHAR(30) NOT NULL COMMENT '接收人地址 邮件或者短信',
+  `content` VARCHAR(300) NOT NULL COMMENT '发送内容',
+  `remark` VARCHAR(300) DEFAULT NULL COMMENT '备注信息',
+  `state` VARCHAR(1) NOT NULL COMMENT '发送状态 1:成功 2:异常',
+  `operate_date` BIGINT(20) DEFAULT NULL COMMENT '操作日期',
+  `update_date` BIGINT(20) DEFAULT NULL COMMENT '修改日期',
+  `operate_id` VARCHAR(20) DEFAULT NULL COMMENT '操作人',
+  PRIMARY KEY (`id`)
+) ENGINE=INNODB AUTO_INCREMENT=1115580906794721282 DEFAULT CHARSET=utf8 COMMENT='通信明细';
+
+
+
+DROP TABLE IF EXISTS `t_info_templates`;
+
+CREATE TABLE `t_info_templates` (
+  `id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '自增长序列号',
+  `templates_id` VARCHAR(20) NOT NULL COMMENT '模板id',
+  `type` VARCHAR(1) NOT NULL COMMENT '1:普通短信2:运营短信',
+  `content` VARCHAR(300) NOT NULL COMMENT '模板内容',
+  `state` VARCHAR(1) NOT NULL COMMENT '是否警用 1:正常 2:禁用',
+  `international` VARCHAR(1) NOT NULL COMMENT '1国内短信，2海外短信',
+  `remark` VARCHAR(300) DEFAULT NULL COMMENT '备注',
+  `operate_date` BIGINT(20) DEFAULT NULL,
+  `update_date` BIGINT(20) DEFAULT NULL,
+  `operate_id` VARCHAR(20) DEFAULT NULL,
+  PRIMARY KEY (`id`,`templates_id`)
+) ENGINE=INNODB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COMMENT='短信邮件模板';
+
+DROP TABLE IF EXISTS `t_sms_sign`;
+
+CREATE TABLE `t_sms_sign` (
+  `id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '自增长序列号',
+  `sign_id` VARCHAR(100) NOT NULL,
+  `sign_name` VARCHAR(20) NOT NULL,
+  `remark` VARCHAR(300) DEFAULT NULL,
+  `operate_date` BIGINT(20) DEFAULT NULL,
+  `update_date` BIGINT(20) DEFAULT NULL,
+  `operate_id` VARCHAR(20) DEFAULT NULL,
+  PRIMARY KEY (`id`,`sign_id`)
+) ENGINE=INNODB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='短信签名';
 
 /*!40101 SET SQL_MODE = @OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS = @OLD_FOREIGN_KEY_CHECKS */;
