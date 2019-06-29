@@ -27,7 +27,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `t_identification_type` WRITE;
 TRUNCATE t_identification_type;
-insert  into `t_identification_type`(`id`,`identification_type`,`identification_name`,`operate_time`,`operator_id`) values (1,'1','身份证',20181211,'admin'),(2,'2','军官证',NULL,NULL),(3,'4','护照',NULL,NULL);
+insert  into `t_identification_type`(`id`,`identification_type`,`identification_name`,`operate_time`,`operator_id`) values (1,'1','身份证',20181211,'admin'),(2,'2','军官证',NULL,NULL),(3,'4','huzhao',NULL,NULL);
 
 UNLOCK TABLES;
 
@@ -111,13 +111,47 @@ UNLOCK TABLES;
 
 LOCK TABLES `t_underlying_detail` WRITE;
 
-insert  into `t_underlying_detail`(`id`,`underlying_id`,`exch_id`,`product_id`,`weight`) values (1,'XBT-USD','KRAKEN','XBT-USD','0.33'),(4,'XBT-USD','COINBASE','BTC-USD','0.33'),(7,'XBT-USD','BITSTAMP','btcusd','0.34'),(13,'XBT-USD','BITMEX','.BXBT','1');
+insert  into `t_underlying_detail`(`id`,`underlying_id`,`exch_id`,`product_id`,`weight`) values (1,'XBT-USD','KRAKEN','XBT-USD','0.3333'),(4,'XBT-USD','COINBASE','BTC-USD','0.3333'),(7,'XBT-USD','BITSTAMP','btcusd','0.3333'),(13,'XBT-USD','BITMEX','.BXBT','0.3333');
 
 UNLOCK TABLES;
 
 /*   交易所状态  */
 TRUNCATE t_risk_exchange_limit;
 insert  into `t_risk_exchange_limit`(`id`,`exchange_status`,`operate_time`,`operator_id`,`old_id`,`notice_status`) values (1,'1',1545896347124,'admin',NULL,'0');
+
+
+
+-- 初始化系统用户
+TRUNCATE t_trade_user;
+-- 爆仓账户
+insert into `t_trade_user` (`application_id`, `user_id`, `user_name`, `nick_name`, `country_code`, `email`, `password`, `invite_code`, `account_password`, `registered_rake_back`, `identification_type`, `identification_id`, `apply_status`, `level`, `google_status`, `secret`, `is_active`, `telephone`, `id_back_photo`, `id_front_photo`, `self_card_photo`, `client_channel`, `register_time`, `recheck_time`, `rechecker_id`, `reject_remark`, `remark`, `user_type`, `old_id`, `notice_status`) values('qm8EH9sV','9752877235',NULL,NULL,NULL,'yinkangxi1@gmail.com','f5bc6cb171a431983e153d731c35db08',NULL,NULL,NULL,NULL,NULL,'4',NULL,NULL,'OVW5Z2A4PUNKVTSN','0',NULL,NULL,NULL,NULL,NULL,'1556872440059',NULL,NULL,NULL,NULL,'2',NULL,'0');
+-- 提现手续费账户
+insert into `t_trade_user` (`application_id`, `user_id`, `user_name`, `nick_name`, `country_code`, `email`, `password`, `invite_code`, `account_password`, `registered_rake_back`, `identification_type`, `identification_id`, `apply_status`, `level`, `google_status`, `secret`, `is_active`, `telephone`, `id_back_photo`, `id_front_photo`, `self_card_photo`, `client_channel`, `register_time`, `recheck_time`, `rechecker_id`, `reject_remark`, `remark`, `user_type`, `old_id`, `notice_status`) values('8UFc4nAo','7828251072',NULL,NULL,NULL,'yinkangxi2@gmail.com','24df23089b6227827fe33a3b6f886fb7',NULL,NULL,NULL,NULL,NULL,'4',NULL,NULL,'VR25NDHYFBRMDT42','0',NULL,NULL,NULL,NULL,NULL,'1556872440059',NULL,NULL,NULL,NULL,'3',NULL,'0');
+-- 运营账户
+insert into `t_trade_user` (`application_id`, `user_id`, `user_name`, `nick_name`, `country_code`, `email`, `password`, `invite_code`, `account_password`, `registered_rake_back`, `identification_type`, `identification_id`, `apply_status`, `level`, `google_status`, `secret`, `is_active`, `telephone`, `id_back_photo`, `id_front_photo`, `self_card_photo`, `client_channel`, `register_time`, `recheck_time`, `rechecker_id`, `reject_remark`, `remark`, `user_type`, `old_id`, `notice_status`) values('8r7SdDOq','8949355047',NULL,NULL,NULL,'yinkangxi3@gmail.com','6d8f96d6e5818de6cd5897da99895cf7',NULL,NULL,NULL,NULL,NULL,'4',NULL,NULL,'K3LGAB47NI3S47HA','0',NULL,NULL,NULL,NULL,NULL,'1556872440059',NULL,NULL,NULL,NULL,'4',NULL,'0');
+-- 平账账户
+insert into `t_trade_user` (`application_id`, `user_id`, `user_name`, `nick_name`, `country_code`, `email`, `password`, `invite_code`, `account_password`, `registered_rake_back`, `identification_type`, `identification_id`, `apply_status`, `level`, `google_status`, `secret`, `is_active`, `telephone`, `id_back_photo`, `id_front_photo`, `self_card_photo`, `client_channel`, `register_time`, `recheck_time`, `rechecker_id`, `reject_remark`, `remark`, `user_type`, `old_id`, `notice_status`) values('cE5e1WFv','6789776272',NULL,NULL,NULL,'yinkangxi4@gmail.com','65918a47389b51ff1fde68d9afdf9869',NULL,NULL,NULL,NULL,NULL,'4',NULL,NULL,'DVQSCAMEDXJRVKJ6','0',NULL,NULL,NULL,NULL,NULL,'1556872440059',NULL,NULL,NULL,NULL,'5',NULL,'0');
+-- 交易手续费账户
+insert into `t_trade_user` (`application_id`, `user_id`, `user_name`, `nick_name`, `country_code`, `email`, `password`, `invite_code`, `account_password`, `registered_rake_back`, `identification_type`, `identification_id`, `apply_status`, `level`, `google_status`, `secret`, `is_active`, `telephone`, `id_back_photo`, `id_front_photo`, `self_card_photo`, `client_channel`, `register_time`, `recheck_time`, `rechecker_id`, `reject_remark`, `remark`, `user_type`, `old_id`, `notice_status`) values('cE5e1WFv','5719336272',NULL,NULL,NULL,'yinkangxi5@gmail.com','65918a47389b51ff1fde68d9afdf9869',NULL,NULL,NULL,NULL,NULL,'4',NULL,NULL,'DVQSCAMEDXJRVKJ6','0',NULL,NULL,NULL,NULL,NULL,'1556872440059',NULL,NULL,NULL,NULL,'6',NULL,'0');
+
+
+-- 初始化系统用户资金
+TRUNCATE t_account_capital;
+
+insert into `t_account_capital` (`account_id`, `user_id`, `currency`, `balance`, `avail_balance`, `margin_balance`, `positionl_margin`, `order_margin`, `unrealised_pnl`, `transfer_in`, `transfer_out`, `deposited`, `withdrawn`, `realised_pnl`, `update_time`) values('4416046734','9752877235','XBT','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000',NULL);
+insert into `t_account_capital` (`account_id`, `user_id`, `currency`, `balance`, `avail_balance`, `margin_balance`, `positionl_margin`, `order_margin`, `unrealised_pnl`, `transfer_in`, `transfer_out`, `deposited`, `withdrawn`, `realised_pnl`, `update_time`) values('9734990447','7828251072','XBT','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000',NULL);
+insert into `t_account_capital` (`account_id`, `user_id`, `currency`, `balance`, `avail_balance`, `margin_balance`, `positionl_margin`, `order_margin`, `unrealised_pnl`, `transfer_in`, `transfer_out`, `deposited`, `withdrawn`, `realised_pnl`, `update_time`) values('9380754040','8949355047','XBT','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000',NULL);
+insert into `t_account_capital` (`account_id`, `user_id`, `currency`, `balance`, `avail_balance`, `margin_balance`, `positionl_margin`, `order_margin`, `unrealised_pnl`, `transfer_in`, `transfer_out`, `deposited`, `withdrawn`, `realised_pnl`, `update_time`) values('5926325374','6789776272','XBT','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000',NULL);
+insert into `t_account_capital` (`account_id`, `user_id`, `currency`, `balance`, `avail_balance`, `margin_balance`, `positionl_margin`, `order_margin`, `unrealised_pnl`, `transfer_in`, `transfer_out`, `deposited`, `withdrawn`, `realised_pnl`, `update_time`) values('3343252114','5719336272','XBT','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000',NULL);
+
+
+-- 初始化系统用户ApiKey
+TRUNCATE t_api_key;
+insert into `t_api_key` (`user_id`, `key_id`, `key_type`, `key_name`, `cidr`, `key_right`, `secret_key`, `is_active`, `operate_time`, `operator_id`) values('9752877235','wPk4bZUvj4gvI9M9TI92','1','系统默认Key',NULL,'0','vUV7J9vcZAX47gwNEhn3AE99aA8f9Z3Qp4VLsJt1jQn244Q8jHPMR0aW87mZ2ir1Wblha74A9t28FcBSS1712u8kCZtpzsKc14s','1','1550631448291',NULL);
+insert into `t_api_key` (`user_id`, `key_id`, `key_type`, `key_name`, `cidr`, `key_right`, `secret_key`, `is_active`, `operate_time`, `operator_id`) values('7828251072','c15n92D8iLfQO0sALXsk','1','系统默认Key',NULL,'0','CH3eVm3d3vFej6a3t1B8l4scEk80VpK799LOGI63yXtw0DBhhEeA95LVE35jOa1OjCM3W0gRksYK2CG5w8329H9i6vbTXg7rs2t','1','1550632430331',NULL);
+insert into `t_api_key` (`user_id`, `key_id`, `key_type`, `key_name`, `cidr`, `key_right`, `secret_key`, `is_active`, `operate_time`, `operator_id`) values('8949355047','yk50vqxvDVLm2R6F58XQ','1','系统默认Key',NULL,'0','kCS23OpnB3m0thTpDa05IAG0EgX2jcD58kcWj07U9IE08J23xO888pVvrz47X7DfVzm18ViqUYF7Er11GqaFB6ZxjhS42oo09Uq','1','1550644354307',NULL);
+insert into `t_api_key` (`user_id`, `key_id`, `key_type`, `key_name`, `cidr`, `key_right`, `secret_key`, `is_active`, `operate_time`, `operator_id`) values('6789776272','Qz88v8QkG7T5Skm2JgGd','1','系统默认Key',NULL,'0','R5qE1b4gk0Xf5WSRUc53Z9xN606591vii3RgBWCSgbfR1DPP6I78r5qCox2upyB5Zj5N773THNa30xanb2108r2pBeVcWfBQgPK','1','1556872440055',NULL);
+insert into `t_api_key` (`user_id`, `key_id`, `key_type`, `key_name`, `cidr`, `key_right`, `secret_key`, `is_active`, `operate_time`, `operator_id`) values('5719336272','Qz88v8QkG7T5Skm2JgGd','1','系统默认Key',NULL,'0','R5qE1b4gk0Xf5WSRUc53Z9xN606591vii3RgBWCSgbfR1DPP6I78r5qCox2upyB5Zj5N773THNa30xanb2108r2pBeVcWfBQgPK','1','1556872440055',NULL);
 
 -- 委托事前风控参数设置
 
@@ -158,7 +192,8 @@ insert  into `t_risk_mandatory_reduction_set`(`max_tick_tolerate`,`id`,`product_
 insert  into `t_price_band_detail`(`id`,`instrumentid`,`start_price_type`,`basis_price_type`,`ref_price_type`,`round_mode`,`value_mode`,`upper_value`,`lower_value`,`operator_id`,`operate_time`,`recheck_oper_id`,`recheck_oper_time`) values (1,'XBTUSD','4','4','4','2','1','5.0000000000','0.9000000000','admin',1551439903064,'admin',1551439903064);
 
 
--- 短信模板
+LOCK TABLES `t_info_templates` WRITE;
+
 insert  into `t_info_templates`(`templates_id`,`type`,`content`,`state`,`international`,`remark`,`operate_date`,`update_date`,`operate_id`)
 values
 ('261015','1','您的验证码是 {code}，您正在申请注册365MEX帐号，需要进行验证，请勿泄漏您的验证码。','1','1','登录注册验证',1547375715000,1547375715000,'admin'),
@@ -178,4 +213,10 @@ values
 ('261029','1','您好，您在 {symbol} 的 {direction} 仓位已被自动减仓, 在 {price} 的价格减仓 {qty} 张合约。这次的减仓对于您来说是{profit}的：平仓价格为 {price} {updown} 您的开仓价格。您的仓位已经平仓了。','1','1','登录注册验证',1547375715000,1547375715000,'admin'),
 ('261030','1','您的验证码是：{code}，{time} 分钟内有效，请勿向任何人包括客服泄漏验证码。','1','1','验证',1547375715000,1547375715000,'admin');
 
+UNLOCK TABLES;
+
+LOCK TABLES `t_sms_sign` WRITE;
+
 INSERT  INTO `t_sms_sign`(`id`,`sign_id`,`sign_name`,`remark`,`operate_date`,`update_date`,`operate_id`) VALUES (1,'189809','365MEX','注册登录验证',1547375715000,1547375715000,'admin');
+
+UNLOCK TABLES;

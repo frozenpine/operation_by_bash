@@ -12,7 +12,7 @@ JVM_OPTS=""
 
 SENTRY_DSN=`get_sentry_dsn ${NAME}`
 
-DB_NAME="digital"
+DB_NAME="management"
 PRIM_DB_NAME="clear"
 
 SERVICE_LIST="registry zookeeper kafka mysql"

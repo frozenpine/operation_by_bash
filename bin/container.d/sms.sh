@@ -12,7 +12,7 @@ SENTRY_DSN=`get_sentry_dsn ${NAME}`
 
 JVM_OPTS=""
 
-DB_NAME="sms"
+DB_NAME="management"
 
 MAIL_HOST=
 MAIL_PORT=

@@ -13,7 +13,7 @@ SENTRY_DSN=`get_sentry_dsn ${NAME}`
 JVM_OPTS=""
 
 DB_NAME="clear"
-PRIM_DB_NAME="digital"
+PRIM_DB_NAME="management"
 
 SERVICE_LIST="registry zookeeper kafka mysql consul scheduler"
 

@@ -14,7 +14,7 @@ JVM_OPTS=""
 
 SERVICE_LIST="registry zookeeper kafka mysql redis consul tradebase sms"
 
-DB_NAME="digital"
+DB_NAME="management"
 SECOND_DB_NAME="clear"
 
 WALLET_BASE_URI="/api/BTC/testnet"

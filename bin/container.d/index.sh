@@ -12,7 +12,7 @@ SENTRY_DSN=`get_sentry_dsn ${NAME}`
 
 JVM_OPTS=""
 
-DB_NAME="digital"
+DB_NAME="management"
 
 WALLET_URL="http://127.0.0.1:3000/api/BTC/testnet"
 

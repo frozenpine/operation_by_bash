@@ -2,9 +2,9 @@
 # section name is database name
 # if no user or password specified, default config in common.env will be used.
 
-[digital]
-user=digital
-pass=digital123456
+[management]
+user=management
+pass=management123456
 
 [clear]
 user=clear
@@ -13,7 +13,3 @@ pass=clear123456
 [sso]
 user=sso
 pass=sso123456
-
-[sms]
-user=sms
-pass=sms123456
