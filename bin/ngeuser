@@ -36,7 +36,7 @@ if [[ ${TRADE_EXPORT_PORT:=80} -ne 80 ]]; then
     TRADE_HOST="${TRADE_HOST}:${TRADE_EXPORT_PORT}"
 fi
 
-DB_NAME=digital
+DB_NAME=management
 
 DB_USER=
 DB_PASS=
@@ -61,7 +61,7 @@ PYLOAD_GROUP="pyload"
 
 HELP_ARGS["u:db_user"]="optional,User used in db connection with root privilege, if not specified, default auth will be used."
 HELP_ARGS["p:db_pass"]="optional,Password used in db connection with root privilege, if not specified, default auth will be used."
-HELP_ARGS["d:db_name"]="optional,DB name used in connection, if not specified, default \`digital\` will be used."
+HELP_ARGS["d:db_name"]="optional,DB name used in connection, if not specified, default \`management\` will be used."
 HELP_ARGS["g:group_name"]="optional,Group name used when pub user CSV to all pyload members if not specified, default: \"pyload\" will be used."
 
 HELP_COMMANDS["init"]="Init 10000 pre-defined users for testing."
