@@ -292,7 +292,7 @@ DROP TABLE IF EXISTS `t_trade`;
 
 CREATE TABLE `t_trade`
 (
-    `trade_id`         char(36)        NOT NULL COMMENT 'trade id',
+    `trade_id`         varchar(100)        NOT NULL COMMENT 'trade id',
     `client_id`        varchar(30)     NOT NULL COMMENT '客户代码',
     `instrument_id`    varchar(30)     NOT NULL COMMENT '合约代码',
     `order_id`         bigint(20)      NOT NULL COMMENT '报单编号',

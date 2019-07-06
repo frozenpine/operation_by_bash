@@ -155,6 +155,7 @@ CREATE TABLE `t_clear_premium_price`
 (
     `id`                bigint(20)  NOT NULL AUTO_INCREMENT COMMENT 'id自增长序列',
     `instrument_id`     varchar(30) NOT NULL COMMENT '合约代码',
+    `index_price`       decimal(30,10)  DEFAULT NULL COMMENT '指数价格',
     `basis_rate`        decimal(30, 10) DEFAULT NULL COMMENT '基准利率',
     `quote_rate`        decimal(30, 10) DEFAULT NULL COMMENT '计价利率',
     `rate`              decimal(30, 10) DEFAULT NULL COMMENT '利率',
@@ -1090,6 +1091,8 @@ CREATE TABLE `t_verify_transfer`
     `id`                      bigint(20)  NOT NULL AUTO_INCREMENT COMMENT '自增长序列号',
     `transfer_out_account_id` bigint(20)  NOT NULL COMMENT '转出资金账号',
     `transfer_in_account_id`  bigint(20)  NOT NULL COMMENT '转入资金账号',
+    `transfer_out_client_id`  bigint(20)  NOT NULL COMMENT '转出客户号',
+    `transfer_in_client_id`   bigint(20)  NOT NULL COMMENT '转入客户号',
     `currency`                varchar(10) NOT NULL COMMENT '币种',
     `transfer`                decimal(30, 10) DEFAULT NULL COMMENT '划转数量',
     `frozen_id`               varchar(50)     DEFAULT NULL COMMENT '交易业务id',

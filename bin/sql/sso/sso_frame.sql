@@ -1,8 +1,9 @@
 /*
 SQLyog Ultimate v11.24 (32 bit)
-MySQL - 5.7.25 : Database - security
+MySQL - 5.5.60-MariaDB : Database - security
 *********************************************************************
 */
+
 
 /*!40101 SET NAMES utf8 */;
 
@@ -12,9 +13,9 @@ MySQL - 5.7.25 : Database - security
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`sso` /*!40100 DEFAULT CHARACTER SET utf8 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`security` /*!40100 DEFAULT CHARACTER SET utf8 */;
 
-USE `sso`;
+USE `security`;
 
 /*Table structure for table `t_group` */
 
@@ -30,6 +31,8 @@ CREATE TABLE `t_group` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+/*Data for the table `t_group` */
+
 /*Table structure for table `t_group_user` */
 
 DROP TABLE IF EXISTS `t_group_user`;
@@ -41,6 +44,8 @@ CREATE TABLE `t_group_user` (
   KEY `IDX_T_GROUP_USER_USERID` (`user_id`),
   KEY `IDX_T_GROUP_USER_GROUPID` (`group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Data for the table `t_group_user` */
 
 /*Table structure for table `t_log` */
 
@@ -55,7 +60,9 @@ CREATE TABLE `t_log` (
   `description` varchar(400) DEFAULT NULL COMMENT '操作内容',
   `oper_time` timestamp NULL DEFAULT NULL COMMENT '操作时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='业务日志表';
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='业务日志表';
+
+/*Data for the table `t_log` */
 
 /*Table structure for table `t_online_user` */
 
@@ -69,7 +76,9 @@ CREATE TABLE `t_online_user` (
   `session_id` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `IDX_T_ONLINE_USER_LOGINID_LOGINIP` (`login_id`,`login_ip`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='在线用户统计表';
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='在线用户统计表';
+
+/*Data for the table `t_online_user` */
 
 /*Table structure for table `t_org_admin` */
 
@@ -84,6 +93,8 @@ CREATE TABLE `t_org_admin` (
   `oper_time` timestamp NULL DEFAULT NULL COMMENT '操作时间',
   UNIQUE KEY `IDX_T_ORG_ADMIN_USERID_ORGUNITID` (`user_id`,`org_unit_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='组织管理员表';
+
+/*Data for the table `t_org_admin` */
 
 /*Table structure for table `t_org_unit` */
 
@@ -108,6 +119,8 @@ CREATE TABLE `t_org_unit` (
   UNIQUE KEY `UX_T_ORG_UNIT_CODE` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='组织单位表';
 
+/*Data for the table `t_org_unit` */
+
 /*Table structure for table `t_org_unit_resource` */
 
 DROP TABLE IF EXISTS `t_org_unit_resource`;
@@ -119,6 +132,8 @@ CREATE TABLE `t_org_unit_resource` (
   KEY `IDX_T_ORG_UNIT_RESOURCE_ORGUNITID` (`org_unit_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='组织可分配的资源';
 
+/*Data for the table `t_org_unit_resource` */
+
 /*Table structure for table `t_org_unit_type` */
 
 DROP TABLE IF EXISTS `t_org_unit_type`;
@@ -129,6 +144,8 @@ CREATE TABLE `t_org_unit_type` (
   `name` varchar(80) NOT NULL COMMENT '类型名称',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='组织类型表字典';
+
+/*Data for the table `t_org_unit_type` */
 
 /*Table structure for table `t_org_user` */
 
@@ -145,6 +162,8 @@ CREATE TABLE `t_org_user` (
   KEY `IDX_T_ORG_USER_USERID` (`user_id`),
   KEY `IDX_T_ORG_USER_ORGUNITID` (`org_unit_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='组织用户关系表';
+
+/*Data for the table `t_org_user` */
 
 /*Table structure for table `t_resource` */
 
@@ -188,7 +207,7 @@ CREATE TABLE `t_role` (
   `oper_time` timestamp NULL DEFAULT NULL COMMENT '操作时间',
   PRIMARY KEY (`id`),
   KEY `IDX_T_ROLE_SYSTEMID` (`system_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='角色表';
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COMMENT='角色表';
 
 /*Table structure for table `t_role_group` */
 
@@ -202,6 +221,8 @@ CREATE TABLE `t_role_group` (
   KEY `IDX_T_ROLE_GROUP_ROLEID` (`role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+/*Data for the table `t_role_group` */
+
 /*Table structure for table `t_role_org` */
 
 DROP TABLE IF EXISTS `t_role_org`;
@@ -213,6 +234,8 @@ CREATE TABLE `t_role_org` (
   KEY `IDX_T_ROLE_ORG_ORGUNITID` (`org_unit_id`),
   KEY `IDX_T_ROLE_ORG_ROLEID` (`role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Data for the table `t_role_org` */
 
 /*Table structure for table `t_role_resource` */
 
@@ -229,6 +252,8 @@ CREATE TABLE `t_role_resource` (
   KEY `IDX_T_ROLE_PERMISSION_RESOURCEID` (`resource_id`),
   KEY `IDX_T_ROLE_PERMISSION_ROLEID` (`role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Data for the table `t_role_resource` */
 
 /*Table structure for table `t_role_user` */
 
@@ -255,7 +280,7 @@ CREATE TABLE `t_system` (
   `name` varchar(80) NOT NULL COMMENT '系统名称',
   `description` varchar(80) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='系统';
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COMMENT='系统';
 
 /*Table structure for table `t_system_param_set` */
 
@@ -292,7 +317,7 @@ CREATE TABLE `t_user` (
   `oper_time` timestamp NULL DEFAULT NULL COMMENT '操作时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `UX_T_USER_LOGINNAME` (`login_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户表';
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='用户表';
 
 /*Table structure for table `t_user_hist_password` */
 
@@ -309,6 +334,8 @@ CREATE TABLE `t_user_hist_password` (
   PRIMARY KEY (`id`),
   KEY `IDX_T_HIS_USER_PASSWORD_USERID` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户历史密码记录表.';
+
+/*Data for the table `t_user_hist_password` */
 
 /*Table structure for table `t_userinfo` */
 
@@ -328,6 +355,8 @@ CREATE TABLE `t_userinfo` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `UX_T_USERINFO_USERID` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Data for the table `t_userinfo` */
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
