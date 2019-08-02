@@ -122,22 +122,5 @@ docker run -d \
         --spring.datasource.secondary.username="${DB_USER:=$DEFAULT_DB_USER}" \
         --spring.datasource.secondary.password="${DB_PASS:=$DEFAULT_DB_PASS}" \
         --elaticjob.zookeeper.server-lists="${ZK_SERVERS}" \
-        --com.js.trade.data-exchange.command.producer.bootstrap.servers="${KAFKA_SERVERS}" \
-        --com.js.trade.data-exchange.monitor.consumer.bootstrap.servers="${KAFKA_SERVERS}" \
-        --spring.datasource.primary.max-idle=10 \
-        --spring.datasource.primary.max-wait=10000 \
-        --spring.datasource.primary.min-idle=5 \
-        --spring.datasource.primary.initial-size=5 \
-        --spring.datasource.primary.validation-query="SELECT 1" \
-        --spring.datasource.primary.test-on-borrow=false \
-        --spring.datasource.primary.test-while-idle=true \
-        --spring.datasource.primary.time-between-eviction-runs-millis=18800 \
-        --spring.datasource.secondary.max-idle=10 \
-        --spring.datasource.secondary.max-wait=10000 \
-        --spring.datasource.secondary.min-idle=5 \
-        --spring.datasource.secondary.initial-size=5 \
-        --spring.datasource.secondary.validation-query="SELECT 1" \
-        --spring.datasource.secondary.test-on-borrow=false \
-        --spring.datasource.secondary.test-while-idle=true \
-        --spring.datasource.secondary.time-between-eviction-runs-millis=18800 \
+        --com.js.trade.support.produce.bootstrap.servers="${KAFKA_SERVERS}" \
         &>/dev/null
