@@ -1,8 +1,8 @@
 FROM registry:5000/openjdk:8u201-jre-alpine
 COPY . /${MODULE}
-LABEL repo=${REPO:=https://github.com/jisheng-cn/webadmin-server.git} \
+LABEL repo=${REPO:=https://github.com/jisheng-cn/management.git} \
       branch=${BRANCH:=master} \
       commit=${COMMIT_ID:=UNKNOWN}
 WORKDIR /${MODULE}
 ENTRYPOINT ["java", "-XX:+UseG1GC", "-XX:MaxGCPauseMillis=100", "-Dfile.encoding=UTF-8"]
-CMD ["-jar", "/${MODULE}/digital-${MODULE}-${VERSION}.jar"]
+CMD ["-jar", "/${MODULE}/management-${MODULE}-${VERSION}.jar"]
