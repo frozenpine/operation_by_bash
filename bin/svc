@@ -23,6 +23,8 @@ function _make_serivce() {
 
     if [[ ! -d "${SERVICE_BASE}" ]]; then
         ${SUDO} mkdir -p "${SERVICE_BASE}"
+    else
+        ${SUDO} rm -f ${SERVICE_BASE}/*
     fi
 
     typeset -u APP_GROUP_NAME
