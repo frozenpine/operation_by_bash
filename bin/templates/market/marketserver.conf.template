@@ -1,7 +1,7 @@
 # 公有配置
 
 # 是否将日志输入到文件
-LogToFile=true
+LogToFile=false
 
 # log文件目录，注意：目录后面的正斜杠不要少！
 logFileDir=log/
@@ -59,10 +59,10 @@ MaxClientDataInterval=45
 # 拉取公告的时间间隔，单位为秒，可选配置
 PullAnnouncementInterval=15
 # 拉取公告的 URL
-PullAnnouncementURL=http://docs.365mex.com/api/document
+PullAnnouncementURL=http://docs.ybmex.com/api/document
 
 #客户端连接成功后的欢迎语
-WelcomeMsg={"info":"Welcome to the 365MEX Realtime API.","version":"2019-03-26T18:43:09.000Z","timestamp":"2019-03-28T06:05:15.309Z","docs":"https://www.365MEX.com/app/wsAPI","limit":{"remaining":39}}
+WelcomeMsg={"info":"Welcome to the YBMEX Realtime API.","version":"2019-03-26T18:43:09.000Z","docs":"https://www.ybmex.com",
 #apikey和signature校验地址
 CheckSignatureURL=${TRADE_FRONT}/api/v1/signature
 #当前订单查询接口
@@ -75,6 +75,8 @@ QueryPositionURL=${TRADE_FRONT}/api/v1/positionx
 QueryTradeURL=${TRADE_FRONT}/api/v1/trade?reverse=true
 #账户成交查询接口
 QueryExecutionURL=${TRADE_FRONT}/api/v1/executionx?count=200&reverse=true
+#强平单查询接口
+QueryLiquidationURL=${TRADE_FRONT}/api/v1/orderx/liquidation
 
 #获取全量instrument接口
 GetInstrumentDataURL=${TRADE_FRONT}/api/v1/instrument

@@ -51,8 +51,8 @@ docker run -d \
         -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
         --server.port=${MATCH_PORT} \
         --logging.level.com.js.trade=${LOG_LEVEL:=info} \
-        --com.js.trade.match.consumer.bootstrap.servers=${KAFKA_SERVERS} \
-        --com.js.trade.match.producer.bootstrap.servers=${KAFKA_SERVERS} \
-        --com.js.trade.match.producer.buffer.memory=100000000 \
-        --com.js.trade.match.producer.max.request.size=100000000 \
+        --com.js.trade.handle.producer.properties.bootstrap.servers=${KAFKA_SERVERS} \
+        --com.js.trade.handle.producer.max.request.size=52428800 \
+        --com.js.trade.handle.consumer.properties.bootstrap.servers=${KAFKA_SERVERS} \
+        --com.js.trade.handle.consumer.properties.fetch.max.bytes=52428800 \
         &>/dev/null

@@ -64,10 +64,4 @@ docker run -d \
         --spring.data.elasticsearch.cluster-name=${ES_CLUSTER_NAME:=Js} \
         --spring.data.elasticsearch.cluster-nodes=${ELASTIC_SERVERS} \
         --com.js.trade.sink.properties.bootstrap.servers=${KAFKA_SERVERS} \
-        --com.js.trade.sink.source-topic=${SINK_TOPIC:=SINK} \
-        --com.js.trade.sink.properties.fetch.max.wait.ms=10 \
-        --com.js.trade.sink.properties.heartbeat.interval.ms=10000 \
-        --com.js.trade.sink.properties.session.timeout.ms=30000 \
-        --com.js.trade.sink.properties.max.poll.records=1000 \
-        --com.js.trade.sink.properties.max.poll.interval.ms=300000 \
         &>/dev/null

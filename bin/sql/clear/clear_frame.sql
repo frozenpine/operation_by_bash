@@ -292,7 +292,7 @@ DROP TABLE IF EXISTS `t_trade`;
 
 CREATE TABLE `t_trade`
 (
-    `trade_id`         char(36)        NOT NULL COMMENT 'trade id',
+    `trade_id`         varchar(100)        NOT NULL COMMENT 'trade id',
     `client_id`        varchar(30)     NOT NULL COMMENT '客户代码',
     `instrument_id`    varchar(30)     NOT NULL COMMENT '合约代码',
     `order_id`         bigint(20)      NOT NULL COMMENT '报单编号',
@@ -353,6 +353,8 @@ CREATE TABLE `t_verify_account`
     `affiliate_payout`    decimal(30, 10) DEFAULT NULL COMMENT '返佣',
     `largess`             decimal(30, 10) DEFAULT NULL COMMENT '赠币',
     `compensation`        decimal(30, 10) DEFAULT NULL COMMENT '补偿',
+    `kafka_partition`     int(11)         NOT NULL,
+    `kafka_offset`        bigint(20)      NOT NULL,
     `insert_time`         bigint(20)      NOT NULL COMMENT '插入时间',
     PRIMARY KEY (`account_id`, `settlement_id`, `source_type`)
 ) ENGINE = InnoDB

@@ -27,7 +27,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `t_identification_type` WRITE;
 TRUNCATE t_identification_type;
-insert  into `t_identification_type`(`id`,`identification_type`,`identification_name`,`operate_time`,`operator_id`) values (1,'1','身份证',20181211,'admin'),(2,'2','军官证',NULL,NULL),(3,'4','huzhao',NULL,NULL);
+insert  into `t_identification_type`(`id`,`identification_type`,`identification_name`,`operate_time`,`operator_id`) values (1,'1','身份证',20181211,'admin'),(2,'2','护照',NULL,NULL);
 
 UNLOCK TABLES;
 
@@ -55,7 +55,7 @@ UNLOCK TABLES;
  -- 指数预警设置
 LOCK TABLES `t_risk_index` WRITE;
 TRUNCATE t_risk_index;
-insert  into `t_risk_index`(`id`,`warn_type`,`risk_flag`,`peek_value`,`operate_time`,`warn_level`,`accounts`,`interval_time`) values (1,'2','261016','0.100',1545896347124,'1','suhb@quantdo.com.cn',5),(2,'2','261017','0.250',1545896347124,'1','suhb@quantdo.com.cn',5),(3,'2','261018','0.250',1545896347124,'1','suhb@quantdo.com.cn',5),(4,'2','261019','0.000',1545896347124,'1','suhb@quantdo.com.cn',5),(5,'2','261020','0.000',1545896347124,'1','suhb@quantdo.com.cn',5),(6,'2','261021','0.000',1545896347124,'1','suhb@quantdo.com.cn',5),(7,'2','261022','0.000',1545896347124,'1','suhb@quantdo.com.cn',5),(8,'2','261023','0.000',1545896347124,'1','suhb@quantdo.com.cn',5);
+insert  into `t_risk_index`(`id`,`warn_type`,`risk_flag`,`peek_value`,`operate_time`,`warn_level`,`accounts`,`interval_time`) values (1,'2','261016','0.100',1545896347124,'1','yinkangxi@115bit.com',5),(2,'2','261017','0.250',1545896347124,'1','yinkangxi@115bit.com',5),(3,'2','261018','0.250',1545896347124,'1','yinkangxi@115bit.com',5),(4,'2','261019','0.000',1545896347124,'1','yinkangxi@115bit.com',5),(5,'2','261020','0.000',1545896347124,'1','yinkangxi@115bit.com',5),(6,'2','261021','0.000',1545896347124,'1','yinkangxi@115bit.com',5),(7,'2','261022','0.000',1545896347124,'1','yinkangxi@115bit.com',5),(8,'2','261023','0.000',1545896347124,'1','yinkangxi@115bit.com',5);
 
 UNLOCK TABLES;
 
@@ -64,7 +64,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `t_warn_insurance_fund` WRITE;
 TRUNCATE t_warn_insurance_fund;
-insert  into `t_warn_insurance_fund`(`id`,`risk_flag`,`time_value`,`peek_value`,`warn_level`,`warn_type`,`interval_time`,`accounts`,`operator_id`,`operate_time`,`notice_status`,`old_id`) values (4,'261024',NULL,NULL,'1','2',5,'sub@quantdo.com.cn','admin',1545896347124,'0',NULL),(5,'261025','2','500000000.0000000000','1','2',5,'sub@quantdo.com.cn','admin',1545896347124,'0',NULL),(6,'261026',NULL,'500000000.0000000000','1','2',5,'sub@quantdo.com.cn','admin',1545896347124,'0',NULL),(7,'261027',NULL,'500000000.0000000000','1','2',5,'sub@quantdo.com.cn','admin',1545896347124,'0',NULL);
+insert  into `t_warn_insurance_fund`(`id`,`risk_flag`,`time_value`,`peek_value`,`warn_level`,`warn_type`,`interval_time`,`accounts`,`operator_id`,`operate_time`,`notice_status`,`old_id`) values (4,'261024',NULL,NULL,'1','2',5,'yinkangxi@115bit.com','admin',1545896347124,'0',NULL),(5,'261025','2','500000000.0000000000','1','2',5,'yinkangxi@115bit.com','admin',1545896347124,'0',NULL),(6,'261026',NULL,'500000000.0000000000','1','2',5,'yinkangxi@115bit.com','admin',1545896347124,'0',NULL),(7,'261027',NULL,'500000000.0000000000','1','2',5,'yinkangxi@115bit.com','admin',1545896347124,'0',NULL);
 
 UNLOCK TABLES;
 
@@ -123,35 +123,14 @@ insert  into `t_risk_exchange_limit`(`id`,`exchange_status`,`operate_time`,`oper
 
 -- 初始化系统用户
 TRUNCATE t_trade_user;
--- 爆仓账户
-insert into `t_trade_user` (`application_id`, `user_id`, `user_name`, `nick_name`, `country_code`, `email`, `password`, `invite_code`, `account_password`, `registered_rake_back`, `identification_type`, `identification_id`, `apply_status`, `level`, `google_status`, `secret`, `is_active`, `telephone`, `id_back_photo`, `id_front_photo`, `self_card_photo`, `client_channel`, `register_time`, `recheck_time`, `rechecker_id`, `reject_remark`, `remark`, `user_type`, `old_id`, `notice_status`) values('qm8EH9sV','9752877235',NULL,NULL,NULL,'yinkangxi1@gmail.com','f5bc6cb171a431983e153d731c35db08',NULL,NULL,NULL,NULL,NULL,'4',NULL,NULL,'OVW5Z2A4PUNKVTSN','0',NULL,NULL,NULL,NULL,NULL,'1556872440059',NULL,NULL,NULL,NULL,'2',NULL,'0');
--- 提现手续费账户
-insert into `t_trade_user` (`application_id`, `user_id`, `user_name`, `nick_name`, `country_code`, `email`, `password`, `invite_code`, `account_password`, `registered_rake_back`, `identification_type`, `identification_id`, `apply_status`, `level`, `google_status`, `secret`, `is_active`, `telephone`, `id_back_photo`, `id_front_photo`, `self_card_photo`, `client_channel`, `register_time`, `recheck_time`, `rechecker_id`, `reject_remark`, `remark`, `user_type`, `old_id`, `notice_status`) values('8UFc4nAo','7828251072',NULL,NULL,NULL,'yinkangxi2@gmail.com','24df23089b6227827fe33a3b6f886fb7',NULL,NULL,NULL,NULL,NULL,'4',NULL,NULL,'VR25NDHYFBRMDT42','0',NULL,NULL,NULL,NULL,NULL,'1556872440059',NULL,NULL,NULL,NULL,'3',NULL,'0');
--- 运营账户
-insert into `t_trade_user` (`application_id`, `user_id`, `user_name`, `nick_name`, `country_code`, `email`, `password`, `invite_code`, `account_password`, `registered_rake_back`, `identification_type`, `identification_id`, `apply_status`, `level`, `google_status`, `secret`, `is_active`, `telephone`, `id_back_photo`, `id_front_photo`, `self_card_photo`, `client_channel`, `register_time`, `recheck_time`, `rechecker_id`, `reject_remark`, `remark`, `user_type`, `old_id`, `notice_status`) values('8r7SdDOq','8949355047',NULL,NULL,NULL,'yinkangxi3@gmail.com','6d8f96d6e5818de6cd5897da99895cf7',NULL,NULL,NULL,NULL,NULL,'4',NULL,NULL,'K3LGAB47NI3S47HA','0',NULL,NULL,NULL,NULL,NULL,'1556872440059',NULL,NULL,NULL,NULL,'4',NULL,'0');
--- 平账账户
-insert into `t_trade_user` (`application_id`, `user_id`, `user_name`, `nick_name`, `country_code`, `email`, `password`, `invite_code`, `account_password`, `registered_rake_back`, `identification_type`, `identification_id`, `apply_status`, `level`, `google_status`, `secret`, `is_active`, `telephone`, `id_back_photo`, `id_front_photo`, `self_card_photo`, `client_channel`, `register_time`, `recheck_time`, `rechecker_id`, `reject_remark`, `remark`, `user_type`, `old_id`, `notice_status`) values('cE5e1WFv','6789776272',NULL,NULL,NULL,'yinkangxi4@gmail.com','65918a47389b51ff1fde68d9afdf9869',NULL,NULL,NULL,NULL,NULL,'4',NULL,NULL,'DVQSCAMEDXJRVKJ6','0',NULL,NULL,NULL,NULL,NULL,'1556872440059',NULL,NULL,NULL,NULL,'5',NULL,'0');
--- 交易手续费账户
-insert into `t_trade_user` (`application_id`, `user_id`, `user_name`, `nick_name`, `country_code`, `email`, `password`, `invite_code`, `account_password`, `registered_rake_back`, `identification_type`, `identification_id`, `apply_status`, `level`, `google_status`, `secret`, `is_active`, `telephone`, `id_back_photo`, `id_front_photo`, `self_card_photo`, `client_channel`, `register_time`, `recheck_time`, `rechecker_id`, `reject_remark`, `remark`, `user_type`, `old_id`, `notice_status`) values('cE5e1WFv','5719336272',NULL,NULL,NULL,'yinkangxi5@gmail.com','65918a47389b51ff1fde68d9afdf9869',NULL,NULL,NULL,NULL,NULL,'4',NULL,NULL,'DVQSCAMEDXJRVKJ6','0',NULL,NULL,NULL,NULL,NULL,'1556872440059',NULL,NULL,NULL,NULL,'6',NULL,'0');
 
 
 -- 初始化系统用户资金
 TRUNCATE t_account_capital;
 
-insert into `t_account_capital` (`account_id`, `user_id`, `currency`, `balance`, `avail_balance`, `margin_balance`, `positionl_margin`, `order_margin`, `unrealised_pnl`, `transfer_in`, `transfer_out`, `deposited`, `withdrawn`, `realised_pnl`, `update_time`) values('4416046734','9752877235','XBT','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000',NULL);
-insert into `t_account_capital` (`account_id`, `user_id`, `currency`, `balance`, `avail_balance`, `margin_balance`, `positionl_margin`, `order_margin`, `unrealised_pnl`, `transfer_in`, `transfer_out`, `deposited`, `withdrawn`, `realised_pnl`, `update_time`) values('9734990447','7828251072','XBT','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000',NULL);
-insert into `t_account_capital` (`account_id`, `user_id`, `currency`, `balance`, `avail_balance`, `margin_balance`, `positionl_margin`, `order_margin`, `unrealised_pnl`, `transfer_in`, `transfer_out`, `deposited`, `withdrawn`, `realised_pnl`, `update_time`) values('9380754040','8949355047','XBT','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000',NULL);
-insert into `t_account_capital` (`account_id`, `user_id`, `currency`, `balance`, `avail_balance`, `margin_balance`, `positionl_margin`, `order_margin`, `unrealised_pnl`, `transfer_in`, `transfer_out`, `deposited`, `withdrawn`, `realised_pnl`, `update_time`) values('5926325374','6789776272','XBT','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000',NULL);
-insert into `t_account_capital` (`account_id`, `user_id`, `currency`, `balance`, `avail_balance`, `margin_balance`, `positionl_margin`, `order_margin`, `unrealised_pnl`, `transfer_in`, `transfer_out`, `deposited`, `withdrawn`, `realised_pnl`, `update_time`) values('3343252114','5719336272','XBT','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000','0.0000000000',NULL);
-
 
 -- 初始化系统用户ApiKey
 TRUNCATE t_api_key;
-insert into `t_api_key` (`user_id`, `key_id`, `key_type`, `key_name`, `cidr`, `key_right`, `secret_key`, `is_active`, `operate_time`, `operator_id`) values('9752877235','wPk4bZUvj4gvI9M9TI92','1','系统默认Key',NULL,'0','vUV7J9vcZAX47gwNEhn3AE99aA8f9Z3Qp4VLsJt1jQn244Q8jHPMR0aW87mZ2ir1Wblha74A9t28FcBSS1712u8kCZtpzsKc14s','1','1550631448291',NULL);
-insert into `t_api_key` (`user_id`, `key_id`, `key_type`, `key_name`, `cidr`, `key_right`, `secret_key`, `is_active`, `operate_time`, `operator_id`) values('7828251072','c15n92D8iLfQO0sALXsk','1','系统默认Key',NULL,'0','CH3eVm3d3vFej6a3t1B8l4scEk80VpK799LOGI63yXtw0DBhhEeA95LVE35jOa1OjCM3W0gRksYK2CG5w8329H9i6vbTXg7rs2t','1','1550632430331',NULL);
-insert into `t_api_key` (`user_id`, `key_id`, `key_type`, `key_name`, `cidr`, `key_right`, `secret_key`, `is_active`, `operate_time`, `operator_id`) values('8949355047','yk50vqxvDVLm2R6F58XQ','1','系统默认Key',NULL,'0','kCS23OpnB3m0thTpDa05IAG0EgX2jcD58kcWj07U9IE08J23xO888pVvrz47X7DfVzm18ViqUYF7Er11GqaFB6ZxjhS42oo09Uq','1','1550644354307',NULL);
-insert into `t_api_key` (`user_id`, `key_id`, `key_type`, `key_name`, `cidr`, `key_right`, `secret_key`, `is_active`, `operate_time`, `operator_id`) values('6789776272','Qz88v8QkG7T5Skm2JgGd','1','系统默认Key',NULL,'0','R5qE1b4gk0Xf5WSRUc53Z9xN606591vii3RgBWCSgbfR1DPP6I78r5qCox2upyB5Zj5N773THNa30xanb2108r2pBeVcWfBQgPK','1','1556872440055',NULL);
-insert into `t_api_key` (`user_id`, `key_id`, `key_type`, `key_name`, `cidr`, `key_right`, `secret_key`, `is_active`, `operate_time`, `operator_id`) values('5719336272','Qz88v8QkG7T5Skm2JgGd','1','系统默认Key',NULL,'0','R5qE1b4gk0Xf5WSRUc53Z9xN606591vii3RgBWCSgbfR1DPP6I78r5qCox2upyB5Zj5N773THNa30xanb2108r2pBeVcWfBQgPK','1','1556872440055',NULL);
 
 -- 委托事前风控参数设置
 
@@ -176,7 +155,7 @@ insert into `t_product` (`product_id`, `product_name`, `underlying_id`, `product
 insert into `t_deliv_fee_set` (notice_status,`product_id`, `instrument_id`, `user_group_id`, `fee_mode`, `deliv_fee_rate`, `deliv_fee_amt`, `operate_time`, `operator_id`) values('0','XBT',NULL,NULL,'1','0.0200000000','0.0000000000','1553049611369',NULL);
 
 insert  into `t_trade_fee_set`(`id`,`product_id`,`instrument_id`,`user_group_id`,`fee_mode`,`maker_fee_rate`,`taker_fee_rate`,`maker_fee_amt`,`taker_fee_amt`,`operate_time`,`operator_id`,`old_id`,`notice_status`) values (115,'XBT',NULL,NULL,'1','-0.00025','0.000750000000','0.0000000000','0.0000000000',1555590039518,NULL,NULL,'0');
-insert  into `t_risk_limit`(`id`,`product_id`,`instrument_id`,`level`,`base_risk_limit`,`step_risk_limit`,`step_times`,`base_maint_margin`,`base_init_margin`,`operator_id`,`operate_time`,`old_id`,`notice_status`) values (11,'XBT',NULL,NULL,'20000000000','10000000000',10,'0.0050000','0.0100000','admin',1555980569597,NULL,'0');
+insert  into `t_risk_limit`(`id`,`product_id`,`instrument_id`,`level`,`base_risk_limit`,`step_risk_limit`,`step_times`,`base_maint_margin`,`base_init_margin`,`operator_id`,`operate_time`,`old_id`,`notice_status`) values (11,'XBT',NULL,NULL,'20000000000','10000000000',9,'0.0050000','0.0100000','admin',1555980569597,NULL,'0');
 
 insert  into `t_risk_leverage_point_detail`(`id`,`product_id`,`risk_limit`,`leverage`) values (1,'XBT','20000000000','1.00'),(2,'XBT','20000000000','2.00'),(3,'XBT','20000000000','3.00'),(4,'XBT','20000000000','5.00'),(5,'XBT','20000000000','10.00'),(6,'XBT','20000000000','25.00'),(7,'XBT','20000000000','50.00'),(8,'XBT','20000000000','100.00'),(13,'XBT','30000000000','1.00'),(14,'XBT','30000000000','2.00'),(15,'XBT','30000000000','3.00'),(16,'XBT','30000000000','5.00'),(17,'XBT','30000000000','10.00'),(18,'XBT','30000000000','25.00'),(19,'XBT','30000000000','50.00'),(20,'XBT','30000000000','66.60'),(21,'XBT','40000000000','1.00'),(22,'XBT','40000000000','2.00'),(23,'XBT','40000000000','3.00'),(24,'XBT','40000000000','5.00'),(25,'XBT','40000000000','10.00'),(26,'XBT','40000000000','25.00'),(27,'XBT','40000000000','35.00'),(28,'XBT','40000000000','50.00'),(29,'XBT','50000000000','1.00'),(30,'XBT','50000000000','2.00'),(31,'XBT','50000000000','3.00'),(32,'XBT','50000000000','5.00'),(33,'XBT','50000000000','10.00'),(34,'XBT','50000000000','25.00'),(35,'XBT','50000000000','33.30'),(36,'XBT','50000000000','40.00'),(37,'XBT','60000000000','1.00'),(38,'XBT','60000000000','2.00'),(39,'XBT','60000000000','3.00'),(40,'XBT','60000000000','5.00'),(41,'XBT','60000000000','10.00'),(42,'XBT','60000000000','25.00'),(43,'XBT','60000000000','33.30'),(44,'XBT','70000000000','1.00'),(45,'XBT','70000000000','2.00'),(46,'XBT','70000000000','3.00'),(47,'XBT','70000000000','5.00'),(48,'XBT','70000000000','10.00'),(49,'XBT','70000000000','15.00'),(50,'XBT','70000000000','20.00'),(51,'XBT','70000000000','25.00'),(52,'XBT','70000000000','28.50'),(53,'XBT','80000000000','1.00'),(54,'XBT','80000000000','2.00'),(55,'XBT','80000000000','3.00'),(56,'XBT','80000000000','5.00'),(57,'XBT','80000000000','10.00'),(58,'XBT','80000000000','15.00'),(59,'XBT','80000000000','20.00'),(60,'XBT','80000000000','25.00'),(61,'XBT','90000000000','1.00'),(62,'XBT','90000000000','2.00'),(63,'XBT','90000000000','3.00'),(64,'XBT','90000000000','4.00'),(65,'XBT','90000000000','5.00'),(66,'XBT','90000000000','10.00'),(67,'XBT','90000000000','15.00'),(68,'XBT','90000000000','20.00'),(69,'XBT','90000000000','22.20'),(70,'XBT','100000000000','1.00'),(71,'XBT','100000000000','2.00'),(72,'XBT','100000000000','3.00'),(73,'XBT','100000000000','4.00'),(74,'XBT','100000000000','5.00'),(75,'XBT','100000000000','10.00'),(76,'XBT','100000000000','15.00'),(77,'XBT','100000000000','20.00'),(78,'XBT','110000000000','1.00'),(79,'XBT','110000000000','2.00'),(80,'XBT','110000000000','3.00'),(81,'XBT','110000000000','4.00'),(82,'XBT','110000000000','5.00'),(83,'XBT','110000000000','10.00'),(84,'XBT','110000000000','15.00'),(85,'XBT','110000000000','18.10');
 
@@ -194,29 +173,79 @@ insert  into `t_price_band_detail`(`id`,`instrumentid`,`start_price_type`,`basis
 
 LOCK TABLES `t_info_templates` WRITE;
 
-insert  into `t_info_templates`(`templates_id`,`type`,`content`,`state`,`international`,`remark`,`operate_date`,`update_date`,`operate_id`)
-values
-('261015','1','您的验证码是 {code}，您正在申请注册365MEX帐号，需要进行验证，请勿泄漏您的验证码。','1','1','登录注册验证',1547375715000,1547375715000,'admin'),
-('261016','1','三家有效交易所，{exchange} 交易所的 {product} 品种价格 {price} 偏离所有样本交易所中位数价格 {midPrice} 的 {value}，超过阈值 {peakValue} 时被剔除，触发预警','1','1','登录注册验证',1547375715000,1547375715000,'admin'),
-('261017','1','两家有效交易所，{product} 品种指数价格偏离绝对值 {value} 大于 {peakValue} 时，{exchange} 交易所最新指数价格与上次指数价格偏离更大，被剔除，触发预警','1','1','登录注册验证',1547375715000,1547375715000,'admin'),
-('261018','1','一家交易所时 {exchange}，获取到 {product} 品种指数价格 {price} 与上一次获取到的指数价格 {lastPrice} 偏差绝对值 {value} 大于 {peakValue}，以上一次价格为准，触发预警','1','1','登录注册验证',1547375715000,1547375715000,'admin'),
-('261019','1','{product} 品种指数来源中，一家交易所价格获取不到，触发预警','1','1','登录注册验证',1547375715000,1547375715000,'admin'),
-('261020','1','{product} 品种指数来源中，仅剩一家交易所可获取价格，触发预警','1','1','登录注册验证',1547375715000,1547375715000,'admin'),
-('261021','1','{product} 品种指数来源中，所有交易所价格都获取不到，触发预警','1','1','登录注册验证',1547375715000,1547375715000,'admin'),
-('261022','1','{product} 品种所有指数来源交易所和Bitmex 价格都获取不到，触发预警','1','1','登录注册验证',1547375715000,1547375715000,'admin'),
-('261023','1','{product} 品种所有指数来源价格都获取不到，且秒内无人工干预，触发预警','1','1','登录注册验证',1547375715000,1547375715000,'admin'),
-('261024','1','当日保险基金减少，触发预警','1','1','登录注册验证',1547375715000,1547375715000,'admin'),
-('261025','1','保险基金在 {time} 日内降低 {value} BTC，触发预警','1','1','登录注册验证',1547375715000,1547375715000,'admin'),
-('261026','1','保险基金减少至安全阈值 {value} BTC，触发预警','1','1','登录注册验证',1547375715000,1547375715000,'admin'),
-('261027','1','每日保险基金降低 {value} BTC，触发自动减仓','1','1','登录注册验证',1547375715000,1547375715000,'admin'),
-('261028','1','您好，您在 {symbol} 的 {direction} 的 {qty} 张合约的仓位已被强制平仓。{symbol} 的标记价格 最近 {updown} 到 {markPrice}。您的仓位的强平价格为 {liquidationPrice}。您的仓位已经被我们的强平引擎接管了。','1','1','登录注册验证',1547375715000,1547375715000,'admin'),
-('261029','1','您好，您在 {symbol} 的 {direction} 仓位已被自动减仓, 在 {price} 的价格减仓 {qty} 张合约。这次的减仓对于您来说是{profit}的：平仓价格为 {price} {updown} 您的开仓价格。您的仓位已经平仓了。','1','1','登录注册验证',1547375715000,1547375715000,'admin'),
-('261030','1','您的验证码是：{code}，{time} 分钟内有效，请勿向任何人包括客服泄漏验证码。','1','1','验证',1547375715000,1547375715000,'admin');
+INSERT  INTO `t_info_templates`(`templates_id`,`type`,`content`,`state`,`international`,`remark`,`operate_date`,`update_date`,`operate_id`) VALUES
+('261015','1','您的验证码是 {code}，您正在申请注册YBMEX帐号，需要进行验证，请勿泄漏您的校验码。','1','1','登录注册验证',1547375715000,1547375715000,'admin'),
+('261016','1','三家有效时，{exchange}的{product}品种的价格{price}偏离所有参考样本中位数价格{midPrice}的{value}，超过阈值{peakValue}时被剔除，触发预警','1','1','指数预警',1547375715000,1547375715000,'admin'),
+('261017','1','两家有效时，{product}品种指数价格偏离绝对值{value}大于{peakValue}时，{exchange}参考样本最新指数价格与上次指数价格偏离更大，被剔除，触发预警','1','1','指数预警',1547375715000,1547375715000,'admin'),
+('261018','1','一家有效时，{exchange}参考样本获取到{product}品种指数价格{price}与上一次获取到的指数价格{lastPrice}偏差绝对值{value}大于{peakValue}，以上一次价格为准，触发预警','1','1','指数预警',1547375715000,1547375715000,'admin'),
+('261019','1','{product}品种指数来源中，一家参考样本价格获取不到，触发预警','1','1','指数预警',1547375715000,1547375715000,'admin'),
+('261020','1','{product}品种指数来源中，仅剩一家参考样本可获取价格，触发预警','1','1','指数预警',1547375715000,1547375715000,'admin'),
+('261021','1','{product}品种指数来源中，所有参考样本价格都获取不到，触发预警','1','1','指数预警',1547375715000,1547375715000,'admin'),
+('261022','1','{product}品种所有指数来源参考样本和BITMEX价格都获取不到，触发预警','1','1','指数预警',1547375715000,1547375715000,'admin'),
+('261023','1','{product}品种所有指数来源价格都获取不到，且秒内无人工干预，触发预警','1','1','指数预警',1547375715000,1547375715000,'admin'),
+('261024','1','当日保险基金减少，触发预警','1','1','保险基金预警',1547375715000,1547375715000,'admin'),
+('261025','1','保险基金在{time}日内降低{value}BTC，触发预警','1','1','保险基金预警',1547375715000,1547375715000,'admin'),
+('261026','1','保险基金减少至安全阈值{value}BTC，触发预警','1','1','保险基金预警',1547375715000,1547375715000,'admin'),
+('261027','1','每日保险基金降低{value}BTC，触发自动减仓','1','1','保险基金预警',1547375715000,1547375715000,'admin'),
+('261028','1','您的{qty}张{symbol}{direction}仓合约到达强平价格{liquidationPrice}，已被强制平仓。','1','1','爆仓短信',1547375715000,1547375715000,'admin'),
+('261029','1','尊敬的用户，由于行情剧烈波动，市场发生了自动减仓事件，您的{qty}张{symbol}{direction}仓合约被系统自动减仓。','1','1','自动减仓短信',1547375715000,1547375715000,'admin'),
+('261030','1','{code}，{time}分钟内有效，请勿将该验证码告诉任何人包括客服。','1','1','验证',1547375715000,1547375715000,'admin'),
+('261031','1','您申请提现的{amount}XBT已经汇出。','1','1','充值提醒',1547375715000,1547375715000,'admin'),
+('261032','1','您充值的{amount}XBT已经到账。','1','1','充值提醒',1547375715000,1547375715000,'admin'),
+('261033','1','您已通过身份验证！','1','1','客户信息审核通过',1547375715000,1547375715000,'admin');
 
 UNLOCK TABLES;
 
 LOCK TABLES `t_sms_sign` WRITE;
 
-INSERT  INTO `t_sms_sign`(`id`,`sign_id`,`sign_name`,`remark`,`operate_date`,`update_date`,`operate_id`) VALUES (1,'189809','365MEX','注册登录验证',1547375715000,1547375715000,'admin');
+INSERT  INTO `t_sms_sign`(`id`,`sign_id`,`sign_name`,`remark`,`operate_date`,`update_date`,`operate_id`) VALUES (1,'189809','YBMEX','注册登录验证',1547375715000,1547375715000,'admin');
 
 UNLOCK TABLES;
+
+INSERT  INTO `t_supplier`(`id`,`supplier_name`,`operate_date`,`update_date`,`operate_id`) VALUES
+(1,'腾讯短信',1562224466000,1562224466000,'admin'),
+(2,'阿里短信',1562224466000,1562224466000,'admin'),
+(3,'亿美软通',1562224466000,1562224466000,'admin'),
+(4,'创蓝短信',1562224466000,1562224466000,'admin'),
+(5,'资采短信',1562224466000,1562224466000,'admin');
+
+
+INSERT  INTO `t_templates_relation`(`templates_id`,`supplier_temp_id`,`supplier_id`,`operate_date`,`update_date`,`operate_id`) VALUES
+('261015','261015',3,1562224466000,1562224466000,'admin'),
+('261015','bysU26crrXxNKL2JtfMo',5,1562224466000,1562224466000,'admin'),
+('261016','261016',3,1562224466000,1562224466000,'admin'),
+('261016','261016',5,1562224466000,1562224466000,'admin'),
+('261017','261017',3,1562224466000,1562224466000,'admin'),
+('261017','261017',5,1562224466000,1562224466000,'admin'),
+('261018','261018',3,1562224466000,1562224466000,'admin'),
+('261018','261018',5,1562224466000,1562224466000,'admin'),
+('261019','261019',3,1562224466000,1562224466000,'admin'),
+('261019','261019',5,1562224466000,1562224466000,'admin'),
+('261020','261020',3,1562224466000,1562224466000,'admin'),
+('261020','261020',5,1562224466000,1562224466000,'admin'),
+('261021','261021',3,1562224466000,1562224466000,'admin'),
+('261021','261021',5,1562224466000,1562224466000,'admin'),
+('261022','261022',3,1562224466000,1562224466000,'admin'),
+('261022','261022',5,1562224466000,1562224466000,'admin'),
+('261023','261023',3,1562224466000,1562224466000,'admin'),
+('261023','261023',5,1562224466000,1562224466000,'admin'),
+('261024','261024',3,1562224466000,1562224466000,'admin'),
+('261024','261024',5,1562224466000,1562224466000,'admin'),
+('261025','261025',3,1562224466000,1562224466000,'admin'),
+('261025','261025',5,1562224466000,1562224466000,'admin'),
+('261026','261026',3,1562224466000,1562224466000,'admin'),
+('261026','261026',5,1562224466000,1562224466000,'admin'),
+('261027','261027',3,1562224466000,1562224466000,'admin'),
+('261027','261027',5,1562224466000,1562224466000,'admin'),
+('261028','261028',3,1562224466000,1562224466000,'admin'),
+('261028','261028',5,1562224466000,1562224466000,'admin'),
+('261029','261029',3,1562224466000,1562224466000,'admin'),
+('261029','261029',5,1562224466000,1562224466000,'admin'),
+('261030','261030',3,1562224466000,1562224466000,'admin'),
+('261030','261030',5,1562224466000,1562224466000,'admin'),
+('261031','261031',3,1562224466000,1562224466000,'admin'),
+('261031','261031',5,1562224466000,1562224466000,'admin'),
+('261032','261032',3,1562224466000,1562224466000,'admin'),
+('261032','261032',5,1562224466000,1562224466000,'admin'),
+('261033','261033',3,1562224466000,1562224466000,'admin'),
+('261033','261033',5,1562224466000,1562224466000,'admin');
