@@ -353,6 +353,8 @@ CREATE TABLE `t_verify_account`
     `affiliate_payout`    decimal(30, 10) DEFAULT NULL COMMENT '返佣',
     `largess`             decimal(30, 10) DEFAULT NULL COMMENT '赠币',
     `compensation`        decimal(30, 10) DEFAULT NULL COMMENT '补偿',
+    `kafka_partition`     int(11)         NOT NULL,
+    `kafka_offset`        bigint(20)      NOT NULL,
     `insert_time`         bigint(20)      NOT NULL COMMENT '插入时间',
     PRIMARY KEY (`account_id`, `settlement_id`, `source_type`)
 ) ENGINE = InnoDB
