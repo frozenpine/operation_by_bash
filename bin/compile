@@ -19,9 +19,11 @@ JAVA_MODULE_DEFINE["digital"]="digital-rest digital-serviceimpl"
 JAVA_MODULE_DEFINE["management"]="management-rest management-service"
 JAVA_MODULE_DEFINE["trade-system"]="trade-clear trade-sink-db trade-sink-es trade-match trade-order trade-query trade-kline trade-back-order"
 JAVA_MODULE_DEFINE["service-management"]="exchange-index-server scheduler-server sms-mail-server trade-base"
+JAVA_MODULE_DEFINE["js-framework"]="framework-core"
 
 declare -A JAVA_MODULE_DEPLOY
 JAVA_MODULE_DEPLOY["trade-system"]="trade-data-exchange trade-core"
+JAVA_MODULE_DEPLOY["js-framework"]="framework-core"
 
 declare -A PUB_MAPPER
 PUB_MAPPER["management-rest"]=digital-rest
@@ -40,6 +42,7 @@ PUB_MAPPER["sms-mail-server"]=service-sms
 PUB_MAPPER["trade-base"]=service-tradebase
 PUB_MAPPER["365MEX"]=quant-coin
 PUB_MAPPER["webadmin-front"]=quant-coinMS
+PUB_MAPPER["js-framework"]=""
 
 UPDATE_GIT=0
 PUBLISH=
