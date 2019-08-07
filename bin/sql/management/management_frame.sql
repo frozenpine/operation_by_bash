@@ -155,6 +155,7 @@ CREATE TABLE `t_clear_premium_price`
 (
     `id`                bigint(20)  NOT NULL AUTO_INCREMENT COMMENT 'id自增长序列',
     `instrument_id`     varchar(30) NOT NULL COMMENT '合约代码',
+    `index_price`       decimal(30,10)  DEFAULT NULL COMMENT '指数价格',
     `basis_rate`        decimal(30, 10) DEFAULT NULL COMMENT '基准利率',
     `quote_rate`        decimal(30, 10) DEFAULT NULL COMMENT '计价利率',
     `rate`              decimal(30, 10) DEFAULT NULL COMMENT '利率',
@@ -884,15 +885,23 @@ CREATE TABLE `t_trade_user`
 
 DROP TABLE IF EXISTS `t_trade_user_oper_log`;
 
-CREATE TABLE `t_trade_user_oper_log`
-(
-    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID自增长序列',
-    `operation_type` varchar(3)  DEFAULT NULL COMMENT '日志类型 1注册 2 登录 3 丛植密码 4 邮箱验证 5 修改邮箱 6 身份认证 7 设置手机绑定 8 修改手机绑定  9 google 绑定 10 google 解除绑定 11 设置资金密码',
-    `operate_time`   bigint(20)  DEFAULT NULL COMMENT '操作时间',
-    `user_id`        varchar(20) DEFAULT NULL COMMENT '操作人',
-    PRIMARY KEY (`id`)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT ='用户操作日志';
+CREATE TABLE `t_trade_user_oper_log` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID自增长序列',
+  `user_id` varchar(20) NOT NULL COMMENT '用户Id',
+  `user_agent` varchar(300) NOT NULL COMMENT 'userAgent',
+  `session_id` varchar(100) NOT NULL COMMENT 'sessionId',
+  `param_data` varchar(300) NOT NULL COMMENT '请求参数',
+  `operate_ip` varchar(20) NOT NULL COMMENT '用户IP',
+  `method` varchar(20) NOT NULL COMMENT '请求方法',
+  `status` varchar(3) NOT NULL COMMENT '返回code',
+  `source` varchar(100) NOT NULL COMMENT '请求资源',
+  `action` varchar(3) NOT NULL COMMENT '行为：增、删、查、改',
+  `remark` varchar(200) DEFAULT NULL COMMENT '备注',
+  `time_consuming` bigint(20) NOT NULL COMMENT '请求耗时',
+  `return_time` bigint(20) NOT NULL COMMENT '返回时间',
+  `operate_time` bigint(20) NOT NULL COMMENT '操作时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='用户操作日志';
 
 /*Table structure for table `t_transaction_history` */
 
@@ -1090,6 +1099,8 @@ CREATE TABLE `t_verify_transfer`
     `id`                      bigint(20)  NOT NULL AUTO_INCREMENT COMMENT '自增长序列号',
     `transfer_out_account_id` bigint(20)  NOT NULL COMMENT '转出资金账号',
     `transfer_in_account_id`  bigint(20)  NOT NULL COMMENT '转入资金账号',
+    `transfer_out_client_id`  bigint(20)  NOT NULL COMMENT '转出客户号',
+    `transfer_in_client_id`   bigint(20)  NOT NULL COMMENT '转入客户号',
     `currency`                varchar(10) NOT NULL COMMENT '币种',
     `transfer`                decimal(30, 10) DEFAULT NULL COMMENT '划转数量',
     `frozen_id`               varchar(50)     DEFAULT NULL COMMENT '交易业务id',
@@ -1126,61 +1137,57 @@ CREATE TABLE `t_verify_erase_account`
 
 DROP TABLE IF EXISTS `t_verify_account`;
 
-CREATE TABLE `t_verify_account`
-(
-    `verify_date`         varchar(20)     NOT NULL COMMENT '对账日期',
-    `account_id`          bigint(20)      NOT NULL COMMENT '资金账号',
-    `currency`            varchar(10)     NOT NULL COMMENT '币种',
-    `client_id`           varchar(30)     NOT NULL COMMENT '用户代码',
-    `prev_wallet_balance` decimal(30, 10) NOT NULL COMMENT '上日钱包余额',
-    `wallet_balance`      decimal(30, 10) NOT NULL COMMENT '钱包余额',
-    `available`           decimal(30, 10) NOT NULL COMMENT '可用余额',
-    `margin_balance`      decimal(30, 10) NOT NULL COMMENT '保证金余额',
-    `frozen_margin`       decimal(30, 10) NOT NULL COMMENT '委托冻结保证金',
-    `frozen_available`    decimal(30, 10) NOT NULL DEFAULT '0.0000000000',
-    `current_margin`      decimal(30, 10)          DEFAULT NULL COMMENT '占用保证金(持仓保证金)',
-    `affiliate_payout`    decimal(30, 10)          DEFAULT NULL,
-    `withdraw`            decimal(30, 10)          DEFAULT NULL COMMENT '出金',
-    `deposit`             decimal(30, 10)          DEFAULT NULL COMMENT '入金',
-    `capital_fee`         decimal(30, 10)          DEFAULT NULL COMMENT '资金费用',
-    `realised_pnl`        decimal(30, 10) NOT NULL COMMENT '已实现盈亏',
-    `unrealised_pnl`      decimal(30, 10) NOT NULL COMMENT '未实现盈亏',
-    `no_filed_cnt`        bigint(20)               DEFAULT NULL,
-    `sell_vol_sum`        bigint(20)               DEFAULT NULL,
-    `buy_vol_sum`         bigint(20)               DEFAULT NULL,
-    `sell_cost`           decimal(30, 10)          DEFAULT NULL,
-    `buy_cost`            decimal(30, 10)          DEFAULT NULL,
-    `transfer`            decimal(30, 10)          DEFAULT NULL COMMENT '今日转账',
-    `settlement_id`       bigint(20)      NOT NULL COMMENT '结算编号',
-    `commission`          decimal(30, 10) NOT NULL COMMENT '佣金',
-    `withdraw_fee`        decimal(30, 10)          DEFAULT NULL COMMENT '提现手续费(比特币网络费用)',
-    `update_time`         bigint(30)               DEFAULT NULL COMMENT '更新时间',
-    `insert_time`         bigint(30)               DEFAULT NULL COMMENT '插入时间',
-    PRIMARY KEY (`account_id`, `currency`, `verify_date`)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT ='对账资金';
+CREATE TABLE `t_verify_account` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '自增长序列号',
+  `account_id` bigint(20) NOT NULL COMMENT '资金账号',
+  `client_id` varchar(30) NOT NULL COMMENT '用户代码',
+  `source_type` int(1) NOT NULL COMMENT '来源 1:结算 2:流水汇总 3:对账差额',
+  `status` int(1) NOT NULL DEFAULT '0' COMMENT '是否最新跑批结果 0 ：最新 1：历史',
+  `settlement_id` bigint(20) NOT NULL COMMENT '结算ID',
+  `prev_settlement_id` bigint(20) NOT NULL COMMENT '上一个结算批次号',
+  `currency` varchar(10) NOT NULL COMMENT '币种',
+  `prev_wallet_balance` decimal(30,10) NOT NULL DEFAULT '0.0000000000' COMMENT '上日钱包余额',
+  `wallet_balance` decimal(30,10) NOT NULL DEFAULT '0.0000000000' COMMENT '钱包余额',
+  `realised_gross_pnl` decimal(30,10) NOT NULL DEFAULT '0.0000000000' COMMENT '平仓盈亏',
+  `frozen_available` decimal(30,10) NOT NULL DEFAULT '0.0000000000' COMMENT '冻结资金',
+  `realised_pnl` decimal(30,10) NOT NULL DEFAULT '0.0000000000' COMMENT '已实现盈亏',
+  `withdraw` decimal(30,10) NOT NULL DEFAULT '0.0000000000' COMMENT '出金',
+  `deposit` decimal(30,10) NOT NULL DEFAULT '0.0000000000' COMMENT '入金',
+  `fee` decimal(30,10) NOT NULL DEFAULT '0.0000000000' COMMENT '成交手续费',
+  `capital_fee` decimal(30,10) NOT NULL DEFAULT '0.0000000000' COMMENT '资金费用',
+  `withdraw_fee` decimal(30,10) NOT NULL DEFAULT '0.0000000000' COMMENT '提现手续费(比特币网络费用)',
+  `transfer` decimal(30,10) NOT NULL DEFAULT '0.0000000000' COMMENT '今日转账',
+  `transfer_account` decimal(30,10) NOT NULL DEFAULT '0.0000000000' COMMENT '（同用户资金账号间）划转',
+  `transfer_client` decimal(30,10) NOT NULL DEFAULT '0.0000000000' COMMENT '（不同用户间）今日转账',
+  `affiliate_payout` decimal(30,10) NOT NULL DEFAULT '0.0000000000' COMMENT '返佣',
+  `largess` decimal(30,10) NOT NULL DEFAULT '0.0000000000' COMMENT '赠币',
+  `compensation` decimal(30,10) NOT NULL DEFAULT '0.0000000000' COMMENT '补偿',
+  `verify_status` int(1) NOT NULL COMMENT '对账状态 0:正常  1：异常',
+  `last_changed_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '数据最近一次修改时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `t_command`;
-CREATE TABLE `t_command`
-(
-    `id`                 bigint(20)  NOT NULL COMMENT '主键',
-    `command_id`         varchar(36) NOT NULL COMMENT '命令Id，全局唯一',
-    `scenarios`          varchar(50) NOT NULL COMMENT '业务场景',
-    `send_topic`         varchar(12) NOT NULL COMMENT '命令通知的队列',
-    `send_partition`     varchar(20) NOT NULL COMMENT '命令通知的分区',
-    `send_time`          bigint(20)  NOT NULL COMMENT '发送时间',
-    `send_status`        tinyint(4)  NOT NULL COMMENT '1: 待发； 2：已发；3：发送失败',
-    `send_remark`        varchar(200) DEFAULT NULL COMMENT '命令通知的备注',
-    `feedback_result`    tinyint(4)   DEFAULT NULL COMMENT '处理的反馈结果',
-    `feedback_time`      bigint(20)   DEFAULT NULL COMMENT '处理的反馈处理时间',
-    `feedback_partition` int(11)      DEFAULT NULL COMMENT '处理的反馈消息来源partition',
-    `feedback_offset`    bigint(20)   DEFAULT NULL COMMENT '处理的反馈来源偏移',
-    `feedback_remark`    varchar(200) DEFAULT NULL COMMENT '处理的反馈信息',
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `UK_COMMAND_ID` (`command_id`),
-    KEY `IDX_SEND_TARGET` (`send_topic`, `send_partition`)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
+CREATE TABLE `t_command` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `command_id` varchar(36) NOT NULL COMMENT '命令Id，全局唯一',
+  `command_type` varchar(64) DEFAULT NULL COMMENT '命令类型描述',
+  `scenarios` varchar(50) NOT NULL COMMENT '业务场景',
+  `send_topic` varchar(12) NOT NULL COMMENT '命令通知的队列',
+  `send_partition` int(11) NOT NULL COMMENT '命令通知的分区',
+  `send_time` bigint(20) NOT NULL COMMENT '发送时间',
+  `send_status` tinyint(4) NOT NULL COMMENT '1: 待发； 2：已发；3：发送失败',
+  `send_remark` varchar(200) DEFAULT NULL COMMENT '命令通知的备注',
+  `feedback_result` tinyint(4) DEFAULT NULL COMMENT '处理的反馈结果, 0:成功, -1:失败',
+  `feedback_message` varchar(200) DEFAULT NULL COMMENT '反馈消息',
+  `feedback_time` bigint(20) DEFAULT NULL COMMENT '处理的反馈处理时间',
+  `feedback_partition` int(11) DEFAULT NULL COMMENT '处理的反馈消息来源partition',
+  `feedback_offset` bigint(20) DEFAULT NULL COMMENT '处理的反馈来源偏移',
+  `feedback_remark` varchar(200) DEFAULT NULL COMMENT '处理的反馈信息',
+  `transaction_id` varchar(64) DEFAULT NULL COMMENT '外部事务ID，与业务关联的字段',
+  PRIMARY KEY (`id`),
+  KEY `IDX_SEND_TARGET` (`send_topic`,`send_partition`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `t_info_detail`;
 
@@ -1230,6 +1237,37 @@ CREATE TABLE `t_sms_sign` (
   `operate_id` VARCHAR(20) DEFAULT NULL,
   PRIMARY KEY (`id`,`sign_id`)
 ) ENGINE=INNODB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='短信签名';
+
+
+DROP TABLE IF EXISTS `t_supplier`;
+
+CREATE TABLE `t_supplier` (
+  `id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '自增长序列号',
+  `supplier_name` VARCHAR(50) NOT NULL COMMENT '运营商名称',
+  `operate_date` BIGINT(20) NOT NULL COMMENT '操作日',
+  `update_date` BIGINT(20) NOT NULL COMMENT '更新日期',
+  `operate_id` VARCHAR(20) NOT NULL COMMENT '操作者',
+  PRIMARY KEY (`id`)
+) ENGINE=INNODB  DEFAULT CHARSET=utf8 COMMENT='短信运营商';
+
+
+DROP TABLE IF EXISTS `t_templates_relation`;
+
+CREATE TABLE `t_templates_relation` (
+  `templates_id` VARCHAR(20) NOT NULL COMMENT '模板ID',
+  `supplier_temp_id` VARCHAR(20) NOT NULL COMMENT '提供者模板ID',
+  `supplier_id` INT(20) NOT NULL COMMENT '提供者ID',
+  `operate_date` BIGINT(20) NOT NULL COMMENT '操作日期',
+  `update_date` BIGINT(20) NOT NULL COMMENT '修改日期',
+  `operate_id` VARCHAR(20) NOT NULL COMMENT '操作人',
+  PRIMARY KEY (`templates_id`,`supplier_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='短信模板';
+
+CREATE VIEW `t_account` AS SELECT * FROM `clear`.`t_account`;
+CREATE VIEW `t_position` AS SELECT * FROM `clear`.`t_position`;
+CREATE VIEW `t_settlement` AS SELECT * FROM `clear`.`t_settlement`;
+CREATE VIEW `t_statement` AS SELECT * FROM `clear`.`t_statement`;
+CREATE VIEW `t_order_history` AS SELECT * FROM `clear`.`t_order_history`;
 
 /*!40101 SET SQL_MODE = @OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS = @OLD_FOREIGN_KEY_CHECKS */;

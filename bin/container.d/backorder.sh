@@ -51,8 +51,6 @@ docker run -d \
         -jar /${NAME}/trade$1-${NAME}-${VERSION}.jar \
         --logging.level.com.js.trade=${LOG_LEVEL:=info} \
         --server.port=${BACKORDER_PORT} \
-        --com.js.trade.backorder.snapshot.consumer.bootstrap.servers=${KAFKA_SERVERS} \
-        --com.js.trade.backorder.backorder.consumer.bootstrap.servers=${KAFKA_SERVERS} \
-        --com.js.trade.backorder.market.consumer.bootstrap.servers=${KAFKA_SERVERS} \
-        --com.js.trade.backorder.order.producer.bootstrap.servers=${KAFKA_SERVERS} \
+        --com.js.trade.handle.consumer.properties.bootstrap.servers=${KAFKA_SERVERS} \
+        --com.js.trade.handle.producer.properties.bootstrap.servers=${KAFKA_SERVERS} \
         &>/dev/null

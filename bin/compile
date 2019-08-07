@@ -15,8 +15,7 @@ COMPILE_BASE="${DATA_BASE:=/opt}/build"
 HTTP_PUBLISH_BASE="${DATA_BASE:=/opt}/publish"
 
 declare -A JAVA_MODULE_DEFINE
-JAVA_MODULE_DEFINE["digital"]="digital-rest digital-serviceimpl"
-JAVA_MODULE_DEFINE["management"]="management-rest management-service"
+JAVA_MODULE_DEFINE["management"]="management-rest"
 JAVA_MODULE_DEFINE["trade-system"]="trade-clear trade-sink-db trade-sink-es trade-match trade-order trade-query trade-kline trade-back-order"
 JAVA_MODULE_DEFINE["service-management"]="exchange-index-server scheduler-server sms-mail-server trade-base"
 JAVA_MODULE_DEFINE["js-framework"]="framework-core"
@@ -26,8 +25,7 @@ JAVA_MODULE_DEPLOY["trade-system"]="trade-data-exchange trade-core"
 JAVA_MODULE_DEPLOY["js-framework"]="framework-core"
 
 declare -A PUB_MAPPER
-PUB_MAPPER["management-rest"]=digital-rest
-PUB_MAPPER["management-service"]=digital-serviceimpl
+PUB_MAPPER["management-rest"]=management-rest
 PUB_MAPPER["trade-sink-db"]=trade-tmdb
 PUB_MAPPER["trade-sink-es"]=trade-tmes
 PUB_MAPPER["trade-clear"]=trade-clear
@@ -134,7 +132,10 @@ function _git_update() {
     local _CURRENT_BRANCH=`git branch | grep "*" | cut -d' ' -f2`
     if [[ ${_CURRENT_BRANCH} != ${BRANCH} ]]; then
         warning "current branch is not ${BRANCH}, checkout to ${BRANCH}."
-        git checkout ${BRANCH}
+        git checkout ${BRANCH} || {
+            # incase of branch not exist on local
+            git fetch && git checkout ${BRANCH}
+        }
 
         if [[ $? -ne 0 ]]; then
             error "check out to ${BRANCH} failed."

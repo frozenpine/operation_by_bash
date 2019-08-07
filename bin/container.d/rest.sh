@@ -12,9 +12,7 @@ JVM_OPTS=""
 
 SENTRY_DSN=`get_sentry_dsn ${NAME}`
 
-DB_NAME="sso"
-
-SERVICE_LIST="registry zookeeper kafka mysql redis digital kafka"
+SERVICE_LIST="registry zookeeper kafka mysql redis digital kafka sms"
 for SERVICE in ${SERVICE_LIST}; do
     source "${BASE_DIR}/service.d/${SERVICE}.sh" || {
         echo "service list file missing: ${SERVICE}.sh" >&2
@@ -22,6 +20,7 @@ for SERVICE in ${SERVICE_LIST}; do
     }
 done
 
+DB_NAME="security"
 DB_USER=
 DB_PASS=
 for CONF in `extract_ini_sec ${DB_NAME} "${CONF_BASE}/dbs.ini"`; do
@@ -34,6 +33,22 @@ for CONF in `extract_ini_sec ${DB_NAME} "${CONF_BASE}/dbs.ini"`; do
         DB_PASS=`echo ${CONF} | cut -d'=' -f2`
         DB_PASS=${DB_PASS## }
         DB_PASS=${DB_PASS%% }
+    fi
+done
+
+2ND_DB_NAME="management"
+2ND_DB_USER=
+2ND_DB_PASS=
+for CONF in `extract_ini_sec ${2ND_DB_NAME} "${CONF_BASE}/dbs.ini"`; do
+    if [[ $CONF =~ .*[Uu][Ss][Ee][Rr] ]]; then
+        2ND_DB_USER=`echo ${CONF} | cut -d'=' -f2`
+        2ND_DB_USER=${2ND_DB_USER## }
+        2ND_DB_USER=${2ND_DB_USER%% }
+    fi
+    if [[ $CONF =~ .*[Pp][Aa][Ss][Ss]([Ww][Oo][Rr][Dd])? ]]; then
+        2ND_DB_PASS=`echo ${CONF} | cut -d'=' -f2`
+        2ND_DB_PASS=${2ND_DB_PASS## }
+        2ND_DB_PASS=${2ND_DB_PASS%% }
     fi
 done
 
@@ -106,11 +121,11 @@ docker run -d \
         --spring.datasource.url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?characterEncoding=utf-8" \
         --spring.datasource.username="${DB_USER:=$DEFAULT_DB_USER}" \
         --spring.datasource.password="${DB_PASS:=$DEFAULT_DB_PASS}" \
-        --dubbo.registry.address="${ZK_SERVERS}" \
-        --dubbo.protocol.host="${SELF_IP}" \
-        --dubbo.registry.file="/${NAME}/data/dubbo/dubbo-registry.properties" \
-        --dubbo.consumer.timeout=300000 \
-        --dubbo.application.qos.port=33333 \
-        --com.js.trade.operation.consume-properties.bootstrap.servers=${KAFKA_SERVERS} \
-        --com.js.trade.operation.produce-properties.bootstrap.servers=${KAFKA_SERVERS} \
+        --spring.datasource.list[0].url="jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${2ND_DB_NAME}?characterEncoding=utf-8&amp;autoReconnect=true&amp;useSSL=false" \
+        --spring.datasource.list[0].username="${2ND_DB_USER:=$DEFAULT_DB_USER}" \
+        --spring.datasource.list[0].password="${2ND_DB_PASS:=$DEFAULT_DB_PASS}" \
+        --com.js.trade.support.consume.bootstrap.servers=${KAFKA_SERVERS} \
+        --com.js.trade.support.produce.bootstrap.servers=${KAFKA_SERVERS} \
+        --com.rest.sms.url=http://${SMS_HOST}:${SMS_PORT}/sms/send \
+        --com.rest.mail.url=http://${SMS_HOST}:${SMS_PORT}/mail/send \
         &>/dev/null

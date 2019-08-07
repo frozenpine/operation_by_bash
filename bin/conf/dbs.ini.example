@@ -10,6 +10,6 @@ pass=management123456
 user=clear
 pass=clear123456
 
-[sso]
-user=sso
-pass=sso123456
+[security]
+user=security
+pass=js2018security
