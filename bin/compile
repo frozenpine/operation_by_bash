@@ -40,7 +40,7 @@ PUB_MAPPER["sms-mail-server"]=service-sms
 PUB_MAPPER["trade-base"]=service-tradebase
 PUB_MAPPER["365MEX"]=quant-coin
 PUB_MAPPER["webadmin-front"]=quant-coinMS
-PUB_MAPPER["js-framework"]=""
+PUB_MAPPER["framework-core"]=framework-core
 
 UPDATE_GIT=0
 PUBLISH=
