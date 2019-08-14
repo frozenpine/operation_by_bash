@@ -15,9 +15,9 @@ COMPILE_BASE="${DATA_BASE:=/opt}/build"
 HTTP_PUBLISH_BASE="${DATA_BASE:=/opt}/publish"
 
 declare -A JAVA_MODULE_DEFINE
-JAVA_MODULE_DEFINE["management"]="management-rest check"
+JAVA_MODULE_DEFINE["management"]="management-rest"
 JAVA_MODULE_DEFINE["trade-system"]="trade-clear trade-sink-db trade-sink-es trade-match trade-order trade-query trade-kline trade-back-order"
-JAVA_MODULE_DEFINE["service-management"]="exchange-index-server scheduler-server sms-mail-server trade-base"
+JAVA_MODULE_DEFINE["service-management"]="exchange-index-server scheduler-server sms-mail-server trade-base check"
 JAVA_MODULE_DEFINE["js-framework"]="framework-core"
 
 declare -A JAVA_MODULE_DEPLOY
