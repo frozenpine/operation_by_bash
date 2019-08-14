@@ -15,7 +15,7 @@ COMPILE_BASE="${DATA_BASE:=/opt}/build"
 HTTP_PUBLISH_BASE="${DATA_BASE:=/opt}/publish"
 
 declare -A JAVA_MODULE_DEFINE
-JAVA_MODULE_DEFINE["management"]="management-rest"
+JAVA_MODULE_DEFINE["management"]="management-rest check"
 JAVA_MODULE_DEFINE["trade-system"]="trade-clear trade-sink-db trade-sink-es trade-match trade-order trade-query trade-kline trade-back-order"
 JAVA_MODULE_DEFINE["service-management"]="exchange-index-server scheduler-server sms-mail-server trade-base"
 JAVA_MODULE_DEFINE["js-framework"]="framework-core"
@@ -23,6 +23,7 @@ JAVA_MODULE_DEFINE["js-framework"]="framework-core"
 declare -A JAVA_MODULE_DEPLOY
 JAVA_MODULE_DEPLOY["trade-system"]="trade-data-exchange trade-core"
 JAVA_MODULE_DEPLOY["js-framework"]="framework-core"
+JAVA_MODULE_DEPLOY["management"]="check"
 
 declare -A PUB_MAPPER
 PUB_MAPPER["management-rest"]=management-rest
@@ -41,6 +42,7 @@ PUB_MAPPER["trade-base"]=service-tradebase
 PUB_MAPPER["365MEX"]=quant-coin
 PUB_MAPPER["webadmin-front"]=quant-coinMS
 PUB_MAPPER["framework-core"]=framework-core
+PUB_MAPPER["check"]=check
 
 UPDATE_GIT=0
 PUBLISH=
