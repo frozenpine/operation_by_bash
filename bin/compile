@@ -23,7 +23,7 @@ JAVA_MODULE_DEFINE["js-framework"]="framework-core"
 declare -A JAVA_MODULE_DEPLOY
 JAVA_MODULE_DEPLOY["trade-system"]="trade-data-exchange trade-core"
 JAVA_MODULE_DEPLOY["js-framework"]="framework-core"
-JAVA_MODULE_DEPLOY["management"]="check"
+JAVA_MODULE_DEPLOY["service-management"]="check"
 
 declare -A PUB_MAPPER
 PUB_MAPPER["management-rest"]=management-rest
