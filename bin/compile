@@ -441,6 +441,10 @@ EOF
         fi
         ${SUDO} sed -i 's/.*\/openssl/\.\/openssl/' CMakeLists.txt
 
+         [[ -f "CMakeCache.txt" ]] && ${SUDO} rm -f CMakeCache.txt
+         [[ -d "CMakeFiles" ]] && ${SUDO} rm -rf CMakeFiles
+         [[ -f "cmake_install.cmake" ]] && ${SUDO} rm -f cmake_install.cmake
+
         make clean
         cmake .
         make
