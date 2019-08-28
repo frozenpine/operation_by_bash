@@ -30,4 +30,6 @@ INSTRUMENT
 POSITION
 
 TRADE-LOG   1
-SINK    # 与clear的partition数相同
+SINK    # 与 clear 的 partition 数相同，用户id维度
+
+TICKER   # 与 Match 的 partition 数相同，合约维度
