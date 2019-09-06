@@ -6,8 +6,8 @@ function mysql_exec() {
 
     cat | mysql -h${DB_HOST} \
                 -P${DB_PORT:=3306} \
-                -u${DB_USER:=root} \
-                -p${DB_PASS:=quantdo123456} \
+                -u${DB_USER:=monitor} \
+                -p${DB_PASS:=monitor123456} \
                 --default-character-set=utf8mb4 $*
 }
 
@@ -43,7 +43,7 @@ function mysql_shell() {
     LANG=utf-8
     mysql -h${DB_HOST} \
           -P${DB_PORT:=3306} \
-          -u${DB_USER:=root} \
-          -p${DB_PASS:=quantdo123456} \
+          -u${DB_USER:=monitor} \
+          -p${DB_PASS:=monitor123456} \
           --default-character-set=utf8mb4 ${DB_NAME} $*
 }
