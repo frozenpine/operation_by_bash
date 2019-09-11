@@ -11,6 +11,7 @@ FUNC_FILE_CONFIG="${MODULE_BASE}/config.sh"
 import_functions
 
 SERVICE_LIST=
+SERVICE_BASE="${BASE_DIR}/service.d"
 
 HELP_COMMANDS["sync"]="Sync specified IP-HOST mapping to \"/etc/hosts\" by service name, if no service name specified, all service in \"service.d\" will be synced."
 HELP_COMMANDS["create"]="Create service module in \"service.d\" by definition in \"hosts.ini\" \"alias.ini\" \"ports.ini\""
@@ -19,12 +20,6 @@ function _make_serivce() {
     if [[ $# -lt 1 ]]; then
         error "app group name missing."
         exit 1
-    fi
-
-    if [[ ! -d "${SERVICE_BASE}" ]]; then
-        ${SUDO} mkdir -p "${SERVICE_BASE}"
-    else
-        ${SUDO} rm -f ${SERVICE_BASE}/*
     fi
 
     typeset -u APP_GROUP_NAME
@@ -120,6 +115,12 @@ case ${COMMAND} in
         alias_address
         declare -A PORTS
         app_ports
+
+        if [[ ! -d "${SERVICE_BASE}" ]]; then
+            ${SUDO} mkdir -p "${SERVICE_BASE}"
+        else
+            ${SUDO} rm -f ${SERVICE_BASE}/*
+        fi
 
         for HOST_SEC_NAME in `list_sections`; do
             _make_serivce ${HOST_SEC_NAME}
