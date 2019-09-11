@@ -20,7 +20,9 @@ HELP_ARGS["D"]="optional,Dry run command for test."
 
 HELP_POSITION_ARGS[0]="COMMAND..."
 
-while getopts :u:H:p:g:Dh FLAG; do
+FORCE=0
+
+while getopts :u:H:p:g:fDh FLAG; do
     case $FLAG in
         g)
             GROUP_NAME=${OPTARG}
@@ -36,6 +38,9 @@ while getopts :u:H:p:g:Dh FLAG; do
         ;;
         D)
             DRY_RUN="echo"
+        ;;
+        f)
+            FORCE=1
         ;;
         h)
             help_message >&2
@@ -69,20 +74,20 @@ while read CMD; do
     fi
 done <"${CONF_BASE}/.ignore"
 
+if [[ ${FORCE} != 1 ]]; then
+    for CMD in `cat "${CONF_BASE}/.dangerous"`; do
+        if [[ "$*" =~ ^${CMD} ]]; then
+            confirm "\`${COLOR[yellow]}$1${COLOR[nc]}\` command is ${COLOR[red]}dangeours${COLOR[nc]} to remote site, confirm?"
 
-
-for CMD in `cat "${CONF_BASE}/.dangerous"`; do
-    if [[ "$*" =~ ^${CMD} ]]; then
-        confirm "\`${COLOR[yellow]}$1${COLOR[nc]}\` command is ${COLOR[red]}dangeours${COLOR[nc]} to remote site, confirm?"
-        
-        if [[ $? -eq 0 ]]; then
-            break
-        else
-            error skip ${CMD_LINE[@]}
-            exit 1
+            if [[ $? -eq 0 ]]; then
+                break
+            else
+                error skip ${CMD_LINE[@]}
+                exit 1
+            fi
         fi
-    fi
-done
+    done
+fi
 
 host_list | while read HOST_CONF; do
     parse_ssh ${HOST_CONF}
