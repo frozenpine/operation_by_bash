@@ -80,7 +80,7 @@ function _sync_host() {
 
 function _list_services() {
     if [[ $# -lt 1 ]]; then
-        SERVICE_LIST=`find "${BASE_DIR}/service.d" -maxdepth 1 -type f -name "*.sh" -exec basename {} \; | cut -d'.' -f1 | xargs`
+        SERVICE_LIST=`find "${SERVICE_BASE}" -maxdepth 1 -type f -name "*.sh" -exec basename {} \; | cut -d'.' -f1 | xargs`
     else
         SERVICE_LIST="$*"
     fi
