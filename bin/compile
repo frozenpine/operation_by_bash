@@ -16,7 +16,7 @@ HTTP_PUBLISH_BASE="${DATA_BASE:=/opt}/publish"
 
 declare -A JAVA_MODULE_DEFINE
 JAVA_MODULE_DEFINE["management"]="management-rest"
-JAVA_MODULE_DEFINE["trade-system"]="trade-clear trade-sink-db trade-sink-es trade-match trade-order trade-query trade-kline trade-back-order trade-kafka-monitor"
+JAVA_MODULE_DEFINE["trade-system"]="trade-clear trade-sink-db trade-sink-es trade-match trade-order trade-query trade-kline trade-back-order"
 JAVA_MODULE_DEFINE["service-management"]="exchange-index-server scheduler-server sms-mail-server trade-base check trade-analysis"
 JAVA_MODULE_DEFINE["js-framework"]="framework-core"
 
@@ -35,7 +35,6 @@ PUB_MAPPER["trade-order"]=trade-order
 PUB_MAPPER["trade-query"]=trade-query
 PUB_MAPPER["trade-kline"]=trade-kline
 PUB_MAPPER["trade-back-order"]=trade-backorder
-PUB_MAPPER["trade-kafka-monitor"]=trade-monitor
 PUB_MAPPER["exchange-index-server"]=service-index
 PUB_MAPPER["scheduler-server"]=service-scheduler
 PUB_MAPPER["sms-mail-server"]=service-sms
