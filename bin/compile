@@ -42,6 +42,7 @@ PUB_MAPPER["trade-base"]=service-tradebase
 PUB_MAPPER["trade-analysis"]=service-analysis
 PUB_MAPPER["365MEX"]=quant-coin
 PUB_MAPPER["webadmin-front"]=quant-coinMS
+PUB_MAPPER["365MEXStatic"]=365mexstatic
 PUB_MAPPER["framework-core"]=framework-core
 PUB_MAPPER["check"]=check
 
