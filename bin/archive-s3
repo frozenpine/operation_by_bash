@@ -4,11 +4,10 @@ DATA_DIR="/data"
 SUDO="sudo"
 HOST_NAME="`uname -n | cut -d'.' -f1`"
 S3_BASE="s3://js-log-backup"
-FORCE=
 CLEAN=
 
 function help() {
-    echo "`basename $0` [-f] {java|websocket|nginx}"
+    echo "`basename $0` [-c] {java|websocket|nginx}"
 }
 
 function archive_java() {
@@ -19,15 +18,9 @@ function archive_java() {
         
         pushd "${APP_LOG_DIR}"
         find . -maxdepth 1 -type d -not -name "." -not -name "`date +%Y-%m-%d`" -exec basename {} \; | while read DATE; do
-            if [[ -f "${DATE}/.s3" ]]; then
-                if [[ ${CLEAN} == "true" ]]; then
-                    ${SUDO} rm -rf "${DATE}"
-                    continue
-                fi
-
-                if [[ ${FORCE} != "true" ]]; then
-                    continue
-                fi
+            if [[ -f "${DATE}/.s3" && ${CLEAN} == "true" ]]; then
+                ${SUDO} rm -rf "${DATE}"
+                continue
             fi
             
             aws s3 cp --recursive ${DATE} "${S3_BASE}/`basename ${APP_BASE}`/${HOST_NAME}/${DATE}/" && ${SUDO} touch "${DATE}/.s3"
@@ -42,9 +35,13 @@ function archive_websocket() {
     [[ ! -d "${WEBSOCKET_LOG_DIR}" ]] && return
 
     pushd "${WEBSOCKET_LOG_DIR}"
-        find . -type f -name "*.tar.gz" | while read LOG_FILE; do
-            aws s3 cp ${LOG_FILE} "${S3_BASE}/marketserver/${HOST_NAME}/" && ${SUDO} rm -f ${LOG_FILE}
-        done
+        if [[ ${CLEAN} == "true" ]]; then
+            find . -type f -name "*.s3" -exec ${SUDO} rm -f {} \;
+        else
+            find . -type f -name "*.tar.gz" | while read LOG_FILE; do
+                aws s3 cp ${LOG_FILE} "${S3_BASE}/marketserver/${HOST_NAME}/" && ${SUDO} mv ${LOG_FILE} "${LOG_FILE}.s3"
+            done
+        fi
     popd
 }
 
@@ -54,17 +51,18 @@ function archive_nginx() {
     [[ ! -d "${NGINX_LOG_DIR}" ]] && return
 
     pushd "${NGINX_LOG_DIR}"
-        find . -type f -name "*.gz" | while read LOG_FILE; do
-            aws s3 cp ${LOG_FILE} "${S3_BASE}/nginx/${HOST_NAME}/`date +%Y-%m-%d`/" && ${SUDO} rm -f ${LOG_FILE}
-        done
+        if [[ ${CLEAN} == "true" ]]; then
+            find . -type f -name "*.s3" -exec ${SUDO} rm -f {} \;
+        else
+            find . -type f -name "*.gz" | while read LOG_FILE; do
+                aws s3 cp ${LOG_FILE} "${S3_BASE}/nginx/${HOST_NAME}/`date +%Y-%m-%d`/" && ${SUDO} mv ${LOG_FILE} "${LOG_FILE}.s3"
+            done
+        fi
     popd
 }
 
-while getopts :cf FLAG; do
+while getopts :c FLAG; do
     case $FLAG in
-        f)
-            FORCE="true"
-        ;;
         c)
             CLEAN="true"
         ;;
