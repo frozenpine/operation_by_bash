@@ -8,7 +8,7 @@ FORCE=
 CLEAN=
 
 function help() {
-    echo "`basename $0` [-f] {java|websocket}"
+    echo "`basename $0` [-f] {java|websocket|nginx}"
 }
 
 function archive_java() {
@@ -36,6 +36,30 @@ function archive_java() {
     done
 }
 
+function archive_websocket() {
+    local WEBSOCKET_LOG_DIR="${DATA_DIR}/marketserver/log"
+    
+    [[ ! -d "${WEBSOCKET_LOG_DIR}" ]] && return
+
+    pushd "${WEBSOCKET_LOG_DIR}"
+        find . -type f -name "*.tar.gz" | while read LOG_FILE; do
+            aws s3 cp ${LOG_FILE} "${S3_BASE}/nginx/${HOST_NAME}/`date +%Y-%m-%d`/" && ${SUDO} rm -f ${LOG_FILE}
+        done
+    popd
+}
+
+function archive_nginx() {
+    local NGINX_LOG_DIR="${DATA_DIR}/nginx/log"
+    
+    [[ ! -d "${NGINX_LOG_DIR}" ]] && return
+
+    pushd "${NGINX_LOG_DIR}"
+        find . -type f -name "*.gz" | while read LOG_FILE; do
+            aws s3 cp ${LOG_FILE} "${S3_BASE}/nginx/${HOST_NAME}/`date +%Y-%m-%d`/" && ${SUDO} rm -f ${LOG_FILE}
+        done
+    popd
+}
+
 while getopts :cf FLAG; do
     case $FLAG in
         f)
@@ -59,7 +83,10 @@ case $COMMAND in
         archive_java
     ;;
     websocket)
-        echo "not realiszed yet."
+        archive_websocket
+    ;;
+    nginx)
+        archive_nginx
     ;;
     *)
         help >&2
