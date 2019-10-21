@@ -43,7 +43,7 @@ function archive_websocket() {
 
     pushd "${WEBSOCKET_LOG_DIR}"
         find . -type f -name "*.tar.gz" | while read LOG_FILE; do
-            aws s3 cp ${LOG_FILE} "${S3_BASE}/nginx/${HOST_NAME}/`date +%Y-%m-%d`/" && ${SUDO} rm -f ${LOG_FILE}
+            aws s3 cp ${LOG_FILE} "${S3_BASE}/nginx/${HOST_NAME}/" && ${SUDO} rm -f ${LOG_FILE}
         done
     popd
 }
