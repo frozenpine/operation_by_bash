@@ -448,8 +448,7 @@ EOF
          [[ -f "cmake_install.cmake" ]] && ${SUDO} rm -f cmake_install.cmake
 
         make clean
-        cmake -DVERSION="${COMMIT_ID}" -DCOMPILE_TIME=`date +%Y%m%d%H%M%S` .
-        make
+        cmake -DVERSION="${COMMIT_ID}" -DCOMPILE_TIME="`date +%Y%m%d%H%M%S`" . && make
 
         if [[ $? -ne 0 ]]; then
             error "project[${_project_base_name}] build failed."
