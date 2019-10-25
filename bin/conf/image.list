@@ -11,3 +11,4 @@ sonatype/nexus3:3.16.1
 store/elastic/filebeat:7.0.0
 kibana:6.7.1
 openresty/openresty:1.15.8.1rc1-0-alpine
+alpine:3.10.2

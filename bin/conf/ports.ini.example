@@ -9,21 +9,21 @@ front=80
 
 tradebase=9091
 order=9191
-query=9192
-clear=9291
-tmdb=9292
-match=9391
-backorder=9392
-kline=9491
-tmes=9293
+query=9292
+clear=9393
+tmdb=9494
+match=9595
+backorder=9596
+kline=9696
+tmes=9797
 
-security=9088
+security=10000
 digital=9089
 serviceimpl=9090
 
-sms=9189
-scheduler=9289
-index=9389
+sms=8180
+scheduler=8765
+index=8686
+analysis=9898
 
 websocket=9988
-qmarket=30007

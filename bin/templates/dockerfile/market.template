@@ -1,4 +1,4 @@
-FROM marketbase:alpine-3.9
+FROM wsbase:alpine-3.10.2
 COPY . /market
 WORKDIR /market
 ENTRYPOINT ["./entrypoint.sh"]

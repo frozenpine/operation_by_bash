@@ -4,12 +4,12 @@
 
 [management]
 user=management
-pass=management123456
+pass=XXXXXXXXXXXXXXXXX
 
 [clear]
 user=clear
-pass=clear123456
+pass=YYYYYYYYYYYYYYYYY
 
 [security]
 user=security
-pass=js2018security
+pass=ZZZZZZZZZZZZZZZZZ
