@@ -18,8 +18,11 @@ function archive_java() {
         
         pushd "${APP_LOG_DIR}"
         find . -maxdepth 1 -type d -not -name "." -not -name "`date +%Y-%m-%d`" -exec basename {} \; | while read DATE; do
-            if [[ -f "${DATE}/.s3" && ${CLEAN} == "true" ]]; then
-                ${SUDO} rm -rf "${DATE}"
+            if [[ -f "${DATE}/.s3" ]]; then
+                if [[ ${CLEAN} == "true" ]]; then
+                    ${SUDO} rm -rf "${DATE}"
+                fi
+
                 continue
             fi
             
