@@ -58,7 +58,7 @@ function archive_nginx() {
             find . -type f -name "*.s3" -exec ${SUDO} rm -f {} \;
         else
             find . -type f -name "*.gz" | while read LOG_FILE; do
-                aws s3 cp ${LOG_FILE} "${S3_BASE}/nginx/${HOST_NAME}/`date +%Y-%m-%d`/" && ${SUDO} mv ${LOG_FILE} "${LOG_FILE}.s3"
+                aws s3 cp ${LOG_FILE} "${S3_BASE}/nginx/${HOST_NAME}/" && ${SUDO} mv ${LOG_FILE} "${LOG_FILE}.s3"
             done
         fi
     popd
