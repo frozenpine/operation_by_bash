@@ -50,6 +50,9 @@ PUB_MAPPER["check"]=check
 UPDATE_GIT=
 PUBLISH=
 FORCE=0
+GIT_UPDATE=
+GIT_BRANCH=
+GIT_COMMIT_ID=
 
 HELP_ARGS["u"]="optional,Pull lastest update from master@github."
 HELP_ARGS["p:"]="optional,Publish new build to remote server, http download or docker registry."
@@ -130,7 +133,7 @@ function _npm_compile() {
     pushd "${_project_base_dir}" >/dev/null
         _project_base_name=$(basename `pwd`)
 
-        git_checkout -b${BRANCH} -c${COMMIT_ID} ${UPDATE_GIT}
+        git_checkout ${GIT_BRANCH} ${GIT_COMMIT_ID} ${GIT_UPDATE}
 
         if [[ x"${COMMIT_ID}" == "x" ]]; then
             error "fail to get current commit id."
@@ -226,7 +229,7 @@ EOF
             exit 1
         fi
         
-        git_checkout -b${BRANCH} -c${COMMIT_ID} ${UPDATE_GIT}
+        git_checkout ${GIT_BRANCH} ${GIT_COMMIT_ID} ${GIT_UPDATE}
 
         if [[ x"${COMMIT_ID}" == "x" ]]; then
             error "fail to get current commit id."
@@ -348,7 +351,7 @@ function _gcc_compile() {
     pushd "${_project_base_dir}" >/dev/null
         _project_base_name=$(basename `pwd`)
 
-        git_checkout -b${BRANCH} -c${COMMIT_ID} ${UPDATE_GIT}
+        git_checkout ${GIT_BRANCH} ${GIT_COMMIT_ID} ${GIT_UPDATE}
 
         if [[ x"${COMMIT_ID}" == "x" ]]; then
             error "fail to get current commit id."
@@ -436,16 +439,16 @@ EOF
 while getopts :b:c:C:e:p:ufh FLAG; do
     case $FLAG in
         u)
-            UPDATE_GIT="-u"
+            GIT_UPDATE="-u"
         ;;
         p)
             PUBLISH=${OPTARG}
         ;;
         b)
-            BRANCH=${OPTARG}
+            GIT_BRANCH="-b ${OPTARG}"
         ;;
         c)
-            COMMIT_ID=${OPTARG}
+            GIT_COMMIT_ID="-c ${OPTARG}"
         ;;
         C)
             WANTED_COMPILER=${OPTARG}
