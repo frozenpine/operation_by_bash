@@ -49,8 +49,6 @@ PUB_MAPPER["check"]=check
 
 UPDATE_GIT=
 PUBLISH=
-BRANCH=master
-COMMIT_ID=
 FORCE=0
 
 HELP_ARGS["u"]="optional,Pull lastest update from master@github."
