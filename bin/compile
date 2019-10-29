@@ -9,6 +9,7 @@ source "${BASE_DIR}/module.d/common.sh"
 check_env || exit 1
 
 FUNC_FILE_TEMPLATE="${MODULE_BASE}/template.sh"
+FUNC_FILE_GIT="${MODULE_BASE}/git.sh"
 import_functions
 
 COMPILE_BASE="${DATA_BASE:=/opt}/build"
@@ -46,11 +47,12 @@ PUB_MAPPER["365MEXStatic"]=365mexstatic
 PUB_MAPPER["framework-core"]=framework-core
 PUB_MAPPER["check"]=check
 
-UPDATE_GIT=0
+UPDATE_GIT=
 PUBLISH=
-BRANCH=master
-COMMIT_ID=
 FORCE=0
+GIT_UPDATE=
+GIT_BRANCH=
+GIT_COMMIT_ID=
 
 HELP_ARGS["u"]="optional,Pull lastest update from master@github."
 HELP_ARGS["p:"]="optional,Publish new build to remote server, http download or docker registry."
@@ -124,73 +126,6 @@ function _decide_compiler() {
     return 1
 }
 
-function _get_commit() {
-    local _commit=`git show | grep commit | awk '{print $NF}'`
-    COMMIT_ID=${_commit:0:7}
-}
-
-function _git_update() {
-    # drop all local changes.
-    git checkout .
-
-    local _CURRENT_BRANCH=`git branch | grep "*" | cut -d' ' -f2`
-    if [[ ${_CURRENT_BRANCH} != ${BRANCH} ]]; then
-        warning "current branch is not ${BRANCH}, checkout to ${BRANCH}."
-        git checkout ${BRANCH} || {
-            # incase of branch not exist on local
-            git fetch && git checkout ${BRANCH}
-        }
-
-        if [[ $? -ne 0 ]]; then
-            error "check out to ${BRANCH} failed."
-            exit 1
-        fi
-    fi
-
-    if [[ x"${COMMIT_ID}" != "x" ]]; then
-        git checkout ${COMMIT_ID}
-        
-        if [[ $? -ne 0 ]]; then
-            error "checkout commit[${COMMIT_ID}] failed."
-            exit 1
-        fi
-
-        return
-    fi
-
-    if [[ ${UPDATE_GIT} -ne 1 ]]; then
-        _get_commit
-        return
-    fi
-
-    info "getting ${_project_base_name} latest version from git."
-
-    git pull && _get_commit
-}
-
-function _git_patch() {
-    if [[ $# -lt 1 ]]; then
-        error "project name missing in git patch."
-        exit 1
-    fi
-
-    local _project_name=$1
-    local _patch_file="${PATCH_BASE}/${_project_name}/patch.diff"
-    
-    if [[ ! -f "${_patch_file}" ]]; then
-        info "no patch file found for project[${_project_name}]"
-        return
-    fi
-
-    git apply --check "${_patch_file}" && git apply "${_patch_file}"
-    if [[ $? -ne 0 ]]; then
-        error "patch[${_patch_file}] failed for project[${_project_name}]."
-        exit 1
-    fi
-
-    info "${_patch_file} applied successfully."
-}
-
 function _npm_compile() {
     local _project_base_dir=`pwd`
     local _project_base_name
@@ -198,7 +133,7 @@ function _npm_compile() {
     pushd "${_project_base_dir}" >/dev/null
         _project_base_name=$(basename `pwd`)
 
-        _git_update
+        git_checkout ${GIT_BRANCH} ${GIT_COMMIT_ID} ${GIT_UPDATE}
 
         if [[ x"${COMMIT_ID}" == "x" ]]; then
             error "fail to get current commit id."
@@ -207,7 +142,7 @@ function _npm_compile() {
 
         info "start to build project: ${_project_base_name}[${COMMIT_ID}]"
 
-        _git_patch ${_project_base_name}
+        git_patch ${_project_base_name}
 
         local _tar_file="${_project_base_name}_${COMMIT_ID}.tar.gz"
 
@@ -279,12 +214,6 @@ function _mvn_compile() {
     local _project_base_dir=`find . -maxdepth 2 -type f -name pom.xml -exec dirname {} \; | sort | head -1`
     local _project_base_name
     local _env_arg
-
-    # netstat -tnl | grep :${MAVEN_MIRROR_PORT} | grep LISTEN &>/dev/null
-    # if [[ $? -ne 0 ]]; then
-    #     warning "maven mirror port for js local repository not open."
-    #     confirm -t 10 || exit 1
-    # fi
     
     pushd "${_project_base_dir}" >/dev/null
         _project_base_name=$(basename `pwd`)
@@ -300,7 +229,7 @@ EOF
             exit 1
         fi
         
-        _git_update
+        git_checkout ${GIT_BRANCH} ${GIT_COMMIT_ID} ${GIT_UPDATE}
 
         if [[ x"${COMMIT_ID}" == "x" ]]; then
             error "fail to get current commit id."
@@ -309,7 +238,7 @@ EOF
 
         info "start to build project: ${_project_base_name}[${COMMIT_ID}]"
 
-        _git_patch ${_project_base_name}
+        git_patch ${_project_base_name}
 
         if [[ -d conf ]]; then
             _env_arg="-Denv=dev"
@@ -422,7 +351,7 @@ function _gcc_compile() {
     pushd "${_project_base_dir}" >/dev/null
         _project_base_name=$(basename `pwd`)
 
-        _git_update
+        git_checkout ${GIT_BRANCH} ${GIT_COMMIT_ID} ${GIT_UPDATE}
 
         if [[ x"${COMMIT_ID}" == "x" ]]; then
             error "fail to get current commit id."
@@ -431,7 +360,7 @@ function _gcc_compile() {
 
         info "start to build project: ${_project_base_name}[${COMMIT_ID}]"
 
-        _git_patch ${_project_base_name}
+        git_patch ${_project_base_name}
 
         if [[ ! -f "CMakeLists.txt" ]]; then
             cat <<EOF | error
@@ -510,16 +439,16 @@ EOF
 while getopts :b:c:C:e:p:ufh FLAG; do
     case $FLAG in
         u)
-            UPDATE_GIT=1
+            GIT_UPDATE="-u"
         ;;
         p)
             PUBLISH=${OPTARG}
         ;;
         b)
-            BRANCH=${OPTARG}
+            GIT_BRANCH="-b ${OPTARG}"
         ;;
         c)
-            COMMIT_ID=${OPTARG}
+            GIT_COMMIT_ID="-c ${OPTARG}"
         ;;
         C)
             WANTED_COMPILER=${OPTARG}
