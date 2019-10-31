@@ -24,9 +24,9 @@ monitortoken=123
 # Smonitorservername=`uname -n`
 # monitormailserver=smtp.163.com
 # monitormailport=25
-# monitormailuser=testformybook@163.com
-# monitormailpassword=2019hhxxttxs
-# monitormailto=slgeng@115bit.com;zhangyl@115bit.com;yinkangxi@115bit.com
+# monitormailuser=XXXXXXXXXXXXXXX@163.com
+# monitormailpassword=XXXXXXXXXXXXXXX
+# monitormailto=a@abc.com;b@abc.com;c@abc.com
 
 # kafka 配置
 KafkaGroupID=marketserver${ID}
