@@ -3,7 +3,7 @@ function _normal_dry_run() {
         DRY_RUN="echo"
         return
     fi
-    
+
     DRY_RUN=$1
 }
 
@@ -25,13 +25,13 @@ function is_self() {
         error "remote host missing in check self."
         exit 1
     fi
-    
+
     local _host=$1
     local _self_ip
 
-    _self_ip=`grep ${_host} /etc/hosts | awk '{print $1}'`
+    _self_ip=$(grep ${_host} /etc/hosts | awk '{print $1}')
 
-    for IP in `ip address show | grep inet | grep -v inet6 | awk '{split($2, addr, "/"); print addr[1]}'`; do
+    for IP in $(ip address show | grep inet | grep -v inet6 | awk '{split($2, addr, "/"); print addr[1]}'); do
         if [[ ${IP} == ${_self_ip} ]]; then
             warning "Destination is same as localhost[${_self_ip}], skip."
             return 0
@@ -73,18 +73,18 @@ function remote_exec() {
     _COMMAND=$1
     _CMD_LINE=$1
     shift
-    
+
     # extend alias command recursively
     _common_alias &>/dev/null
     while true; do
         alias ${_COMMAND} &>/dev/null
         if [[ $? -eq 0 ]]; then
-            _TMP_CMD=`alias ${_COMMAND} | \
-                sed -e 's/^alias[^'"'"']*//g' -e 's/'"'"'//g' -e 's/--color=auto/--color/g'`
+            _TMP_CMD=$(alias ${_COMMAND} |
+                sed -e 's/^alias[^'"'"']*//g' -e 's/'"'"'//g' -e 's/--color=auto/--color/g')
             _CMD_LINE=${_CMD_LINE/${_COMMAND}/${_TMP_CMD}}
-            
+
             _TMP_CMD=${_COMMAND}
-            _COMMAND=`echo ${_CMD_LINE} | awk '{print $1}'`
+            _COMMAND=$(echo ${_CMD_LINE} | awk '{print $1}')
 
             # break alias recursive circle
             [[ ${_TMP_CMD} == ${_COMMAND} ]] && break
@@ -96,14 +96,14 @@ function remote_exec() {
     done
 
     echo -e "${COLOR[cyan]}Results${COLOR[nc]} from remote host[${COLOR[yellow]}${_CONN_STRING}${COLOR[nc]}]:" >&2
-    
+
     _normal_dry_run
 
     ${DRY_RUN} ssh ${_ssh_args[@]} ${_USER}@${_HOST} "\
         export PATH=/sbin:/bin:/usr/bin:/usr/sbin:/user/sbin:/usr/local/bin:~/bin; \
         [[ -f ~/.bashrc ]] && source ~/.bashrc; \
         [[ -f ~/.bash_profile ]] && source ~/.bash_profile; \
-        ${_CMD_LINE} $*"
+        ${SUDO} ${_CMD_LINE} $*"
     echo >&2
 }
 
@@ -157,7 +157,7 @@ function remote_cp() {
         _DST="${!#}"
         _SRC="${*%%${_DST}}"
     fi
-    
+
     _normal_dry_run
 
     ${DRY_RUN} scp ${_scp_args[@]} ${_SRC} ${_USER}@${_HOST}:${_DST}
@@ -173,16 +173,16 @@ function remote_sync() {
     local OPTIND FLAG
     while getopts :k FLAG; do
         case $FLAG in
-            k)
-                _keep_flag=1
+        k)
+            _keep_flag=1
             ;;
-            *)
-                error "invalid args: $*"
-                exit 1
+        *)
+            error "invalid args: $*"
+            exit 1
             ;;
         esac
     done
-    shift $((OPTIND-1))
+    shift $((OPTIND - 1))
 
     local _USER
     local _HOST
@@ -196,7 +196,7 @@ function remote_sync() {
     local _keep_flag
 
     _rsync_args=(-rlptzv --progress --human-readable --chmod="D+rx,Fgo+r")
-    
+
     if [[ ${_keep_flag} -ne 1 ]]; then
         _rsync_args=(${_rsync_args[@]} --delete)
     fi
