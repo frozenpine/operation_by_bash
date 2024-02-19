@@ -1,8 +1,8 @@
 #!/bin/bash
 
-[[ -L $0 ]] && SCRIPT_FILE=`readlink -fn $0` || SCRIPT_FILE=$0
-pushd `dirname "${SCRIPT_FILE}"` >/dev/null
-BASE_DIR=`pwd`
+[[ -L $0 ]] && SCRIPT_FILE=$(readlink -fn $0) || SCRIPT_FILE=$0
+pushd $(dirname "${SCRIPT_FILE}") >/dev/null
+BASE_DIR=$(pwd)
 popd >/dev/null
 
 source "${BASE_DIR}/module.d/common.sh"
@@ -22,34 +22,37 @@ HELP_POSITION_ARGS[0]="COMMAND..."
 
 FORCE=0
 
-while getopts :u:H:p:g:fDh FLAG; do
+while getopts :u:H:p:g:S:fDh FLAG; do
     case $FLAG in
-        g)
-            GROUP_NAME=${OPTARG}
+    g)
+        GROUP_NAME=${OPTARG}
         ;;
-        u)
-            REMOTE_USER=${OPTARG}
+    u)
+        REMOTE_USER=${OPTARG}
         ;;
-        H)
-            REMOTE_HOST=${OPTARG}
+    H)
+        REMOTE_HOST=${OPTARG}
         ;;
-        p)
-            REMOTE_PORT=${OPTARG}
+    p)
+        REMOTE_PORT=${OPTARG}
         ;;
-        D)
-            DRY_RUN="echo"
+    D)
+        DRY_RUN="echo"
         ;;
-        f)
-            FORCE=1
+    f)
+        FORCE=1
         ;;
-        h)
-            help_message >&2
-            exit
+    S)
+        SUDO=${OPTARG}
         ;;
-        *)
-            error "invalid args: $*"
-            help_message >&2
-            exit 1
+    h)
+        help_message >&2
+        exit
+        ;;
+    *)
+        error "invalid args: $*"
+        help_message >&2
+        exit 1
         ;;
     esac
 done
@@ -75,7 +78,7 @@ while read CMD; do
 done <"${CONF_BASE}/.ignore"
 
 if [[ ${FORCE} != 1 ]]; then
-    for CMD in `cat "${CONF_BASE}/.dangerous"`; do
+    for CMD in $(cat "${CONF_BASE}/.dangerous"); do
         if [[ "$*" =~ ^${CMD} ]]; then
             confirm "\`${COLOR[yellow]}$1${COLOR[nc]}\` command is ${COLOR[red]}dangeours${COLOR[nc]} to remote site, confirm?"
 
