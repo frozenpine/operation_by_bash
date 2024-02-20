@@ -22,7 +22,7 @@ HELP_POSITION_ARGS[0]="COMMAND..."
 
 FORCE=0
 
-while getopts :u:H:p:g:S:fDh FLAG; do
+while getopts :u:H:p:g:fDhS FLAG; do
     case $FLAG in
     g)
         GROUP_NAME=${OPTARG}
@@ -43,7 +43,11 @@ while getopts :u:H:p:g:S:fDh FLAG; do
         FORCE=1
         ;;
     S)
-        SUDO=${OPTARG}
+        if [[ -z ${SUDO} ]]; then
+            SUDO="sudo"
+        else
+            SUDO=
+        fi
         ;;
     h)
         help_message >&2
